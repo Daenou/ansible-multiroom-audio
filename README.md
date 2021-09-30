@@ -3,7 +3,7 @@
 Installs the snapclient package using apt and configures it to listen to a snapserver.
 
 # Requirements
-- ansible v2.9 installed
+- ansible installed (This playbook was tested on ansible 2.10.8)
 - passwordless login to clients in the inventory file
 
 # Howto
