@@ -1,0 +1,7 @@
+---
+
+- name: Setup snapclient hosts
+  hosts: snapclients
+  become: true
+  roles:
+    - snapclient

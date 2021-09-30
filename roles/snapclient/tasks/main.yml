@@ -1,0 +1,20 @@
+---
+
+- name: Install snapclient package
+  ansible.builtin.apt:
+    name: snapclient
+    state: latest
+    update_cache: yes
+
+- name: Install snapclient config
+  ansible.builtin.template:
+    src: files/snapclient.j2
+    dest: /etc/default/snapclient
+    backup: yes
+  notify:
+    - Restart snapclient
+
+- name: Enable snapclient to start on boot
+  ansible.builtin.service:
+    name: snapclient
+    enabled: yes
