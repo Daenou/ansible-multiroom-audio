@@ -3,5 +3,7 @@
 - name: Setup snapclient hosts
   hosts: snapclients
   become: true
+
+  vars_files: config/defaults.yml
   roles:
     - snapclient
