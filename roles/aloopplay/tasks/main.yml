@@ -1,0 +1,21 @@
+---
+
+- name: Copy aloopplay script
+  ansible.builtin.copy:
+    src: files/aloopplay.sh
+    dest: /usr/local/bin/aloopplay.sh
+    backup: yes
+
+- name: Copy aloopplay@ systemd service file
+  ansible.builtin.copy:
+    src: files/aloopplay@.service
+    dest: /etc/systemd/system/aloopplay@.service
+    backup: yes
+
+- name: Start and enable aloopplay@ services
+  ansible.builtin.systemd:
+    name: "aloopplay@{{ item }}.service"
+    enabled: yes
+    daemon_reload: yes
+    state: started
+  loop: "{{ aloopplay_sources }}"

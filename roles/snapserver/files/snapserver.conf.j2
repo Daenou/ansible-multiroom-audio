@@ -1,3 +1,4 @@
+# {{ ansible_managed }}
 ###############################################################################
 #     ______                                                                  #
 #    / _____)                                                                 #
@@ -128,22 +129,22 @@ doc_root = /usr/share/snapserver/snapweb
 # alsa: alsa://?name=<name>&device=<alsa device>[&send_silence=false][&idle_threshold=100]
 # meta: meta:///<name of source#1>/<name of source#2>/.../<name of source#N>?name=<name>
 #source = pipe:///tmp/snapfifo?name=mischpult
-source = alsa://?name=alsamischpult&device=dsnoop:CARD=Loopback,DEV=1&send_silence=false
+source = {{ snapserver_sourcetype }}://?name={{ snapserver_name }}&device={{ snapserver_alsadevice }}
 #source = tcp://127.0.0.1?name=mopidy_tcp
 
 # Default sample format
-sampleformat = 44100:16:2
+sampleformat = {{ snapserver_sampleformat }}
 
 # Default transport codec
 # (flac|ogg|opus|pcm)[:options]
 # Type codec:? to get codec specific options
-codec = flac
+codec = {{ snapserver_codec }}
 
 # Default source stream read chunk size [ms]
 #chunk_ms = 20
 
 # Buffer [ms]
-buffer = 200
+buffer = {{ snapserver_buffer }}
 
 # Send audio to muted clients
 #send_to_muted = false
