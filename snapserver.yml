@@ -1,0 +1,9 @@
+---
+
+- name: Setup snapserver
+  hosts: snapservers
+  become: true
+
+  vars_files: config/defaults.yml
+  roles:
+    - snapserver

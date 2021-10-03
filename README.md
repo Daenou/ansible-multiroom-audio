@@ -1,7 +1,10 @@
-# ansible-role-snapclient
+# ansible-multiroom-audio
 
-Installs the snapclient package using apt and configures it to listen to a snapserver.
-
+Contains multiple roles
+* snapserver
+** Installs the snapserver package and configures it
+* snapclient
+** Installs the snapclient package and configures it to listen to a snapserver
 # Requirements
 - ansible installed (This playbook was tested on ansible 2.10.8)
 - passwordless login to clients in the inventory file

@@ -1,0 +1,6 @@
+---
+
+- name: Restart snapserver
+  service:
+    name: snapserver
+    state: restarted
