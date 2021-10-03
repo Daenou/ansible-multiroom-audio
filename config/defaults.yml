@@ -1,7 +1,7 @@
 ---
 
-audio_rate: 44100
-audio_format: S16_LE
+global_audio_rate: 44100
+global_audio_format: S16_LE
 
 snapclient_snapserver: pi2
 snapclient_sink: dmix:CARD=sndrpihifiberry
