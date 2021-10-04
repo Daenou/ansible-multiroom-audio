@@ -1,6 +1,8 @@
 # ansible-multiroom-audio
 
 Contains multiple roles
+* base
+  * Installs and configured /etc/asound.conf, needed for snapclients and snapservers
 * snapserver
   * Installs the snapserver package and configures it
 * snapclient
