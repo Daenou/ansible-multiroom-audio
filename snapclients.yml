@@ -6,4 +6,5 @@
 
   vars_files: config/defaults.yml
   roles:
+    - base
     - snapclient

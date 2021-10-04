@@ -1,11 +1,5 @@
 ---
 
-- name: Install asound.conf config
-  ansible.builtin.template:
-    src: files/asound.conf.j2
-    dest: /etc/asound.conf
-    backup: yes
-
 - name: Install snapclient package
   ansible.builtin.apt:
     name: snapclient
