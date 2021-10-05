@@ -2,7 +2,7 @@
 
 Contains multiple roles
 * base
-  * Installs and configured /etc/asound.conf, needed for snapclients and snapservers
+  * Installs and configures /etc/asound.conf, needed for both snapclients and snapservers
 * snapserver
   * Installs the snapserver package and configures it
 * snapclient
@@ -18,14 +18,17 @@ Contains multiple roles
 
 # Howto
 ## Config
-1) Populate the `config/defaults.yml` file with your settings
-2) Populate the `inventory` file with a `[snapclient]` hostgroup and list all snapclients you want to target
+1) Populate the variables in the `host_vars/$hostgroupname/main.yml` files with your settings. See `roles/*/defaults/main.yml` for all variables.
+2) Populate the `inventory` file with a `[snapclient]` and `[snapservers]` hostgroup and list all snapclients/servers you want to target
 
 ## Deployment
 In the docroot of the playbook, do the following to execute the playbook against the inventory file `./inventory` in check mode showing what would be done (`--diff`).
 To actually execute the changes remove the `--check`.
 ```
+#snapclients.yml
 ansible-playbook snapclients.yml --diff --check -i inventory
+#snapservers.yml
+ansible-playbook snapservers.yml --diff --check -i inventory
 ```
 
 Work in progress
