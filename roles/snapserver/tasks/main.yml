@@ -8,7 +8,7 @@
 
 - name: Install snapserver config
   ansible.builtin.template:
-    src: files/snapserver.conf.j2
+    src: templates/etc/snapserver.conf.j2
     dest: /etc/snapserver.conf
     backup: yes
   notify:

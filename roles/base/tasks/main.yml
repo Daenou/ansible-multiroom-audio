@@ -2,6 +2,12 @@
 
 - name: Install asound.conf config
   ansible.builtin.template:
-    src: files/asound.conf.j2
+    src: templates/etc/asound.conf.j2
     dest: /etc/asound.conf
     backup: yes
+
+
+- name: Print all available facts
+  ansible.builtin.debug:
+    var: ansible_facts
+

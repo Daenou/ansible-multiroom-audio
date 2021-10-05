@@ -14,7 +14,7 @@
 
 - name: Copy alooper script
   ansible.builtin.copy:
-    src: files/alooper.sh
+    src: files/usr/local/bin/alooper.sh
     dest: /usr/local/bin/alooper.sh
     backup: yes
 
@@ -25,7 +25,7 @@
 
 - name: Copy alooper@ systemd service file
   ansible.builtin.copy:
-    src: files/alooper@.service
+    src: files/etc/systemd/system/alooper@.service
     dest: /etc/systemd/system/alooper@.service
     backup: yes
 

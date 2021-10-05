@@ -8,7 +8,7 @@
 
 - name: Install snapclient config
   ansible.builtin.template:
-    src: files/snapclient.j2
+    src: templates/etc/default/snapclient.j2
     dest: /etc/default/snapclient
     backup: yes
   notify:
