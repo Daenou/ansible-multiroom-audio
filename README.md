@@ -18,7 +18,7 @@ Contains multiple roles
 
 # Howto
 ## Config
-1) Populate the variables in the `host_vars/$hostgroupname/main.yml` files with your settings. See `roles/*/defaults/main.yml` for all variables.
+1) Populate the variables in the `host_vars/$HOSTGROUPNAME/main.yml` files with your settings. See `roles/*/defaults/main.yml` for all variables.
 2) Populate the `inventory` file with a `[snapclient]` and `[snapservers]` hostgroup and list all snapclients/servers you want to target
 
 ## Deployment
