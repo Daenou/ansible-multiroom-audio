@@ -12,13 +12,13 @@ Contains multiple roles
 * a2dp-agent
   * Based on mill1000's [python a2dp-agent](https://gist.github.com/mill1000/74c7473ee3b4a5b13f6325e9994ff84c), which configures your device as a bluetooth audio sink with [bluez-alsa](https://github.com/Arkq/bluez-alsa) aka bluealsa.
   * Installs mill1000's a2dp-agent.py script and configures a systemd unit.
-  * Works for both python2 or python3, but needs either installed
 
 # Requirements
 - ansible installed (This playbook was tested on ansible 2.10.8)
 - ansible community.general collection for community.general.modprobe
   - Install with `ansible-galaxy collection install community.general`.
 - passwordless login to clients in the inventory file
+- Either python2 or python3 for the a2dp-agent role
 
 # Howto
 ## Config
