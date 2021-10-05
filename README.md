@@ -7,7 +7,7 @@ Contains multiple roles
   * Installs the snapserver package and configures it
 * snapclient
   * Installs the snapclient package and configures it to listen to a snapserver
-* aloopplay
+* alooper
   * Loads the `snd_aloop` kernel module for alsa loopback devices and installs a systemd unit with which you can record differend alsa sources into the loopback sink. You can then point your snapserver to the loopback source and can listen to all your inputs simultaneously, eliminating the need for source switching if you only need one snap "audio channel".
  
 # Requirements

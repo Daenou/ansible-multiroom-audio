@@ -7,5 +7,5 @@
   vars_files: config/defaults.yml
   roles:
     - base
-    - aloopplay
+    - alooper
     - snapserver

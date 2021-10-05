@@ -13,7 +13,7 @@ snapserver_sampleformat: "44100:16:2"
 snapserver_codec: flac
 snapserver_buffer: 200
 
-aloopplay_sources:
+alooper_sources:
   - hifiberry
   - CODEC
   - bluealsa
