@@ -1,0 +1,12 @@
+[Unit]
+Description=Playback the %i PCM device to the alsa loopback device
+After=multi-user.target
+
+[Service]
+ExecStart=/usr/local/bin/alooper.sh %i
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=alooper@%i
+
+[Install]
+WantedBy=multi-user.target
