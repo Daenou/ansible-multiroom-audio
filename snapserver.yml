@@ -6,5 +6,6 @@
 
   roles:
     - base
+    - a2dp-agent
     - alooper
     - snapserver
