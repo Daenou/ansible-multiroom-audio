@@ -1,0 +1,11 @@
+---
+
+- name: Setup snapserver
+  hosts: snapservers
+  become: true
+
+  roles:
+    - base
+    - a2dp-agent
+    - alooper
+    - snapserver

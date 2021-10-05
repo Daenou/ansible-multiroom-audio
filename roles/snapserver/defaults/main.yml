@@ -1,0 +1,8 @@
+---
+
+snapserver_name: snapname
+snapserver_sourcetype: alsa
+snapserver_alsadevice: dsnoop:CARD=Loopback,DEV=1
+snapserver_sampleformat: "44100:16:2"
+snapserver_codec: flac
+snapserver_buffer: 200

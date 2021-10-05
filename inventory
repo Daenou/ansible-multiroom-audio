@@ -1,3 +1,6 @@
 [snapclients]
 client1
 client2
+
+[snapservers]
+server1

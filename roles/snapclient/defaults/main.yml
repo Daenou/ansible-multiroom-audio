@@ -1,0 +1,4 @@
+---
+
+snapclient_snapserver: snap.example.net
+snapclient_sink: dmix:CARD=sndrpihifiberry

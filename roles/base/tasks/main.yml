@@ -1,0 +1,7 @@
+---
+
+- name: Install asound.conf config
+  ansible.builtin.template:
+    src: templates/etc/asound.conf.j2
+    dest: /etc/asound.conf
+    backup: yes

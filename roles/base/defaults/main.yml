@@ -1,0 +1,4 @@
+---
+
+base_audio_rate: 44100
+base_audio_format: S16_LE

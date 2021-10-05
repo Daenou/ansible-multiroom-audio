@@ -1,0 +1,18 @@
+[Unit]
+Description=A2DP Bluetooth Agent
+After=bluetooth.service
+Wants=bluetooth.service
+
+[Service]
+#ExecStartPre=/bin/bash /usr/local/bin/unpair_disconnected force
+{% if ansible_facts['python']['version']['major'] == 3 %}
+ExecStart=/usr/bin/python{{ ansible_facts['python']['version']['major'] }} -u /usr/local/bin/a2dp-agent.py
+{% elif ansible_facts['python']['version']['major'] == 2 %}
+ExecStart=/usr/bin/python{{ ansible_facts['python']['version']['major'] }}{{ ansible_facts['python']['version']['minor'] }} -u /usr/local/bin/a2dp-agent.py
+{% endif %}
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=a2dp-agent
+
+[Install]
+WantedBy=bluetooth.service

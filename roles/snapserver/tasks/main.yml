@@ -1,0 +1,20 @@
+---
+
+- name: Install snapserver package
+  ansible.builtin.apt:
+    name: snapserver
+    state: latest
+    update_cache: yes
+
+- name: Install snapserver config
+  ansible.builtin.template:
+    src: templates/etc/snapserver.conf.j2
+    dest: /etc/snapserver.conf
+    backup: yes
+  notify:
+    - Restart snapserver
+
+- name: Enable snapserver to start on boot
+  ansible.builtin.service:
+    name: snapserver
+    enabled: yes
