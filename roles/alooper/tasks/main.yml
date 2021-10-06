@@ -4,7 +4,7 @@
   community.general.modprobe:
     name: snd_aloop
     state: present
-  register: snd_aloop
+  notify: Restart snapserver
 
 - name: Load the snd_aloop kernel module at boot
   ansible.builtin.lineinfile:
@@ -28,7 +28,7 @@
     src: templates/etc/systemd/system/alooper@.service.j2
     dest: /etc/systemd/system/alooper@.service
     backup: yes
-  register: alooper_service
+  notify: Restart alooper
 
 - name: Start and enable alooper@ services
   ansible.builtin.systemd:
@@ -37,17 +37,3 @@
     daemon_reload: yes
     state: started
   loop: "{{ alooper_sources }}"
-
-- name: Restart alooper@ services if the servicefile changed
-  ansible.builtin.systemd:
-    name: "alooper@{{ item }}.service"
-    daemon_reload: yes
-    state: restarted
-  loop: "{{ alooper_sources }}"
-  when: alooper_service.changed
-
-- name: Restart snapserver if module was loaded
-  ansible.builtin.systemd:
-    name: snapserver
-    state: restarted
-  when: snd_aloop.changed
