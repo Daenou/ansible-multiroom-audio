@@ -15,6 +15,6 @@
     - Restart snapserver
 
 - name: Enable snapserver to start on boot
-  ansible.builtin.service:
+  ansible.builtin.systemd:
     name: snapserver
     enabled: yes
