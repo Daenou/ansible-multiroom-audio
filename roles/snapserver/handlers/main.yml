@@ -1,6 +1,6 @@
 ---
 
 - name: Restart snapserver
-  service:
+  ansible.builtin.systemd:
     name: snapserver
     state: restarted

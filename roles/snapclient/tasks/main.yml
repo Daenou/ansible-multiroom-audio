@@ -15,6 +15,6 @@
     - Restart snapclient
 
 - name: Enable snapclient to start on boot
-  ansible.builtin.service:
+  ansible.builtin.systemd:
     name: snapclient
     enabled: yes

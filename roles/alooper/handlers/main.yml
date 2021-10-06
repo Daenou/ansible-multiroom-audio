@@ -1,0 +1,9 @@
+---
+
+- name: Restart aloopers
+  ansible.builtin.systemd:
+    name: "alooper@{{ item }}.service"
+    daemon_reload: yes
+    state: restarted
+  loop: "{{ alooper_sources }}"
+
