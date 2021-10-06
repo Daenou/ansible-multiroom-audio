@@ -1,6 +1,6 @@
 ---
 
-- name: Restart alooper
+- name: Restart aloopers
   ansible.builtin.systemd:
     name: "alooper@{{ item }}.service"
     daemon_reload: yes

@@ -9,7 +9,7 @@ Contains multiple roles
   * Installs the snapclient package and configures it to listen to a snapserver
 * alooper
   * Loads the `snd_aloop` kernel module for alsa loopback devices and installs a systemd unit with which you can record differend alsa sources into the loopback sink. You can then point your snapserver to the loopback source and can listen to all your inputs simultaneously, eliminating the need for source switching if you only need one snap "audio channel".
-* a2dp-agent
+* a2dp_agent
   * Based on mill1000's [python a2dp-agent](https://gist.github.com/mill1000/74c7473ee3b4a5b13f6325e9994ff84c), which configures your device as a bluetooth audio sink with [bluez-alsa](https://github.com/Arkq/bluez-alsa) aka bluealsa.
   * Installs mill1000's a2dp-agent.py script and configures a systemd unit.
 
@@ -18,7 +18,7 @@ Contains multiple roles
 - ansible community.general collection for community.general.modprobe
   - Install with `ansible-galaxy collection install community.general`.
 - passwordless login to clients in the inventory file
-- Either python2 or python3 for the a2dp-agent role
+- Either python2 or python3 for the a2dp_agent role
 
 # Howto
 ## Config
