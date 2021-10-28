@@ -1,9 +1,25 @@
 #!/bin/bash
-DEVNAME=$1
+CONFFILE="/etc/alooper.conf.d/$1.conf"
+
+# Initialize default variables
+# These can be overriden in a /etc/alooper.conf.d/EXAMPLE.conf file
+SOURCE=$(/usr/bin/arecord -L | egrep "^dsnoop:.*$1.*$")
+SINK=$(/usr/bin/aplay -L | egrep "^dmix:.*$1.*$")
+FORMAT="cd"
+FILETYPE="raw"
+DURATION=0 # 0 equals infinite
+BUFFERSIZE=16384
+PERIODSIZE=1024
+
+if [[ -f "$CONFFILE" ]];
+then
+	source "$CONFFILE"
+fi
+
 while true; do
-	case "$DEVNAME" in
+	case "$1" in
 		bluealsa) /usr/bin/bluealsa-aplay -vv 00:00:00:00:00:00 -d dmix:CARD=Loopback,DEV=0 ;;
-		*) /usr/bin/arecord -f cd -D $(/usr/bin/arecord -L | egrep "^dsnoop:.*$DEVNAME.*$") -f cd -d 0 -t raw | /usr/bin/aplay -f cd -D dmix:CARD=Loopback,DEV=0 -t raw ;;
+		*) /usr/bin/arecord -D "$SOURCE" -f "$FORMAT" -d "$DURATION" -t "$FILETYPE" --buffer-size="$BUFFERSIZE" --period-size="$PERIODSIZE" | /usr/bin/aplay -D "$SINK" -f "$FORMAT" -t "$FILETYPE" --buffer-size="$BUFFERSIZE" --period-size="$PERIODSIZE" ;;
 	esac
 	echo "Loop broken, restarting"
 done

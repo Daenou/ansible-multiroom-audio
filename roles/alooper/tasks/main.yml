@@ -23,6 +23,12 @@
     dest: /usr/local/bin/alooper.sh
     mode: +x
 
+- name: Create alooper.conf.d directory
+  ansible.builtin.file:
+    path: /etc/alooper.conf.d
+    state: directory
+    mode: 0755
+
 - name: Copy alooper@ systemd service file
   ansible.builtin.template:
     src: templates/etc/systemd/system/alooper@.service.j2
