@@ -17,6 +17,7 @@
     src: files/usr/local/bin/alooper.sh
     dest: /usr/local/bin/alooper.sh
     backup: yes
+  notify: Restart aloopers
 
 - name: Make alooper script executable
   ansible.builtin.file:
