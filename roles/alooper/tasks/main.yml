@@ -1,17 +1,5 @@
 ---
 
-- name: Load the snd_aloop kernel module
-  community.general.modprobe:
-    name: snd_aloop
-    state: present
-  notify: Restart snapserver
-
-- name: Load the snd_aloop kernel module at boot
-  ansible.builtin.lineinfile:
-    path: /etc/modules
-    state: present
-    line: snd_aloop
-
 - name: Copy alooper script
   ansible.builtin.copy:
     src: files/usr/local/bin/alooper.sh
@@ -34,7 +22,7 @@
   ansible.builtin.template:
     src: templates/etc/systemd/system/alooper@.service.j2
     dest: /etc/systemd/system/alooper@.service
-    backup: yes
+    backup: no
   notify: Restart aloopers
 
 - name: Start and enable alooper@ services
