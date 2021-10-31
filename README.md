@@ -16,6 +16,8 @@ Contains the following roles
   * Based on mill1000's [python a2dp-agent](https://gist.github.com/mill1000/74c7473ee3b4a5b13f6325e9994ff84c)
   * Installs mill1000's a2dp-agent.py script and configures a systemd unit
   * The a2dp agent handles the bluetooth connection initiation and authentication
+* bluealsa
+  * Installs and configures bluealsa aka [bluez-alsa](https://github.com/Arkq/bluez-alsa), which configures the device as a bluetooth audio sink aka bluetooth loudspeaker
 
 # Requirements
 - ansible installed (This playbook was tested on ansible 2.10.8)

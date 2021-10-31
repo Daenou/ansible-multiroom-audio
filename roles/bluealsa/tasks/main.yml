@@ -1,0 +1,27 @@
+---
+
+- name: Install bluealsa package
+  ansible.builtin.apt:
+    name: bluealsa
+    state: latest
+    update_cache: yes
+
+- name: Create systemd override directory for bluealsa
+  ansible.builtin.file:
+    path: /etc/systemd/system/bluealsa.service.d
+    state: directory
+    mode: '0755'
+
+- name: Copy bluealsa systemd override file
+  ansible.builtin.copy:
+    src: files/etc/systemd/system/bluealsa.service.d/override.conf
+    dest: /etc/systemd/system/bluealsa.service.d/override.conf
+    backup: no
+  notify: "Restart bluealsa"
+
+- name: Start and enable bluealsa.service
+  ansible.builtin.systemd:
+    name: "bluealsa.service"
+    enabled: yes
+    daemon_reload: yes
+    state: started
