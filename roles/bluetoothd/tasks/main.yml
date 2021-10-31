@@ -1,0 +1,21 @@
+---
+
+- name: Install pi-bluetooth package
+  ansible.builtin.apt:
+    name: pi-bluetooth
+    state: latest
+    update_cache: yes
+  notify: "Restart bluetoothd"
+
+- name: Make device always discoverable
+  ansible.builtin.ini_file:
+    dest: /etc/bluetooth/main.conf
+    section: General
+    option: DiscoverableTimeout
+    value: "0"
+    backup: yes
+  notify: "Restart bluetoothd"
+
+- name: Make device discoverable
+  ansible.builtin.command:
+    cmd: "bluetoothctl discoverable on"
