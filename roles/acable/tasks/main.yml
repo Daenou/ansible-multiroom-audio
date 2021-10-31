@@ -1,0 +1,34 @@
+---
+
+- name: Copy acable script
+  ansible.builtin.copy:
+    src: files/usr/local/bin/acable.sh
+    dest: /usr/local/bin/acable.sh
+    backup: yes
+  notify: Restart acables
+
+- name: Make acable script executable
+  ansible.builtin.file:
+    dest: /usr/local/bin/acable.sh
+    mode: +x
+
+- name: Create acable.conf.d directory
+  ansible.builtin.file:
+    path: /etc/acable.conf.d
+    state: directory
+    mode: 0755
+
+- name: Copy acable@ systemd service file
+  ansible.builtin.template:
+    src: templates/etc/systemd/system/acable@.service.j2
+    dest: /etc/systemd/system/acable@.service
+    backup: no
+  notify: Restart acables
+
+- name: Start and enable acable@ services
+  ansible.builtin.systemd:
+    name: "acable@{{ item }}.service"
+    enabled: yes
+    daemon_reload: yes
+    state: started
+  loop: "{{ acable_connections}}"

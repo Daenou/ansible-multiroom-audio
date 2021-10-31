@@ -1,8 +1,8 @@
 #!/bin/bash
-CONFFILE="/etc/alooper.conf.d/$1.conf"
+CONFFILE="/etc/acable.conf.d/$1.conf"
 
 # Initialize default variables
-# These can be overriden in a /etc/alooper.conf.d/EXAMPLE.conf file
+# These can be overriden in a /etc/acable.conf.d/EXAMPLE.conf file
 SOURCE=$(/usr/bin/arecord -L | egrep "^dsnoop:.*$1.*$")
 SINK=$(/usr/bin/aplay -L | egrep "^dmix:.*Loopback,DEV=0.*$")
 FORMAT="cd"

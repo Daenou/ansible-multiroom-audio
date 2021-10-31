@@ -1,6 +1,6 @@
 snapserver_name: alsamischpult
 
-alooper_sources:
+acable_connections:
   - hifiberry
   - CODEC
   - bluealsa

@@ -1,17 +1,21 @@
 # ansible-multiroom-audio
 
-Contains multiple roles
+Contains the following roles
 * base
-  * Installs and configures /etc/asound.conf, needed for both snapclients and snapservers
+  * Installs and configures the alsa config in /etc/asound.conf, needed for ALL alsa devices
 * snapserver
   * Installs the snapserver package and configures it
 * snapclient
   * Installs the snapclient package and configures it to listen to a snapserver
-* alooper
-  * Loads the `snd_aloop` kernel module for alsa loopback devices and installs a systemd unit with which you can record differend alsa sources into the loopback sink. You can then point your snapserver to the loopback source and can listen to all your inputs simultaneously, eliminating the need for source switching if you only need one snap "audio channel".
+* acable
+  * Installs a systemd unit template with which you can create 'virtual cables' between alsa audio sources and sinks
+  * These virtual cables are basically arec | aplay commands with configurable variables
+* snd_aloop
+  * Loads the `snd_aloop` kernel module for the use of alsa loopback devices
 * a2dp_agent
-  * Based on mill1000's [python a2dp-agent](https://gist.github.com/mill1000/74c7473ee3b4a5b13f6325e9994ff84c), which configures your device as a bluetooth audio sink with [bluez-alsa](https://github.com/Arkq/bluez-alsa) aka bluealsa.
-  * Installs mill1000's a2dp-agent.py script and configures a systemd unit.
+  * Based on mill1000's [python a2dp-agent](https://gist.github.com/mill1000/74c7473ee3b4a5b13f6325e9994ff84c)
+  * Installs mill1000's a2dp-agent.py script and configures a systemd unit
+  * The a2dp agent handles the bluetooth connection initiation and authentication
 
 # Requirements
 - ansible installed (This playbook was tested on ansible 2.10.8)

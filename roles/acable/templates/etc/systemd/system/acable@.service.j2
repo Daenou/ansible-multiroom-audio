@@ -1,13 +1,13 @@
 # {{ ansible_managed }}
 [Unit]
-Description=Playback the %i PCM device to the alsa loopback device
+Description=ALSA Source to Sink connector
 After=multi-user.target
 
 [Service]
-ExecStart=/usr/local/bin/alooper.sh %i
+ExecStart=/usr/local/bin/acable.sh %i
 StandardOutput=syslog
 StandardError=syslog
-SyslogIdentifier=alooper@%i
+SyslogIdentifier=acable@%i
 
 [Install]
 WantedBy=multi-user.target

@@ -7,5 +7,5 @@
   roles:
     - base
     - a2dp_agent
-    - alooper
+    - acable
     - snapserver
