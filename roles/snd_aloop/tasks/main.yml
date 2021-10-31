@@ -4,7 +4,7 @@
   community.general.modprobe:
     name: snd_aloop
     state: present
-    notify: Restart snapserver
+  notify: Restart snapserver
 
 - name: Load the snd_aloop kernel module at boot
   ansible.builtin.lineinfile:
