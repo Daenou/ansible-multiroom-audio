@@ -1,5 +1,10 @@
 ---
 
+- name: Exit play if os_family is not Debian
+  ansible.builtin.fail:
+    msg: "ERROR: os_family of host {{ inventory_hostname }} is not Debian"
+  when: ansible_facts['os_family'] != "Debian"
+
 - name: Install snapserver package
   ansible.builtin.apt:
     name: snapserver

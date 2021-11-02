@@ -3,7 +3,7 @@
 - name: Run the base role on all hosts
   hosts: all
   become: true
-  roles: 
+  roles:
     - base
 
 - name: Snapclients
