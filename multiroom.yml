@@ -3,36 +3,42 @@
 - name: Run the base role on all hosts
   hosts: all
   become: true
+  remote_user: pi
   roles:
     - base
 
 - name: Snapclients
   hosts: snapclients
   become: true
+  remote_user: pi
   roles:
     - snapclient
 
 - name: Snapservers
   hosts: snapservers
   become: true
+  remote_user: pi
   roles:
     - snapserver
 
 - name: acables
   hosts: acables
   become: true
+  remote_user: pi
   roles:
     - acable
 
 - name: Loopback module
   hosts: snd_aloop
   become: true
+  remote_user: pi
   roles:
     - snd_aloop
 
 - name: Bluetooth sinks
   hosts: bluetooth_sinks
   become: true
+  remote_user: pi
   roles:
     - bluetoothd
     - bluealsa

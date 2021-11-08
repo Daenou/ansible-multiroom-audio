@@ -23,4 +23,7 @@
 
 - name: Make device discoverable
   ansible.builtin.command:
-    cmd: "bluetoothctl discoverable on"
+    argv:
+      - /usr/bin/bluetoothctl 
+      - "discoverable"
+      - "on"
