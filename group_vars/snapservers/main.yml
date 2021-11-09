@@ -1,6 +1,3 @@
-snapserver_name: alsamischpult
+---
 
-acable_connections:
-  - hifiberry
-  - CODEC
-  - bluealsa
+snapserver_name: alsamischpult
