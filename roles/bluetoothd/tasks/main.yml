@@ -33,4 +33,7 @@
       - /usr/bin/bluetoothctl
       - "discoverable"
       - "on"
-  when: bluetoothd_discoverable.stdout == "no"
+  when:
+    - bluetoothd_discoverable.stdout == "no"
+    - not ansible_check_mode
+  ignore_errors: "{{ ansible_check_mode }}"
