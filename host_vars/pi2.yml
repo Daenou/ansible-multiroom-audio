@@ -1,0 +1,12 @@
+---
+
+acable_connections:
+  - hifiberry
+  - CODEC
+  - bluealsa
+
+acable_config:
+  hifiberry:
+    sink: dmix:CARD=sndrpihifiberry
+    buffersize: 1
+    periodsize: 1

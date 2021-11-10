@@ -23,6 +23,14 @@
     state: directory
     mode: 0755
 
+- name: Create acable config files
+  ansible.builtin.template:
+    src: templates/etc/acable.conf.d/acable.conf.j2
+    dest: "/etc/acable.conf.d/{{ item.key }}.conf"
+    backup: no
+  notify: Restart acables
+  loop: "{{ acable_config|dict2items }}"
+
 - name: Copy acable@ systemd service file
   ansible.builtin.template:
     src: templates/etc/systemd/system/acable@.service.j2
