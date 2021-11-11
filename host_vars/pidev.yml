@@ -1,0 +1,8 @@
+---
+
+acable_connections:
+  - bluediscover
+
+acable_config:
+  bluediscover:
+    sink: dmix:CARD=sndrpihifiberry,DEV=0
