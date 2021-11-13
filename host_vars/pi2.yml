@@ -3,7 +3,7 @@
 acable_connections:
   - hifiberry
   - CODEC
-  - bluealsa
+  - bluealsa-cable
 
 acable_config:
   hifiberry:
