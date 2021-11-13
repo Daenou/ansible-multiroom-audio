@@ -2,7 +2,15 @@
 
 acable_connections:
   - bluediscover
+  - analogdirect
 
 acable_config:
   bluediscover:
     sink: dmix:CARD=sndrpihifiberry,DEV=0
+  analogdirect:
+    source: dsnoop:CARD=sndrpihifiberry,DEV=0
+    sink: dmix:CARD=sndrpihifiberry,DEV=0
+
+snapclient_snapserver: snap.iselin.net
+snaplicent_sink: dmix:CARD=sndrpihifiberry,DEV=0
+
