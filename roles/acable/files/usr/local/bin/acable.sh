@@ -16,7 +16,7 @@ then
 	source "$CONFFILE"
 fi
 
-wait_for_and_get_first_connected_source () {
+wait_for_and_get_first_connected_source() {
 MAC="NULL"
 while [[ "$MAC" == "NULL" ]]; do
         for tryMAC in  $( bluetoothctl devices | sort -k 3 | awk ' { print $2 } ' ) 
@@ -34,8 +34,10 @@ echo "bluealsa:SRV=org.bluealsa,DEV=${MAC},PROFILE=a2dp"
 }
 
 arecaplaypipe() {
-	/usr/bin/arecord -D "$SOURCE" -f "$FORMAT" -d "$DURATION" -t "$FILETYPE" --buffer-size="$BUFFERSIZE" --period-size="$PERIODSIZE" | \
-	/usr/bin/aplay   -D "$SINK"   -f "$FORMAT" -d "$DURATION" -t "$FILETYPE" --buffer-size="$BUFFERSIZE" --period-size="$PERIODSIZE" 
+        SR="$1"
+        echo "Using source $SR"
+	/usr/bin/arecord -D "$SR" -f "$FORMAT" -d "$DURATION" -t "$FILETYPE" --buffer-size="$BUFFERSIZE" --period-size="$PERIODSIZE" | \
+	/usr/bin/aplay -D "$SINK" -f "$FORMAT" -d "$DURATION" -t "$FILETYPE" --buffer-size="$BUFFERSIZE" --period-size="$PERIODSIZE" 
 }
 
 while true; do
@@ -44,11 +46,9 @@ while true; do
                         ;;
 		bluealsa-workaround-cable) 
                         echo "Waiting for bt device to connect"
-                        SOURCE=$( wait_for_and_get_first_connected_source )
-                        echo "Using discovered SOURCE $SOURCE"
-			arecaplaypipe
+			arecaplaypipe $( wait_for_and_get_first_connected_source )
 			;;
-		*)  arecaplaypipe
+		*) arecaplaypipe "$SOURCE"
                         ;;
 	esac
 	echo "Loop broken, restarting"
