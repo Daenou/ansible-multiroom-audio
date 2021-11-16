@@ -36,8 +36,8 @@ devices.
 
 ### bluetooth
 
-There are two reserved names that are needed for bluetooth audio sources. Do not define the `source:` ansible variable for a bluetooth A2DP source in your host- or group- variables - it would be ignored. A2DP sources as presented by bluealsa have the bluetooth MAC address of the client in the alsa device name. Therefore, the source needs to be determined dynamically. This can be done in two different ways:
+There are two reserved names that are needed for bluetooth audio sources. Do not define the `source:` ansible variable for a bluetooth A2DP source in your host- or group- variables - it would be ignored. A2DP sources as presented by bluealsa have the bluetooth MAC address of the client in the alsa device name, e.g. `bluealsa:SRV=org.bluealsa,DEV=01:02:03:04:05:06,PROFILE=a2dp`. Therefore, the source needs to be determined dynamically. This can be done in two different ways:
 
-* `bluealsa-cable`: Uses `bluealsa-aplay` to read from any (even multiple?) A2DP source.
+* `bluealsa-cable`: Uses `bluealsa-aplay` to read from any (even multiple?) A2DP source(s).
 * `bluealsa-workaround-cable`: Polls every second with `bluetoothctl` to determine if there is a connected A2DP source and then uses `arecord` to capture from `bluealsa`. Functionally equivalent to `bluealsa-cable` except that only one A2DP source can be played at the same time. Ugly, but was needed to make audio work with a Nokia 7 Plus, but there may be other buggy Bluetooth Implementations out there. A nice improvement would be to replace the polling by a proper D-Bus solution.
 
