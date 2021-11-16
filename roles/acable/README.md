@@ -41,3 +41,21 @@ There are two reserved names that are needed for bluetooth audio sources. Do not
 * `bluealsa-cable`: Uses `bluealsa-aplay` to read from any (even multiple?) A2DP source(s).
 * `bluealsa-workaround-cable`: Polls every second with `bluetoothctl` to determine if there is a connected A2DP source and then uses `arecord` to capture from `bluealsa`. Functionally equivalent to `bluealsa-cable` except that only one A2DP source can be played at the same time. Ugly, but was needed to make audio work with a Nokia 7 Plus, but there may be other buggy Bluetooth Implementations out there. A nice improvement would be to replace the polling by a proper D-Bus solution.
 
+Combined with the above configuration this would look like: 
+
+~~~
+host_vars/pidev.yml
+---
+
+acable_connections:
+  - bluealsa-workaround-cable
+  - analogdirect
+
+acable_config:
+  bluealsa-workaround-cable:
+    sink: dmix:CARD=sndrpihifiberry,DEV=0
+  analogdirect:
+    source: dsnoop:CARD=sndrpihifiberry,DEV=0
+    sink: dmix:CARD=sndrpihifiberry,DEV=0
+~~~
+
