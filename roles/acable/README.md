@@ -14,7 +14,7 @@ This script is run as daemon(s) by the `systemd` units created by the ansible co
 example for a development Raspberry `pidev`:
 
 ~~~
-./host_vars/pidev.yml
+host_vars/pidev.yml
 
 acable_connections:
   - analogdirect
@@ -33,6 +33,8 @@ devices.
 ~~~
 /usr/bin/alsaloop -C dsnoop:CARD=sndrpihifiberry,DEV=0 -P dmix:CARD=sndrpihifiberry,DEV=0
 ~~~
+
+### bluetooth
 
 There are two reserved names that are needed for bluetooth audio sources. Do not define the `source:` ansible variable for a bluetooth A2DP source in your host- or group- variables - it would be ignored. A2DP sources as presented by bluealsa have the bluetooth MAC address of the client in the alsa device name. Therefore, the source needs to be determined dynamically. This can be done in two different ways:
 
