@@ -5,7 +5,7 @@ Thanks go to [mill1000](https://gist.github.com/mill1000/74c7473ee3b4a5b13f6325e
 
 A bluetooth agent is a separate process talking to `bluetoothd` (like `bluetoothctl`) and handles the 
 **pairing** (and unpairing etc.) to remote bluetooth devices: It is used to establish both trust and a connection
-with one or more profiles between the local and remote bluetooth devices. It does **not** transport any data itself.
+with one or more profiles between the local and remote bluetooth devices. It does **not** transport any payload data itself.
 
 The `a2dp-agent` authenticates any incoming connection as long as it is an `A2DP` connection. The [Advanced Audio Distribution Profile](https://en.wikipedia.org/wiki/List_of_Bluetooth_profiles#Advanced_Audio_Distribution_Profile_(A2DP)) is the way you should send HiFi-Audio over bluetooth.
 
