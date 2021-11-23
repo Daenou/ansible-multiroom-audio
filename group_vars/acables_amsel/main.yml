@@ -1,0 +1,11 @@
+acable_connections:
+  - bluealsa-workaround-cable
+  - analogdirect
+
+acable_config:
+  bluealsa-workaround-cable:
+    sink: dmix:CARD=sndrpihifiberry,DEV=0
+  analogdirect:
+    source: dsnoop:CARD=sndrpihifiberry,DEV=0
+    sink: dmix:CARD=sndrpihifiberry,DEV=0
+

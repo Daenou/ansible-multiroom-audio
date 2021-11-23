@@ -12,7 +12,7 @@
     update_cache: yes
   notify: "Restart bluetoothd"
 
-- name: Make device always discoverable
+- name: Make device discoverable forever
   ansible.builtin.ini_file:
     dest: /etc/bluetooth/main.conf
     section: General
@@ -29,10 +29,7 @@
 
 - name: Make device discoverable
   ansible.builtin.command:
-    argv:
-      - /usr/bin/bluetoothctl
-      - "discoverable"
-      - "on"
+    cmd: /usr/bin/bluetoothctl discoverable on
   when:
     - bluetoothd_discoverable.stdout == "no"
     - not ansible_check_mode
