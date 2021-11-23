@@ -26,6 +26,12 @@
   roles:
     - acable
 
+- name: Acables Bluetooth Only Amsel
+  hosts: acables_bluetooth_only_amsel
+  become: true
+  roles:
+    - acable
+
 #- name: Snapservers
 #  hosts: snapservers
 #  become: true
