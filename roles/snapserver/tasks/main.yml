@@ -19,6 +19,12 @@
   notify:
     - Restart snapserver
 
+- name: Add snapserver user to audio group
+  ansible.builtin.user: 
+    name: _snapserver
+    append: yes
+    groups: audio
+
 - name: Enable snapserver to start on boot
   ansible.builtin.systemd:
     name: snapserver

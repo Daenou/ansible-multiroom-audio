@@ -32,6 +32,19 @@
   roles:
     - acable
 
+- name: Acables Snapserver Amsel
+  hosts: acables_snapserver_amsel
+  become: true
+  roles:
+    - acable
+
+- name: Snapservers Amsel
+  hosts: snapservers_amsel
+  become: true
+  roles:
+    - snapserver
+    - snd_aloop
+
 #- name: Snapservers
 #  hosts: snapservers
 #  become: true
