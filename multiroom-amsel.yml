@@ -45,6 +45,12 @@
     - snapserver
     - snd_aloop
 
+- name: MPD Servers Amsel
+  hosts: mpdservers_amsel
+  become: true
+  roles:
+    - mpd
+
 #- name: Snapservers
 #  hosts: snapservers
 #  become: true
