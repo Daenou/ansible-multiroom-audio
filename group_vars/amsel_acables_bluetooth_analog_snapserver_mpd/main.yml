@@ -12,7 +12,7 @@ acable_config:
 
 snapserver_name: sspidev
 snapserver_sourcetype: alsa
-snapserver_alsadevice: dsnoop:CARD=Loopback,DEV=1
+snapserver_alsasource: dsnoop:CARD=Loopback,DEV=1
 
 mpd_music_directory: "smb://shares.t7.iselin.net/mp3-coll"
 mpd_alsa_sink_name: "To Snapserver"
