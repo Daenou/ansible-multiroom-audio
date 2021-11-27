@@ -1,21 +1,26 @@
 # {{ ansible_managed }}
 # minimal config, all comments removed
 
-music_directory         "/var/lib/mpd/music"
+music_directory         "{{ mpd_music_directory }}"
 playlist_directory      "/var/lib/mpd/playlists"
 db_file                 "/var/lib/mpd/tag_cache"
 log_file                "/var/log/mpd/mpd.log"
 pid_file                "/run/mpd/pid"
 state_file              "/var/lib/mpd/state"
 sticker_file            "/var/lib/mpd/sticker.sql"
+
 user                    "mpd"
+
 bind_to_address         "any"
 
 input {
         plugin "curl"
 }
 
-# todo smbclient
+
+input { 
+        plugin "smbclient"
+}
 
 audio_output {
         type            "alsa"
