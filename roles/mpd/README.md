@@ -7,8 +7,3 @@ This role installs and configures an mpd on the host. The current configuration 
     * `mpd_alsa_sink_name:` an arbitrary sink name, visible e.g. with `mpc -h localhost outputs`
     * `mpd_alsa_sink_device:` the alsa sink, e.g. `dmix:CARD=Loopback,DEV=0`
     * `mpd_alsa_sink_format:` the format, e.g `44100:16:2`
-
-
-
-
-
