@@ -9,8 +9,6 @@ with one or more profiles between the local and remote bluetooth devices. It doe
 
 The `a2dp-agent` authenticates any incoming connection as long as it is an `A2DP` connection. The [Advanced Audio Distribution Profile](https://en.wikipedia.org/wiki/List_of_Bluetooth_profiles#Advanced_Audio_Distribution_Profile_(A2DP)) is the way you should send HiFi-Audio over bluetooth.
 
-Required (together with ``bluealsa` and `bluetoothd`) to play an audio stream from a bluetooth device (like a mobile phone) using one of the bluetooth acable configuration. 
+Required (together with ``bluealsa` and `bluetoothd`) to play an audio stream from a bluetooth device (like a mobile phone) using one of the bluetooth acable configurations.
 
 No ansible variables available.
-
-
