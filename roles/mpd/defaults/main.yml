@@ -1,0 +1,6 @@
+---
+
+mpd_alsa_sink_name: "To Snapserver"
+mpd_alsa_sink_device: "dmix:CARD=Loopback,DEV=0"
+mpd_alsa_sink_format: "44100:16:2"
+

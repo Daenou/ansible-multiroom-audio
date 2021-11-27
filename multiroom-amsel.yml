@@ -51,20 +51,3 @@
   roles:
     - mpd
 
-#- name: Snapservers
-#  hosts: snapservers
-#  become: true
-#  roles:
-#    - snapserver
-
-#- name: acables
-#  hosts: acables
-#  become: true
-#  roles:
-#    - acable
-
-#- name: Loopback module
-#  hosts: snd_aloop
-#  become: true
-#  roles:
-#    - snd_aloop
