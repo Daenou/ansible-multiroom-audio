@@ -1,53 +1,65 @@
 ---
 
-- name: Run the base role on all hosts
+### Amsel concept
+### * all hosts get base and snapclient, both don't need an acable config
+### * create a specific host group for every config that needs at least one acable 
+###   and put every host in exactly one of these groups if anything more than the
+###   default is needed:
+###   * want to have snd_aloop ? 
+###     enables to use Loopback dmix/dsnoop ALSA devices for audio stream mix in/fan out
+###   * want to process sound from a bluetooth and/or analog audio source? 
+###     * bluetooth needs bluetoothd/bluealsa/a2dp_agent
+###   * want to have snapserver? 
+###   * want to have mpd?
+### * need an snd_aloop device to mix in/fan out via a Loopback dmix/dsnoop?
+
+### base/snapclient 
+
+- name: Run base and snapclient role on all hosts
   hosts: all
   become: true
   roles:
     - base
+    - snapclient
 
-- name: Bluetooth sinks Amsel
-  hosts: bluetooth_sinks_amsel
+### various host groups with acables, use only one of them per host!
+
+- name: Amsel snapserver/mpd host with analog and bluetooth input
+  hosts: amsel_acables_bluetooth_analog_snapserver_mpd
   become: true
   roles:
+    - acable
+    - bluetoothd
+    - bluealsa
+    - a2dp_agent
+    - snd_aloop
+    - snapserver
+    - mpd
+
+- name: Amsel snapserver/mpd host with analog input
+  hosts: amsel_acables_analog_snapserver_mpd
+  become: true
+  roles:
+    - acable
+    - snd_aloop
+    - snapserver
+    - mpd
+
+- name: Amsel bluetooth and analog input
+  hosts: amsel_acables_bluetooth_analog
+  become: true
+  roles:
+    - acable
     - bluetoothd
     - bluealsa
     - a2dp_agent
 
-- name: Snapclients Amsel
-  hosts: snapclients_amsel
-  become: true
-  roles:
-    - snapclient
-
-- name: Acables Amsel
-  hosts: acables_amsel
+- name: Amsel bluetooth input
+  hosts: amsel_acables_bluetooth
   become: true
   roles:
     - acable
-
-- name: Acables Bluetooth Only Amsel
-  hosts: acables_bluetooth_only_amsel
-  become: true
-  roles:
-    - acable
-
-- name: Acables Snapserver Amsel
-  hosts: acables_snapserver_amsel
-  become: true
-  roles:
-    - acable
-
-- name: Snapservers Amsel
-  hosts: snapservers_amsel
-  become: true
-  roles:
-    - snapserver
-    - snd_aloop
-
-- name: MPD Servers Amsel
-  hosts: mpdservers_amsel
-  become: true
-  roles:
-    - mpd
+    - bluetoothd
+    - bluealsa
+    - a2dp_agent
 

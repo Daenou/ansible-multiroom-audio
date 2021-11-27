@@ -1,0 +1,5 @@
+---
+
+snapclient_snapserver: snap.iselin.net
+snapclient_sink: dmix:CARD=sndrpihifiberry,DEV=0
+
