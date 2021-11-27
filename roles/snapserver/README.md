@@ -1,4 +1,4 @@
-# base
+# snapserver
 
 This roles installs a snapserver on the current host. The following ansible variables are available:
 
