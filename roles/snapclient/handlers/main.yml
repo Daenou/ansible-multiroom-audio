@@ -1,6 +1,9 @@
 ---
 
-- name: Restart snapclient
+- name: Restart snapclients
   ansible.builtin.systemd:
-    name: snapclient
+    name: "snapclient@{{ item }}.service"
+    daemon_reload: yes
     state: restarted
+  loop: "{{ snapclient_snapservers }}"
+

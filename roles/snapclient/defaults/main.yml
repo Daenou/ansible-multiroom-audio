@@ -1,4 +1,16 @@
 ---
 
-snapclient_snapserver: snap.example.net
-snapclient_sink: dmix:CARD=sndrpihifiberry
+# Must be adjusted to your config, not possible to give reasonable defaults
+# 
+# snapclient_snapservers
+#   - myserver1
+#   - myserver2
+# 
+# snapclient_config
+#   myserver1
+#     snapclient_snapserver: snap-living.example.net
+#     snapclient_sink: dmix:CARD=sndrpihifiberry,DEV=0
+#   myserver2
+#     snapclient_snapserver: snap-kitchen.example.net
+#     snapclient_sink: dmix:CARD=sndrpihifiberry,DEV=0
+# 
