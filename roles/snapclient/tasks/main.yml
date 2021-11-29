@@ -48,8 +48,6 @@
     backup: no
   notify: Restart snapclients
   loop: "{{ snapclient_config }}"
-  loop_control:
-    label: "{{ item.name }}"
 
 - name: Copy snapclient@ systemd service file
   ansible.builtin.template:
@@ -65,3 +63,5 @@
     daemon_reload: yes
     state: started
   loop: "{{ snapclient_config }}"
+  loop_control:
+    label: "{{ item.name }}"

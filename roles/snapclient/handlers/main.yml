@@ -6,4 +6,5 @@
     daemon_reload: yes
     state: restarted
   loop: "{{ snapclient_config }}"
-
+  loop_control:
+    label: "{{ item.name }}"
