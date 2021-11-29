@@ -1,13 +1,13 @@
 # acable
 
-This role provides a single script `/usr/local/bin/acable.sh` and some generic ansible variables that allow
+This role provides a single script `/usr/local/bin/acable.sh` and a generic ansible list that allows
 you to instantiate as many "alsa cables" (i.e. permanent connections from alsa sources to alsa sinks) as you need 
 for your specific setup.  Together with `snd_aloop`, arbitrarily complex setups can be built. 
 
 The developers of this setup are kind of aware that all that cabling could probably done by a sophisticated 
-`/etc/asound.conf`. But until now, we were not able to decrypt the huge amount of documentation found to create
+`/etc/asound.conf`. But until now, we have not been able to decrypt the huge amount of documentation found to create
 a simple framework that lets you plug your alsa devices together arbitrarily in an understandable way. JACK
-was considered as overkill, as usually only 2 or 3 connections are needed on one host.
+was considered as overkill, as client hosts usually need 0 or 1 cables, server nodes 2 or 3.
 
 ## acable.sh
 
@@ -18,13 +18,11 @@ example for a development Raspberry `pidev`:
 host_vars/pidev.yml
 ---
 
-acable_connections:
-  - analogdirect
-
 acable_config:
-  analogdirect:
+  - name: analog-direct
     source: dsnoop:CARD=sndrpihifiberry,DEV=0
     sink: dmix:CARD=sndrpihifiberry,DEV=0
+
 ~~~
 
 This creates a virtual alsa cable copying everything from the hardware `dsnoop` to the hardware `dmix` device. While
@@ -49,15 +47,10 @@ Combined with the above configuration this would look like:
 host_vars/pidev.yml
 ---
 
-acable_connections:
-  - bluealsa-workaround-cable
-  - analogdirect
-
 acable_config:
-  bluealsa-workaround-cable:
+  - name: bluealsa-workaround-cable
     sink: dmix:CARD=sndrpihifiberry,DEV=0
-  analogdirect:
+  - name: analog-direct
     source: dsnoop:CARD=sndrpihifiberry,DEV=0
     sink: dmix:CARD=sndrpihifiberry,DEV=0
 ~~~
-
