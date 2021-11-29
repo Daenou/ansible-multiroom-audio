@@ -1,3 +1,3 @@
 # {{ ansible_managed }}
 START_SNAPCLIENT=true
-SNAPCLIENT_OPTS="--user _snapclient:audio -h {{ item.snapclient_snapserver }} -s {{ item.snapclient_sink }} --hostID {{ ansible_facts['nodename'] }}"
+SNAPCLIENT_OPTS="--user _snapclient:audio -h {{ item.snapclient_snapserver }}{%if item.snapclient_sink is defined %} -s {{ item.snapclient_sink }}{%endif %} --hostID {{ ansible_facts['nodename'] }}"
