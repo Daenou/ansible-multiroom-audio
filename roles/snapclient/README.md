@@ -19,5 +19,5 @@ Where
 * `snapclient_sink:` The alsa sink you want to play the sound to. Should be hardware, as any further audio routing would probably ruin the synchronous multiroom experience. E.g. `dmix:CARD=sndrpihifiberry,DEV=0`.
 
 Implementation hints:
-* In order to support multiple configs, the systemd service delivered from the debian package is masked and (as I am paranoid) `/etc/default/snapclient` is edited. 
+* In order to support multiple configs, the systemd service delivered from the `snapclient` debian package is masked and in `/etc/default/snapclient` `START_SNAPCLIENT` is set to `false` by the role.
 * I don't know yet if it should be enforced by the ansible data structure that the `snapclient_sink` is always the same (i.e. have only one setting in `snapclient_config` instead of a setting per instance like now). For the moment, I prefer to have a uniform data structure (and the currently unneeded freedom to assign different sinks) at the price of a little redundancy (in normal) configurations. 
