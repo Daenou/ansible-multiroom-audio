@@ -20,4 +20,4 @@ Where
 
 Implementation hints:
 * In order to support multiple configs, the systemd service delivered from the debian package is masked and (as I am paranoid) `/etc/default/snapclient` is edited. 
-* I don't know yet if it should be enforced by the ansible data structure that the `snapclient_sink` is always the same (i.e. have only one global setting instead of a per snapserver setting like now). For the moment, I prefer to have a uniform data structure (and the currently unneeded freedom to assign different sinks) at the price of a little redundancy (in normal) configurations. 
+* I don't know yet if it should be enforced by the ansible data structure that the `snapclient_sink` is always the same (i.e. have only one setting on one client host instead of a per snapserver setting like now). For the moment, I prefer to have a uniform data structure (and the currently unneeded freedom to assign different sinks) at the price of a little redundancy (in normal) configurations. 
