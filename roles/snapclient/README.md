@@ -2,7 +2,7 @@
 
 This role configures one or more snapclients on the target host. Place an ansible list to configure (e.g. in `host_vars`) like this:
 
-
+~~~
 snapclient_config:
   - name: pidev
     snapclient_snapserver: pidev.example.net
@@ -10,7 +10,8 @@ snapclient_config:
   - name: otherpi
     snapclient_snapserver: 192.168.1.14
     snapclient_sink: dmix:CARD=sndrpihifiberry,DEV=0
- 
+~~~
+
 Where 
 
 * `name:` is used for ansible output and for the instance names of the respective systemd service instances and to name the config files in `/etc/snapclient.conf/d`. Keep them short, lowercase, only `a..z` please.
