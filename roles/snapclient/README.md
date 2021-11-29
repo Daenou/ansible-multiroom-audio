@@ -14,7 +14,7 @@ snapclient_config:
 
 Where 
 
-* `name:` is used for ansible output and for the instance names of the respective systemd service instances and to name the config files in `/etc/snapclient.conf/d`. Keep them short, lowercase, only `a..z` please.
+* `name:` is used for ansible output, for the instance names of the respective systemd service instances and to name the config files in `/etc/snapclient.conf/d`. Keep them short, lowercase, only `a..z` please.
 * `snapclient_snapserver:` The IP-Adress or the DNS-Name of the `snapserver` you want to connect to, e.g. `192.168.1.14` 
 * `snapclient_sink:` The alsa sink you want to play the sound to. Should be hardware, as any further audio routing would probably ruin the synchronous multiroom experience. E.g. `dmix:CARD=sndrpihifiberry,DEV=0`.
 
