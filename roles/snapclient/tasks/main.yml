@@ -44,10 +44,12 @@
 - name: Create snapclient config files
   ansible.builtin.template:
     src: templates/etc/snapclient.conf.d/snapclient.j2
-    dest: "/etc/snapclient.conf.d/{{ item.key }}.conf"
+    dest: "/etc/snapclient.conf.d/{{ item.name }}.conf"
     backup: no
   notify: Restart snapclients
-  loop: "{{ snapclient_config|dict2items }}"
+  loop: "{{ snapclient_config }}"
+  loop_control:
+    label: "{{ item.name }}"
 
 - name: Copy snapclient@ systemd service file
   ansible.builtin.template:
@@ -58,8 +60,8 @@
 
 - name: Enable and start snapclient@ services
   ansible.builtin.systemd:
-    name: "snapclient@{{ item }}.service"
+    name: "snapclient@{{ item.name }}.service"
     enabled: yes
     daemon_reload: yes
     state: started
-  loop: "{{ snapclient_snapservers }}"
+  loop: "{{ snapclient_config }}"
