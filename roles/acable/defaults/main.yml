@@ -2,6 +2,7 @@
 
 # List of acable@ instances that should be started
 # bluealsa-cable option starts bluealsa-aplay
-#acable_connections:
- #- hifiberry
- #- bluealsa-cable
+# 
+# acable_config:
+#   - name: hifiberry
+#   - name: bluealsa-cable
