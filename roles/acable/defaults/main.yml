@@ -2,6 +2,11 @@
 
 # List of acable@ instances that should be started
 # bluealsa-cable option starts bluealsa-aplay
-#acable_connections:
- #- hifiberry
- #- bluealsa-cable
+# 
+# acable_config:
+#   - name: bluealsa-workaround-cable
+#     sink: dmix:CARD=sndrpihifiberry,DEV=0
+#   - name: analog-direct
+#     source: dsnoop:CARD=sndrpihifiberry,DEV=0
+#     sink: dmix:CARD=sndrpihifiberry,DEV=0
+

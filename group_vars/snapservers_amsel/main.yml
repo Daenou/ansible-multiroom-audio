@@ -1,5 +1,0 @@
----
-
-snapserver_name: sspidev
-snapserver_sourcetype: alsa
-snapserver_alsadevice: dsnoop:CARD=Loopback,DEV=1

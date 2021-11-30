@@ -26,10 +26,10 @@
 - name: Create acable config files
   ansible.builtin.template:
     src: templates/etc/acable.conf.d/acable.conf.j2
-    dest: "/etc/acable.conf.d/{{ item.key }}.conf"
+    dest: "/etc/acable.conf.d/{{ item.name }}.conf"
     backup: no
   notify: Restart acables
-  loop: "{{ acable_config|dict2items }}"
+  loop: "{{ acable_config }}"
 
 - name: Copy acable@ systemd service file
   ansible.builtin.template:
@@ -40,8 +40,10 @@
 
 - name: Start and enable acable@ services
   ansible.builtin.systemd:
-    name: "acable@{{ item }}.service"
+    name: "acable@{{ item.name }}.service"
     enabled: yes
     daemon_reload: yes
     state: started
-  loop: "{{ acable_connections }}"
+  loop: "{{ acable_config }}"
+  loop_control:
+    label: "{{ item.name }}"

@@ -1,0 +1,10 @@
+---
+
+snapclient_config:
+  - name: pidev
+    snapclient_snapserver: pidev.iselin.net
+    snapclient_sink: dmix:CARD=sndrpihifiberry,DEV=0
+  - name: hifi
+    snapclient_snapserver: hifi.iselin.net
+    snapclient_sink: dmix:CARD=sndrpihifiberry,DEV=0
+

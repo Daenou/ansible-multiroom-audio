@@ -2,8 +2,9 @@
 
 - name: Restart acables
   ansible.builtin.systemd:
-    name: "acable@{{ item }}.service"
+    name: "acable@{{ item.name }}.service"
     daemon_reload: yes
     state: restarted
-  loop: "{{ acable_connections }}"
-
+  loop: "{{ acable_config }}"
+  loop_control:
+    label: "{{ item.name }}"

@@ -1,4 +1,11 @@
 ---
 
-snapclient_snapserver: snap.example.net
-snapclient_sink: dmix:CARD=sndrpihifiberry
+# Must be adjusted to your config, not possible to give reasonable defaults
+# 
+#snapclient_config:
+#  - name: pidev
+#    snapclient_snapserver: pidev.example.net
+#    snapclient_sink: dmix:CARD=sndrpihifiberry,DEV=0
+#  - name: otherpi
+#    snapclient_snapserver: 192.168.1.14
+#    snapclient_sink: dmix:CARD=sndrpihifiberry,DEV=0

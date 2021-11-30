@@ -11,15 +11,57 @@
     state: latest
     update_cache: yes
 
-- name: Install snapclient config
-  ansible.builtin.template:
-    src: templates/etc/default/snapclient.j2
-    dest: /etc/default/snapclient
-    backup: yes
-  notify:
-    - Restart snapclient
-
-- name: Enable snapclient to start on boot
+- name: Disable upstream systemd unit
   ansible.builtin.systemd:
-    name: snapclient
+    name: "snapclient.service"
+    enabled: no
+    state: stopped
+    masked: yes
+    force: yes
+
+- name: Disable autostart in upstream config file
+  ansible.builtin.lineinfile:
+    path: /etc/default/snapclient
+    regexp: "^[ #]*START_SNAPCLIENT *="
+    line: "START_SNAPCLIENT=false"
+    state: present
+    insertbefore: BOF
+    backup: yes
+
+- name: Add comment to upstream config file
+  ansible.builtin.lineinfile:
+    path: /etc/default/snapclient
+    line: "# Autostart disabled here to support multiple snapclients, see /etc/snapclient.conf.d/"
+    insertbefore: BOF
+    state: present
+
+- name: Create snapclient.conf.d directory
+  ansible.builtin.file:
+    path: /etc/snapclient.conf.d
+    state: directory
+    mode: 0755
+
+- name: Create snapclient config files
+  ansible.builtin.template:
+    src: templates/etc/snapclient.conf.d/snapclient.j2
+    dest: "/etc/snapclient.conf.d/{{ item.name }}.conf"
+    backup: no
+  notify: Restart snapclients
+  loop: "{{ snapclient_config }}"
+
+- name: Copy snapclient@ systemd service file
+  ansible.builtin.template:
+    src: templates/etc/systemd/system/snapclient@.service.j2
+    dest: /etc/systemd/system/snapclient@.service
+    backup: no
+  notify: Restart snapclients
+
+- name: Enable and start snapclient@ services
+  ansible.builtin.systemd:
+    name: "snapclient@{{ item.name }}.service"
     enabled: yes
+    daemon_reload: yes
+    state: started
+  loop: "{{ snapclient_config }}"
+  loop_control:
+    label: "{{ item.name }}"
