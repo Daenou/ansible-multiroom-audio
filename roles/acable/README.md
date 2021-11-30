@@ -7,7 +7,7 @@ for your specific setup.  Together with `snd_aloop`, arbitrarily complex setups 
 The developers of this setup are kind of aware that all that cabling could probably done by a sophisticated 
 `/etc/asound.conf`. But until now, we have not been able to decrypt the huge amount of documentation found to create
 a simple framework that lets you plug your alsa devices together arbitrarily in an understandable way. JACK
-was considered as overkill, as client hosts usually need 0 or 1 cables, server nodes 2 or 3.
+was considered as overkill, as client hosts usually need 0 or 1 cables, server hosts 2 or 3.
 
 ## acable.sh
 
