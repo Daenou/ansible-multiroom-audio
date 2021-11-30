@@ -1,22 +1,22 @@
 # {{ ansible_managed }}
-{% if item.value.source is defined -%}
-SOURCE="{{ item.value.source }}"
+{% if item.source is defined -%}
+SOURCE="{{ item.source }}"
 {% endif -%}
-{% if item.value.sink is defined -%}
-SINK="{{ item.value.sink }}"
+{% if item.sink is defined -%}
+SINK="{{ item.sink }}"
 {% endif -%}
-{% if item.value.format is defined -%}
-FORMAT="{{ item.value.format }}"
+{% if item.format is defined -%}
+FORMAT="{{ item.format }}"
 {% endif -%}
-{% if item.value.filetype is defined -%}
-FILETYPE="{{ item.value.filetype }}"
+{% if item.filetype is defined -%}
+FILETYPE="{{ item.filetype }}"
 {% endif -%}
-{% if item.value.duration is defined -%}
-DURATION="{{ item.value.duration }}"
+{% if item.duration is defined -%}
+DURATION="{{ item.duration }}"
 {% endif -%}
-{% if item.value.buffersize is defined -%}
-BUFFERSIZE="{{ item.value.buffersize }}"
+{% if item.buffersize is defined -%}
+BUFFERSIZE="{{ item.buffersize }}"
 {% endif -%}
-{% if item.value.periodsize is defined -%}
-PERIODSIZE="{{ item.value.periodsize }}"
+{% if item.periodsize is defined -%}
+PERIODSIZE="{{ item.periodsize }}"
 {% endif -%}
