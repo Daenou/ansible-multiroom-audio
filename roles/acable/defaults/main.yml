@@ -4,5 +4,9 @@
 # bluealsa-cable option starts bluealsa-aplay
 # 
 # acable_config:
-#   - name: hifiberry
-#   - name: bluealsa-cable
+#   - name: bluealsa-workaround-cable
+#     sink: dmix:CARD=sndrpihifiberry,DEV=0
+#   - name: analog-direct
+#     source: dsnoop:CARD=sndrpihifiberry,DEV=0
+#     sink: dmix:CARD=sndrpihifiberry,DEV=0
+
