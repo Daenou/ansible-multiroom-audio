@@ -6,5 +6,5 @@ As the multiroom architecture makes heavy use of these devices, this minimizes t
 
 Ansible variables available are: 
 `base_audio_rate:` Leave at its default of `44100`. 
-`base_audio_format:` Leavt at its default of `S16_LE`.
+`base_audio_format:` Leave at its default of `S16_LE`.
 
