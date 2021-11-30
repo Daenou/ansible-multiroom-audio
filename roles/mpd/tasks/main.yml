@@ -17,4 +17,3 @@
     dest: /etc/mpd.conf
     backup: yes
   notify: "Restart mpd"
-
