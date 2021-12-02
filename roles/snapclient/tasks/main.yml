@@ -41,6 +41,103 @@
     state: directory
     mode: 0755
 
+# Play with service_facts
+
+- name: Populate service facts
+  ansible.builtin.service_facts:
+
+- name: Print service facts
+  ansible.builtin.debug:
+    var: ansible_facts.services.snapclient
+
+# Returns sth like 
+## 
+## ok: [pidev] => {
+##     "ansible_facts.services": {
+##         "a2dp-agent.service": {
+##             "name": "a2dp-agent.service",
+##             "source": "systemd",
+##             "state": "running",
+##             "status": "enabled"
+##         },
+## ...
+##         "snapclient": {
+##             "name": "snapclient",
+##             "source": "sysv",
+##             "state": "stopped"
+##         },
+##         "snapclient.service": {
+##             "name": "snapclient.service",
+##             "source": "systemd",
+##             "state": "inactive",
+##             "status": "masked"
+##         },
+##         "snapclient@.service": {
+##             "name": "snapclient@.service",
+##             "source": "systemd",
+##             "state": "unknown",
+##             "status": "indirect"
+##         },
+##         "snapclient@hifi.service": {
+##             "name": "snapclient@hifi.service",
+##             "source": "systemd",
+##             "state": "running",
+##             "status": "unknown"
+##         },
+##         "snapclient@pidev.service": {
+##             "name": "snapclient@pidev.service",
+##             "source": "systemd",
+##             "state": "running",
+##             "status": "unknown"
+##         },
+## ...
+##         "x11-common.service": {
+##             "name": "x11-common.service",
+##             "source": "systemd",
+##             "state": "inactive",
+##             "status": "masked"
+##         }
+##     }
+## }
+## 
+## 
+# we want: 
+## source: systemd
+## state: running or stopped
+## name: snapclient@*
+# TODO
+# Print current list of snapclient@ services
+# systemctl | grep snapclient@
+# Remove stale snapclient@ services
+
+#### cleanup stale config files
+# configfiles: contains list of config files found
+# snapclient_config_list: contains list of expected files 
+# deletes all files in "configfiles" but not in "snapclient_config_list"
+
+- name: Register current list all config files
+  ansible.builtin.shell: ls /etc/snapclient.conf.d | sed -e "s/\.conf$//"
+  register: configfiles
+
+- name: compute snapclient_config_list from snapclient_config
+  ansible.builtin.set_fact:
+    snapclient_config_list: "{{ snapclient_config | community.general.json_query('[*].name') }}"
+
+- name: print files found that are expected to be here
+  ansible.builtin.debug:
+    msg: "{{ item }} found, leaving for the moment"
+  loop: "{{ configfiles.stdout_lines }}"
+  when: "item in snapclient_config_list"
+
+- name: delete all files that are not in config list
+  ansible.builtin.file: 
+    path: "/etc/snapclient.conf.d/{{ item }}.conf"
+    state: absent
+  loop: "{{ configfiles.stdout_lines }}"
+  when: "item not in snapclient_config_list"
+
+#### end of cleanup stale config files
+
 - name: Create snapclient config files
   ansible.builtin.template:
     src: templates/etc/snapclient.conf.d/snapclient.j2
