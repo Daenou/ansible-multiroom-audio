@@ -49,6 +49,7 @@
 - name: Print service facts
   ansible.builtin.debug:
     var: ansible_facts.services.snapclient
+    #var: ansible_facts.services
 
 # Returns sth like 
 ## 
@@ -107,6 +108,40 @@
 ## name: snapclient@*
 # TODO
 # Print current list of snapclient@ services
+
+- name: Show type of ansible_facts.services
+  ansible.builtin.debug:
+    msg: "{{ ansible_facts.services | type_debug }}"
+
+- name: Set servicelist from ansible_facts
+  ansible.builtin.set_fact:
+    servicelist: "{{ ansible_facts.services | list }}"
+    # IDEMPOTENT servicelist: "{{ ansible_facts.services | community.general.json_query('*') }}"
+    #template ERROR servicelist: "{{ ansible_facts.services.* | dict2items }}"
+    #NO servicelist: "{{ ansible_facts.services | dict2items | community.general.json_query('*.name') }}"
+    #YES ALL servicelist: "{{ ansible_facts | community.general.json_query('services.*.name[?state==''running'']') }}"
+    #NOservicelist: "{{ ansible_facts | community.general.json_query('services.*[?state==''running''].name') }}"
+    #NO servicelist: "{{ ansible_facts | community.general.json_query('services[?state==''running''].*.name') }}"
+    #NOservicelist: "{{ ansible_facts | community.general.json_query('services.*.*.name') }}"
+    #YES servicelist: "{{ ansible_facts | community.general.json_query('services.*.name') }}"
+    #NO servicelist: "{{ ansible_facts | community.general.json_query('services.*[?state==''running''].name') }}"
+    #NO servicelist: "{{ ansible_facts.services | community.general.json_query('[?*.state==''running'']') }}"
+    #SYNTAX ERROR servicelist: "{{ ansible_facts.services | community.general.json_query('.[?state==''running'']') }}"
+    #SYNTAX ERROR servicelist: "{{ ansible_facts.services | community.general.json_query('*.[?state==''running'']') }}"
+    #YES servicelist: "{{ ansible_facts.services | community.general.json_query('*') }}"
+    #NO servicelist: "{{ ansible_facts.services | community.general.json_query('*[?state==''running'']') }}"
+    #NO servicelist: "{{ ansible_facts.services | community.general.json_query('[?state==''running'']')  }}"
+    #YES servicelist: "{{ ansible_facts.services | community.general.json_query('*.name') | sort }}"
+
+- name: Print current list of all services
+  ansible.builtin.debug:
+    var: servicelist
+
+#- name: Print current list of snapclient@ services
+#  ansible.builtin.debug:
+#    var: servicelist
+
+
 # systemctl | grep snapclient@
 # Remove stale snapclient@ services
 
