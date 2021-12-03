@@ -41,135 +41,67 @@
     state: directory
     mode: 0755
 
-# Play with service_facts
+
+####
+#### Cleanup stale services and config files
+####  ugly, 1st running version
+####
+
 
 - name: Populate service facts
   ansible.builtin.service_facts:
 
-- name: Print service facts
-  ansible.builtin.debug:
-    var: ansible_facts.services.snapclient
-    #var: ansible_facts.services
-
-# Returns sth like 
-## 
-## ok: [pidev] => {
-##     "ansible_facts.services": {
-##         "a2dp-agent.service": {
-##             "name": "a2dp-agent.service",
-##             "source": "systemd",
-##             "state": "running",
-##             "status": "enabled"
-##         },
-## ...
-##         "snapclient": {
-##             "name": "snapclient",
-##             "source": "sysv",
-##             "state": "stopped"
-##         },
-##         "snapclient.service": {
-##             "name": "snapclient.service",
-##             "source": "systemd",
-##             "state": "inactive",
-##             "status": "masked"
-##         },
-##         "snapclient@.service": {
-##             "name": "snapclient@.service",
-##             "source": "systemd",
-##             "state": "unknown",
-##             "status": "indirect"
-##         },
-##         "snapclient@hifi.service": {
-##             "name": "snapclient@hifi.service",
-##             "source": "systemd",
-##             "state": "running",
-##             "status": "unknown"
-##         },
-##         "snapclient@pidev.service": {
-##             "name": "snapclient@pidev.service",
-##             "source": "systemd",
-##             "state": "running",
-##             "status": "unknown"
-##         },
-## ...
-##         "x11-common.service": {
-##             "name": "x11-common.service",
-##             "source": "systemd",
-##             "state": "inactive",
-##             "status": "masked"
-##         }
-##     }
-## }
-## 
-## 
-# we want: 
-## source: systemd
-## state: running or stopped
-## name: snapclient@*
-# TODO
-# Print current list of snapclient@ services
-
-# TIPP FROM STEVEN:
-
-##     - name: filter packages with package_list from distribution vars
-##       set_fact:
-##         installed_packages: "{{ installed_packages + ( ansible_facts.packages | intersect([item.key]) | list ) }}"
-##       loop: "{{ lookup('dict', package_dir) }}"
-## 
-##     - name: construct list out of packages from host
-##       set_fact:
-##         packages: "{{ ansible_facts.packages[item] | list }}"
-##       with_items: "{{ installed_packages }}"
-## 
-## - name: Show type of ansible_facts.services
-##   ansible.builtin.debug:
-##     msg: "{{ ansible_facts.services | type_debug }}"
-## 
-## - name: Set servicelist from ansible_facts
-##   ansible.builtin.set_fact:
-##     servicelist: "{{ ansible_facts.services | list }}"
-## 
-    # IDEMPOTENT servicelist: "{{ ansible_facts.services | community.general.json_query('*') }}"
-    #template ERROR servicelist: "{{ ansible_facts.services.* | dict2items }}"
-    #NO servicelist: "{{ ansible_facts.services | dict2items | community.general.json_query('*.name') }}"
-    #YES ALL servicelist: "{{ ansible_facts | community.general.json_query('services.*.name[?state==''running'']') }}"
-    #NOservicelist: "{{ ansible_facts | community.general.json_query('services.*[?state==''running''].name') }}"
-    #NO servicelist: "{{ ansible_facts | community.general.json_query('services[?state==''running''].*.name') }}"
-    #NOservicelist: "{{ ansible_facts | community.general.json_query('services.*.*.name') }}"
-    #YES servicelist: "{{ ansible_facts | community.general.json_query('services.*.name') }}"
-    #NO servicelist: "{{ ansible_facts | community.general.json_query('services.*[?state==''running''].name') }}"
-    #NO servicelist: "{{ ansible_facts.services | community.general.json_query('[?*.state==''running'']') }}"
-    #SYNTAX ERROR servicelist: "{{ ansible_facts.services | community.general.json_query('.[?state==''running'']') }}"
-    #SYNTAX ERROR servicelist: "{{ ansible_facts.services | community.general.json_query('*.[?state==''running'']') }}"
-    #YES servicelist: "{{ ansible_facts.services | community.general.json_query('*') }}"
-    #NO servicelist: "{{ ansible_facts.services | community.general.json_query('*[?state==''running'']') }}"
-    #NO servicelist: "{{ ansible_facts.services | community.general.json_query('[?state==''running'']')  }}"
-    #YES servicelist: "{{ ansible_facts.services | community.general.json_query('*.name') | sort }}"
-
-- name: Print current list of all services
-  ansible.builtin.debug:
-    var: servicelist
-
-#- name: Print current list of snapclient@ services
-#  ansible.builtin.debug:
-#    var: servicelist
-
-
-# systemctl | grep snapclient@
-# Remove stale snapclient@ services
-
-#### cleanup stale config files
-# configfiles: contains list of config files found
-# snapclient_config_list: contains list of expected files 
-# deletes all files in "configfiles" but not in "snapclient_config_list"
-
-- name: Register current list all config files
-  ansible.builtin.shell: ls /etc/snapclient.conf.d | sed -e "s/\.conf$//"
-  register: configfiles
+#
+# Compute current list of items that are configured, needed to check if files/service should stay present
+#   target list
+#
 
 - name: compute snapclient_config_list from snapclient_config
   ansible.builtin.set_fact:
     snapclient_config_list: "{{ snapclient_config | community.general.json_query('[*].name') }}"
+
+#### cleanup stale systemd services
+# snapclientservices: contains list of services as found in ansible_facts.services named snapclient@ in state running/stopped
+# snapclientids: contains the pure ids (same format as config dict) (current state)
+# snapclient_config_list: contains list of expected ids (target list)
+# removes all instances in snapclientids (current state) but not in snapclientids (target list)
+
+# this is basically: systemctl | grep ^snapclient@ and testing 
+- name: Create list of stopped/running snapclient@ services
+  ansible.builtin.set_fact:
+    snapclientservices: "{{ snapclientservices | default ([]) + [ item.value.name ] }}"
+  loop: "{{ ansible_facts.services | dict2items }}"
+  when: ( item.value.state == 'running' or item.value.state == 'stopped' ) and item.value.name is match('snapclient@')
+
+- name: Strip off generic parts
+  ansible.builtin.set_fact:
+    snapclientids: "{{ snapclientids | default ([]) + [ item | regex_replace('^snapclient@(.*).service','\\1') ] }}"
+  loop: "{{ snapclientservices }}"
+
+- name: print list of services that we leave as is
+  ansible.builtin.debug:
+    msg: "snapclient@{{ item }}.service, leaving for the moment"
+  loop: "{{ snapclientids }}"
+  when: item in snapclient_config_list
+
+# Remove stale snapclient@ services
+- name: Loop through list of found services and remove the undefined ones
+  ansible.builtin.systemd:
+    name: "snapclient@{{ item }}.service"
+    enabled: no
+    state: stopped
+    masked: yes
+  loop: "{{ snapclientids }}"
+  when: item not in snapclient_config_list
+
+#### cleanup stale config files
+# configfiles: contains list of config files found (current state), (already stripped, ugly, take solution from above!)
+# snapclient_config_list: contains list of expected ids (target list)
+# deletes all files in configfiles (current state) but not in snapclient_config_list (target list)
+
+- name: Register current list all config files
+  ansible.builtin.shell: ls /etc/snapclient.conf.d | sed -e "s/\.conf$//"
+  register: configfiles
 
 - name: print files found that are expected to be here
   ansible.builtin.debug:
@@ -185,6 +117,7 @@
   when: "item not in snapclient_config_list"
 
 #### end of cleanup stale config files
+#### end of Cleanup stale services and config files
 
 - name: Create snapclient config files
   ansible.builtin.template:
