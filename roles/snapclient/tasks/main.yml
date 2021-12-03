@@ -109,13 +109,26 @@
 # TODO
 # Print current list of snapclient@ services
 
-- name: Show type of ansible_facts.services
-  ansible.builtin.debug:
-    msg: "{{ ansible_facts.services | type_debug }}"
+# TIPP FROM STEVEN:
 
-- name: Set servicelist from ansible_facts
-  ansible.builtin.set_fact:
-    servicelist: "{{ ansible_facts.services | list }}"
+##     - name: filter packages with package_list from distribution vars
+##       set_fact:
+##         installed_packages: "{{ installed_packages + ( ansible_facts.packages | intersect([item.key]) | list ) }}"
+##       loop: "{{ lookup('dict', package_dir) }}"
+## 
+##     - name: construct list out of packages from host
+##       set_fact:
+##         packages: "{{ ansible_facts.packages[item] | list }}"
+##       with_items: "{{ installed_packages }}"
+## 
+## - name: Show type of ansible_facts.services
+##   ansible.builtin.debug:
+##     msg: "{{ ansible_facts.services | type_debug }}"
+## 
+## - name: Set servicelist from ansible_facts
+##   ansible.builtin.set_fact:
+##     servicelist: "{{ ansible_facts.services | list }}"
+## 
     # IDEMPOTENT servicelist: "{{ ansible_facts.services | community.general.json_query('*') }}"
     #template ERROR servicelist: "{{ ansible_facts.services.* | dict2items }}"
     #NO servicelist: "{{ ansible_facts.services | dict2items | community.general.json_query('*.name') }}"
