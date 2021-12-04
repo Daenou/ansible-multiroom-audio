@@ -41,83 +41,90 @@
     state: directory
     mode: 0755
 
-
 ####
 #### Cleanup stale services and config files
-####  ugly, 1st running version
 ####
 
+- name: Create list of ids as configured in snapclient_config (target list)
+  ansible.builtin.set_fact:
+    idlistfromconfig: "{{ snapclient_config | community.general.json_query('[*].name') }}"
+
+#### cleanup stale systemd services
+# removes all instances in idlistfromservices (current state) but not in idlistfromconfig (target list)
+
+# snapclientservices: list of service names as found in ansible_facts.services named snapclient@ in state running/stopped
+# idlistfromservices: list of ids derived from snapclientservices (current state list)
+# idlistfromconfig: contains list of expected ids (target list)
 
 - name: Populate service facts
   ansible.builtin.service_facts:
 
-#
-# Compute current list of items that are configured, needed to check if files/service should stay present
-#   target list
-#
-
-- name: compute snapclient_config_list from snapclient_config
-  ansible.builtin.set_fact:
-    snapclient_config_list: "{{ snapclient_config | community.general.json_query('[*].name') }}"
-
-#### cleanup stale systemd services
-# snapclientservices: contains list of services as found in ansible_facts.services named snapclient@ in state running/stopped
-# snapclientids: contains the pure ids (same format as config dict) (current state)
-# snapclient_config_list: contains list of expected ids (target list)
-# removes all instances in snapclientids (current state) but not in snapclientids (target list)
-
-# this is basically: systemctl | grep ^snapclient@ and testing 
-- name: Create list of stopped/running snapclient@ services
+- name: Get list of stopped/running snapclient@ services from ansible_facts.services
   ansible.builtin.set_fact:
     snapclientservices: "{{ snapclientservices | default ([]) + [ item.value.name ] }}"
   loop: "{{ ansible_facts.services | dict2items }}"
-  when: ( item.value.state == 'running' or item.value.state == 'stopped' ) and item.value.name is match('snapclient@')
+  when: item.value.name is match('snapclient@') and ( item.value.state == 'running' or item.value.state == 'stopped' )
 
-- name: Strip off generic parts
+- name: Create list of ids from snapclientservices (current service list)
   ansible.builtin.set_fact:
-    snapclientids: "{{ snapclientids | default ([]) + [ item | regex_replace('^snapclient@(.*).service','\\1') ] }}"
+    idlistfromservices: "{{ idlistfromservices | default ([]) + [ item | regex_replace('^snapclient@(.*).service','\\1') ] }}"
   loop: "{{ snapclientservices }}"
 
-- name: print list of services that we leave as is
+- name: Print list of services that we leave as is
   ansible.builtin.debug:
-    msg: "snapclient@{{ item }}.service, leaving for the moment"
-  loop: "{{ snapclientids }}"
-  when: item in snapclient_config_list
+    msg: "snapclient@{{ item }}.service, leaving untouched for now"
+  loop: "{{ idlistfromservices }}"
+  when: item in idlistfromconfig
 
-# Remove stale snapclient@ services
-- name: Loop through list of found services and remove the undefined ones
+- name: Remove snapclient@ services that are not configured (any more)
   ansible.builtin.systemd:
     name: "snapclient@{{ item }}.service"
     enabled: no
     state: stopped
-    masked: yes
-  loop: "{{ snapclientids }}"
-  when: item not in snapclient_config_list
+    daemon_reload: yes
+  loop: "{{ idlistfromservices }}"
+  when: item not in idlistfromconfig
 
 #### cleanup stale config files
-# configfiles: contains list of config files found (current state), (already stripped, ugly, take solution from above!)
-# snapclient_config_list: contains list of expected ids (target list)
-# deletes all files in configfiles (current state) but not in snapclient_config_list (target list)
+# deletes all files in idlistfromfiles (current state) but not in 
 
-- name: Register current list all config files
-  ansible.builtin.shell: ls /etc/snapclient.conf.d | sed -e "s/\.conf$//"
-  register: configfiles
+# snapclientconfigs: list of full path names to config files as returned by find
+# idlistfromfiles: list of ids derived from snapclientconfigs (current state list)
+# idlistfromconfig: contains list of expected ids (target list)
 
-- name: print files found that are expected to be here
-  ansible.builtin.debug:
-    msg: "{{ item }} found, leaving for the moment"
-  loop: "{{ configfiles.stdout_lines }}"
-  when: "item in snapclient_config_list"
+- name: Get list of config files (only files matching /etc/snapclient.conf.d/*.conf)
+  ansible.builtin.find:
+    paths: /etc/snapclient.conf.d
+    use_regex: yes
+    patterns: ['^.*\.conf']
+    recurse: no
+  register: snapclientconfigs
 
-- name: delete all files that are not in config list
+- name: Create list of ids from snapclientconfigs (current config file list)
+  ansible.builtin.set_fact:
+    idlistfromfiles: "{{ idlistfromfiles | default ([]) + [ item.path | regex_replace('^/etc/snapclient.conf.d/(.*).conf', '\\1') ] }}"
+  loop: "{{ snapclientconfigs.files }}"
+  loop_control:
+    label: "{{ item.path }}"
+
+- name: Print list of files that we leave as is
+  ansible.builtin.debug: 
+    msg: "file for configured {{ item }} found, leaving untouched for now"
+  loop: "{{ idlistfromfiles }}" 
+  when: "item in idlistfromconfig"
+
+- name: Remove files that are not configured (any more)
   ansible.builtin.file: 
     path: "/etc/snapclient.conf.d/{{ item }}.conf"
     state: absent
-  loop: "{{ configfiles.stdout_lines }}"
-  when: "item not in snapclient_config_list"
+  loop: "{{ idlistfromfiles }}"
+  when: "item not in idlistfromconfig"
 
 #### end of cleanup stale config files
-#### end of Cleanup stale services and config files
+
+####
+#### End of cleanup stale services and config files
+####
 
 - name: Create snapclient config files
   ansible.builtin.template:
@@ -140,6 +147,7 @@
     enabled: yes
     daemon_reload: yes
     state: started
+    masked: no
   loop: "{{ snapclient_config }}"
   loop_control:
     label: "{{ item.name }}"
