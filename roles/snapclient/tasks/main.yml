@@ -87,7 +87,7 @@
   when: item not in idlistfromconfig
 
 #### cleanup stale config files
-# deletes all files in idlistfromfiles (current state) but not in 
+# deletes all files in idlistfromfiles (current state) but not in idlistfromconfig (target list)
 
 # snapclientconfigs: list of full path names to config files as returned by find
 # idlistfromfiles: list of ids derived from snapclientconfigs (current state list)
