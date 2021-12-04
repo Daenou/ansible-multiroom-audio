@@ -47,7 +47,8 @@
 
 - name: Create list of ids as configured in snapclient_config (target list)
   ansible.builtin.set_fact:
-    idlistfromconfig: "{{ snapclient_config | community.general.json_query('[*].name') }}"
+    idlistfromconfig: "{{ snapclient_config | selectattr('name') | map(attribute='name') }}"
+    #equivalent to:   "{{ snapclient_config | community.general.json_query('[*].name') }}"
 
 #### cleanup stale systemd services
 # removes all instances in idlistfromservices (current state) but not in idlistfromconfig (target list)
