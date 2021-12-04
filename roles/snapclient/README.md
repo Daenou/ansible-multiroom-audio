@@ -20,4 +20,4 @@ Where
 
 Implementation hints:
 * In order to support multiple instances in a scalable way, the systemd service delivered from the `snapclient` debian package is masked and in `/etc/default/snapclient` `START_SNAPCLIENT` is set to `false` by the role.
-* If you remove a snapclient instance from `snapclient_config`, the corresponding config file and service instance created by this playbook are **automatically removed**. This allows you to easily remove or rename a snapclient instance without manual cleanup.
+* If you remove a snapclient instance from `snapclient_config` and rerun the playbook, the corresponding config file and service instance created by the first run (or manually matching the generic pattern) are **automatically removed**. This allows you to easily remove or rename a snapclient instance without manual cleanup.
