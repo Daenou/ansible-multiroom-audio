@@ -1,0 +1,10 @@
+---
+
+- name: Include bluetoothd
+  ansible.builtin.import_tasks: bluetoothd.yml
+
+- name: Include bluealsa
+  ansible.builtin.import_tasks: bluealsa.yml
+ 
+- name: Include a2dp_agent
+  ansible.builtin.import_tasks: a2dp_agent.yml
