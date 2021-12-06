@@ -11,8 +11,6 @@ ExecStart=/usr/bin/python{{ ansible_facts['python']['version']['major'] }} -u /u
 {% elif ansible_facts['python']['version']['major'] == 2 %}
 ExecStart=/usr/bin/python{{ ansible_facts['python']['version']['major'] }}{{ ansible_facts['python']['version']['minor'] }} -u /usr/local/bin/a2dp-agent.py
 {% endif %}
-StandardOutput=syslog
-StandardError=syslog
 SyslogIdentifier=a2dp-agent
 
 [Install]
