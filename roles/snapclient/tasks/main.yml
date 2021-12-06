@@ -65,3 +65,4 @@
   loop: "{{ snapclient_config }}"
   loop_control:
     label: "{{ item.name }}"
+  ignore_errors: "{{ ansible_check_mode }}"
