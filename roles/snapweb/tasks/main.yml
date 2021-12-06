@@ -1,0 +1,7 @@
+---
+
+- name: Copy snapweb files
+  ansible.builtin.copy: 
+    src: "files/{{ snapweb_srcdir }}/"
+    dest: /usr/share/snapserver/snapweb
+
