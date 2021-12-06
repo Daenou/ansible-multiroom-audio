@@ -34,7 +34,4 @@
   hosts: bluetooth_sinks
   become: true
   roles:
-    - bluetoothd
-    - bluealsa
-    - a2dp_agent
-    - acable
+    - bluetooth_sink

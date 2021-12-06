@@ -2,5 +2,5 @@
 
 snapclient_config:
   - name: pi2
-    snapclient_snapserver: pidev.example.net
-    snapclient_sink: dmix:CARD=sndrpihifiberry,DEV=0
+    snapclient_snapserver: pi2
+    snapclient_sink: dmix:CARD=sndrpihifiberry
