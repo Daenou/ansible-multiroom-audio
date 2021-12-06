@@ -8,7 +8,7 @@
 ###   * want to have snd_aloop ? 
 ###     enables to use Loopback dmix/dsnoop ALSA devices for audio stream mix in/fan out
 ###   * want to process sound from a bluetooth and/or analog audio source? 
-###     * bluetooth needs bluetoothd/bluealsa/a2dp_agent
+###     * need bluetooth_sink
 ###   * want to have snapserver? 
 ###   * want to have mpd?
 ### * need an snd_aloop device to mix in/fan out via a Loopback dmix/dsnoop?
@@ -29,9 +29,7 @@
   become: true
   roles:
     - acable
-    - bluetoothd
-    - bluealsa
-    - a2dp_agent
+    - bluetooth_sink
     - snd_aloop
     - snapserver
     - mpd
@@ -50,16 +48,12 @@
   become: true
   roles:
     - acable
-    - bluetoothd
-    - bluealsa
-    - a2dp_agent
+    - bluetooth_sink
 
 - name: Amsel bluetooth input
   hosts: amsel_acables_bluetooth
   become: true
   roles:
     - acable
-    - bluetoothd
-    - bluealsa
-    - a2dp_agent
+    - bluetooth_sink
 
