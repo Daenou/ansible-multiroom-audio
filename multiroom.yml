@@ -35,3 +35,9 @@
   become: true
   roles:
     - bluetooth_sink
+
+- name: mpd servers
+  hosts: mpd
+  become: true
+  roles:
+    - mpd

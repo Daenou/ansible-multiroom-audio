@@ -16,3 +16,6 @@ client1
 
 [bluetooth_sinks]
 server1
+
+[mpd]
+server1
