@@ -5,7 +5,6 @@ acable_config:
     source: dsnoop:CARD=sndrpihifiberry,DEV=0
     sink: dmix:CARD=Loopback,DEV=0
 
-snapserver_name: sspidev
 snapserver_sourcetype: alsa
 snapserver_alsasource: dsnoop:CARD=Loopback,DEV=1
 
