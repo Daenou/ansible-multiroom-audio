@@ -5,3 +5,4 @@
     name: "mpd.service"
     daemon_reload: yes
     state: restarted
+  ignore_errors: "{{ ansible_check_mode }}"

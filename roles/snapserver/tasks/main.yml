@@ -29,3 +29,4 @@
   ansible.builtin.systemd:
     name: snapserver
     enabled: yes
+  ignore_errors: "{{ ansible_check_mode }}"
