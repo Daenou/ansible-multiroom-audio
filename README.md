@@ -87,6 +87,10 @@ Pi:
 * audio HAT is working and enabled in `/boot/config.txt`. You should see it with `aplay -L`
 * Either python2 or python3 for the bluetooth_sink role (a2dp_agent) 
 
+Your Environment:
+* A mobile phone or a computer to control the snapclient volumes and mpd.
+* Some pairs of decent loudspeakers (and `hifiberry` AMP module) or a stereo amp with independent source (i.e. main out) and rec out selectors (and `hifiberry DAC/ADC modules). 
+
 # Howto
 ## Config
 1) Populate the variables in the `host_vars/$HOSTGROUPNAME/main.yml` files with your settings. Refer **TODO** to `example` for examples and to `roles/*/defaults/main.yml` to see all variables
