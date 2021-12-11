@@ -1,5 +1,5 @@
 # ansible-multiroom-audio
-This collection has been built to maintain (at least) two quite different multiroom audio setups based on Raspberry Pi and high quality audio HATs. We use [hifiberry](https://www.hifiberry.com/), but this works with any supported audio HAT. We are happy to hear from anyone else being successfull using these roles.
+This collection has been built to maintain (at least) two quite different multiroom audio setups based on Raspberry Pi and high quality audio HATs. We use [hifiberry](https://www.hifiberry.com/), but this works with any supported audio HAT. We are happy to hear from anyone else being successful using these roles.
 
 ## Features 
 
