@@ -21,7 +21,7 @@ conversions.
 
 ALSA **dmix** devices can be used to mix multiple streams together (provided that all streams have the same digital audio format) without any conversion. 
 **dsnoop** devices can be used to consume the same audio stream by multiple recorders. `dmix`/`dsnoop` devices proved to be very useful, but they are
-apparently not able to usable by `alsaloop`. 
+apparently not usable as `alsaloop` sinks/sources. 
 
 In order to support multiple audio inputs and mix them with a `dmix` device, we use the **snd_aloop** 
 kernel module. This creates a virtual soundcard and whatever you stream to `dmix:CARD=Loopback,DEV=0` comes out of `device=dsnoop:CARD=Loopback,DEV=1` 
