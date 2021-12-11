@@ -50,6 +50,8 @@ Ansible implementation
   * Installs the snapclient package and configures one or more snapclients. Always (or at least on two nodes)
 * snapserver
   * Installs the snapserver package and configures it (max 1 snapserver per host)
+* snapweb
+  * Adds a web application (on port `1780`) to snapserver that allows to control the snapclient volumes with a browser.
 * acable
   * Installs a systemd unit template with which you can create 'virtual cables' between alsa audio sources and sinks
   * These virtual cables are `arec | aplay` commands with configurable variables (e.g. an `alsaloop` that can use `dmix`/`dsnoop` devices)
@@ -66,6 +68,8 @@ Ansible implementation
   * **WARNING**: There is still bug [#14](https://github.com/Daenou/ansible-multiroom-audio/issues/14), needs a one time manual intervention. 
 * snd_aloop
   * Loads the `snd_aloop` kernel module for the use of alsa loopback devices
+* mpd
+  * A simple mpd config, used as (additional) audio stream to snapserver
 
 
 # Requirements
