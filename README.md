@@ -63,7 +63,7 @@ Ansible implementation
       * The a2dp agent handles the bluetooth connection initiation and authentication
     * bluealsa
       * Installs and configures bluealsa aka [bluez-alsa](https://github.com/Arkq/bluez-alsa), which configures the device as a bluetooth audio sink aka bluetooth loudspeaker
-  * **WARNING**: There is still bug #14, needs a one time manual intervention. 
+  * **WARNING**: There is still bug [#14](https://github.com/Daenou/ansible-multiroom-audio/issues/14), needs a one time manual intervention. 
 * snd_aloop
   * Loads the `snd_aloop` kernel module for the use of alsa loopback devices
 
@@ -77,7 +77,7 @@ Ansible host:
 
 Pi:
 
-* bullseye image with buster repo added (bug #18).
+* bullseye image with buster repo added (bug [#18](https://github.com/Daenou/ansible-multiroom-audio/issues/18)).
 * passwordless ssh login from ansible host to hostname in the inventory file. If you use passwordless login to the user `pi` (and not `root`) append `-u pi` to the command line.
 * Strongly suggested: The Pies can reach each other using a DNS-Name.
 * audio HAT is working and enabled in `/boot/config.txt`. You should see it with `aplay -L`
