@@ -89,7 +89,7 @@ Pi:
 
 Your Environment:
 * A mobile phone or a computer to control the snapclient volumes and mpd.
-* Some pairs of decent loudspeakers (and `hifiberry` AMP module) or a stereo amp with independent source (i.e. main out) and rec out selectors (and `hifiberry DAC/ADC modules). 
+* Some pairs of decent loudspeakers (and `hifiberry` AMP module) or a stereo amp with independent source (i.e. main out) and rec out selectors (and `hifiberry` DAC/ADC module). 
 
 # Howto
 ## Config
