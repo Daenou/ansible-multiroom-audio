@@ -28,6 +28,7 @@
     state: present
     insertbefore: BOF
     backup: yes
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: Add comment to upstream config file
   ansible.builtin.lineinfile:
@@ -35,6 +36,7 @@
     line: "# Autostart disabled here to support multiple snapclients, see /etc/snapclient.conf.d/"
     insertbefore: BOF
     state: present
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: Create snapclient.conf.d directory
   ansible.builtin.file:
