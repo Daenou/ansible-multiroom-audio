@@ -24,7 +24,7 @@ ALSA **dmix** devices can be used to mix multiple streams together (provided tha
 apparently not able to usable by `alsaloop`. 
 
 In order to support multiple audio inputs and mix them with a `dmix` device, we use the **snd_aloop** 
-kernel module. This creates a virtual soundcard and whatever you stream to `dmix:CARD=Loopback,DEV=**0**` comes out of `device=dsnoop:CARD=Loopback,DEV=**1**` 
+kernel module. This creates a virtual soundcard and whatever you stream to `dmix:CARD=Loopback,DEV=0` comes out of `device=dsnoop:CARD=Loopback,DEV=1` 
 (and 1->2 and 2->3 etc). To make that work without any audio stuttering or other issues, the default audio format for `dmix`/`dsnoop` has to be set
 in `/etc/asound.conf`.
 
