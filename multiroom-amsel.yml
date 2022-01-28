@@ -38,24 +38,34 @@
     - snapserver
     - snapweb
     - mpd
-   
 
-- name: Amsel snapserver/mpd host with analog input
-  hosts: amsel_acables_analog_snapserver_mpd
+- name: Amsel snapserver/mpd host with bluetooth input
+  hosts: amsel_acables_bluetooth_snapserver_mpd
   become: true
   roles:
     - acable
+    - bluetooth_sink
     - snd_aloop
     - snapserver
     - snapweb
     - mpd
 
-- name: Amsel bluetooth and analog input
-  hosts: amsel_acables_bluetooth_analog
-  become: true
-  roles:
-    - acable
-    - bluetooth_sink
+#- name: Amsel snapserver/mpd host with analog input
+#  hosts: amsel_acables_analog_snapserver_mpd
+#  become: true
+#  roles:
+#    - acable
+#    - snd_aloop
+#    - snapserver
+#    - snapweb
+#    - mpd
+
+#- name: Amsel bluetooth and analog input
+#  hosts: amsel_acables_bluetooth_analog
+#  become: true
+#  roles:
+#    - acable
+#    - bluetooth_sink
 
 - name: Amsel bluetooth input
   hosts: amsel_acables_bluetooth
