@@ -8,12 +8,22 @@ SINK=$(/usr/bin/aplay -L | egrep "^dmix:.*Loopback,DEV=0.*$")
 FORMAT="cd"
 FILETYPE="raw"
 DURATION=0 # 0 equals infinite
-BUFFERSIZE=8192
-PERIODSIZE=1024
 
 if [[ -f "$CONFFILE" ]];
 then
 	source "$CONFFILE"
+fi
+
+if [[ -z "${BUFFERSIZE}" ]] ; then
+  BUFFERSIZEPARAM=""
+else
+  BUFFERSIZEPARAM="--buffer-size=${BUFFERSIZE}"
+fi
+
+if [[ -z "${PERIODSIZE}" ]] ; then
+  PERIODSIZEPARAM=""
+else
+  PERIODSIZEPARAM="--period-size=${PERIODSIZE}"
 fi
 
 wait_for_and_get_first_connected_source() {
@@ -36,8 +46,8 @@ echo "bluealsa:SRV=org.bluealsa,DEV=${MAC},PROFILE=a2dp"
 arecaplaypipe() {
         SR="$1"
         echo "Using source $SR"
-	/usr/bin/arecord -D "$SR" -f "$FORMAT" -d "$DURATION" -t "$FILETYPE" --buffer-size="$BUFFERSIZE" --period-size="$PERIODSIZE" | \
-	/usr/bin/aplay -D "$SINK" -f "$FORMAT" -d "$DURATION" -t "$FILETYPE" --buffer-size="$BUFFERSIZE" --period-size="$PERIODSIZE" 
+	/usr/bin/arecord -D "$SR" -f "$FORMAT" -d "$DURATION" -t "$FILETYPE" ${BUFFERSIZEPARAM} ${PERIODSIZEPARAM} |\
+	/usr/bin/aplay -D "$SINK" -f "$FORMAT" -d "$DURATION" -t "$FILETYPE" ${BUFFERSIZEPARAM} ${PERIODSIZEPARAM}
 }
 
 while true; do
