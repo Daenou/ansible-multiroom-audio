@@ -1,0 +1,16 @@
+---
+
+acable_config:
+  - name: bluealsa-workaround-cable
+    sink: dmix:CARD=Loopback,DEV=0
+
+  - name: analog-aloop
+    source: dsnoop:CARD=sndrpihifiberry,DEV=0
+    sink: dmix:CARD=sndrpihifiberry,DEV=0
+
+mpd_music_directory: "smb://shares.t7.iselin.net/mp3-coll"
+mpd_alsa_sink_name: "To Snapserver"
+mpd_alsa_sink_device: "dmix:CARD=Loopback,DEV=0"
+
+snapserver_sourcetype: alsa
+snapserver_alsasource: dsnoop:CARD=Loopback,DEV=1
