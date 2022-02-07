@@ -43,11 +43,37 @@ done
 echo "bluealsa:SRV=org.bluealsa,DEV=${MAC},PROFILE=a2dp"
 }
 
+
+alloutputs(){
+
+action=$1
+
+# todo: in addition, stop/start other acables/components writing to dmix of soundcard, but not ourselves!
+allsnapclients=$( systemctl -a | grep snapclient@ | awk ' { print $1 } ' )
+
+doforall(){
+for i in $allsnapclients; do
+  echo "executing $1 $i"
+  $1 $i
+done
+}
+
+case "$action" in
+  stop ) doforall "systemctl stop" ;;
+  start) doforall "systemctl start" ;;
+  *    ) doforall "echo" ;;
+esac
+
+}
+
 arecaplaypipe() {
         SR="$1"
         echo "Using source $SR"
+        alloutputs stop
 	/usr/bin/arecord -D "$SR" -f "$FORMAT" -d "$DURATION" -t "$FILETYPE" ${BUFFERSIZEPARAM} ${PERIODSIZEPARAM} |\
-	/usr/bin/aplay -D "$SINK" -f "$FORMAT" -d "$DURATION" -t "$FILETYPE" ${BUFFERSIZEPARAM} ${PERIODSIZEPARAM}
+	/usr/bin/aplay -D "$SINK" -f "$FORMAT" -d "$DURATION" -t "$FILETYPE" ${BUFFERSIZEPARAM} ${PERIODSIZEPARAM} &
+        alloutputs start
+        wait
 }
 
 while true; do
