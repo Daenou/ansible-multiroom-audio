@@ -13,6 +13,8 @@ user                    "mpd"
 
 bind_to_address         "any"
 
+max_output_buffer_size  "{{ mpd_max_output_buffer_size }}"
+
 input {
         plugin "curl"
 }
