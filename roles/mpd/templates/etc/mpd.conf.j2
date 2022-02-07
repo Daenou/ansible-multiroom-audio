@@ -24,6 +24,14 @@ input {
         plugin "smbclient"
 }
 
+input {
+       plugin "alsa"
+       default_format "{{ mpd_alsa_sink_format }}"
+       auto_resample "no"
+       auto_channels "no"
+       auto_format "no"
+}
+
 audio_output {
         type            "alsa"
         name            "{{ mpd_alsa_sink_name }}"
