@@ -1,4 +1,4 @@
-# bluetooth_sink
+# bluetooth_disable
 
 This role disables bluetooth using `rfkill`. This is only needed
 for hosts without an `acable_config`, e.g. pure snapclients
