@@ -77,13 +77,13 @@
     label: "{{ item.path }}"
 
 - name: Print list of files that we leave as is
-  ansible.builtin.debug: 
+  ansible.builtin.debug:
     msg: "file for configured {{ item }} found, leaving untouched for now"
-  loop: "{{ idlistfromfiles }}" 
+  loop: "{{ idlistfromfiles }}"
   when: "item in idlistfromconfig"
 
 - name: Remove files that are not configured (any more)
-  ansible.builtin.file: 
+  ansible.builtin.file:
     path: "/etc/acable.conf.d/{{ item }}.conf"
     state: absent
   loop: "{{ idlistfromfiles }}"

@@ -4,22 +4,23 @@
   ansible.builtin.set_fact:
     idlistfromconfig: "{{ acable_config | selectattr('name') | map(attribute='name') }}"
 
-- name: Is there at least one bluetooth connection?
+- name: Is there at least one bluetooth connection configured?
   ansible.builtin.set_fact:
     hasbluetooth: true
   loop: "{{ idlistfromconfig }}"
   when: item is match('bluealsa-')
 
-- name: Is bluetooth blocked
+- name: Get rfkill bluetooth status
   ansible.builtin.command:
     cmd: rfkill list bluetooth -n -o SOFT
   register: bluetoothstatus
+  changed_when: false
 
 - name: Show bluetoothstatus
   ansible.builtin.debug:
-    msg: "Bluetooth status is {{ bluetoothstatus.stdout }}"
+    msg: "Bluetooth status is {{ bluetoothstatus.stdout | default ('not evaluated in check mode', true) }}"
 
-- block: 
+- block:
 
   - name: unblock bluetooth if needed
     ansible.builtin.shell:
@@ -28,19 +29,19 @@
 
   - name: Include bluetoothd
     ansible.builtin.import_tasks: bluetoothd.yml
-  
+
   - name: Include bluealsa
     ansible.builtin.import_tasks: bluealsa.yml
-   
+
   - name: Include a2dp_agent
     ansible.builtin.import_tasks: a2dp_agent.yml
 
   when: hasbluetooth
 
-- block: 
+- block:
   - name: block bluetooth if needed
     ansible.builtin.shell:
       cmd: rfkill block bluetooth
     when: bluetoothstatus.stdout != "blocked"
 
-  when: not hasbluetooth 
+  when: not hasbluetooth
