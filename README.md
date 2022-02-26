@@ -97,6 +97,7 @@ Your Environment:
 # Howto
 ## Config
 1) Populate the variables in the `host_vars/$HOSTGROUPNAME/main.yml` files with your settings. Checkout `roles/*/defaults/main.yml` to see all variables available.
+
 2) Populate the `inventory` file with a `[snapclient]` and `[snapservers]` hostgroup and list all snapclients/servers you want to target
 3) Write a playbook
 
@@ -109,6 +110,7 @@ A working example uses the following files (**TODO** change this before going to
 (**TODO** change this before going to ansible galaxy)
 
 In the docroot of this repo, do the following (in check mode). 
+
 ```
 ansible-playbook multiroom-amsel.yml --check --diff -u pi -i inventory_amsel
 ```
