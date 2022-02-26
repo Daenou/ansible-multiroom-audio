@@ -1,5 +1,5 @@
 ---
 
-acable_config:
+acable_bluetooth_dac:
   - name: bluealsa-workaround-cable
     sink: dmix:CARD=sndrpihifiberry,DEV=0

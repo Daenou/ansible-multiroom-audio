@@ -1,87 +1,34 @@
 ---
 
 ### Amsel concept
-### * all hosts get base and snapclient, both don't need an acable config
-### * create a specific host group for every config that needs at least one acable and put 
-###   every host in exactly one of these groups if anything more than the default is needed.
-###   You can add
-###   * snd_aloop 
-###     enables to use Loopback dmix/dsnoop ALSA devices for audio stream mix in/fan out
-###   * bluetooth_sink
-###     enables acables to get audio from bluetooth
-###   * snapserver
-###     enables a snapserver. Needs matching snapclients to actually hear something.
-###   * snapweb
-###     enables snapserver to show minimal website at port :1780 to control the individual
-###     snap volumes and change the snap grouping
-###   * mpd
-###     to listen to your local music and internet radio stations. 
+### * all hosts get "base" and "snapclient"
+### * If you have hardware inputs, you need "acable" to connect these inputs. If one
+###   the inputs is a bluetooth input, you need "bluetooth_sink"
+### * If you want a snapserver (to actually distribute audio), you need snd_aloop,
+###   snapserver/snapweb and mpd
 
 ### base/snapclient 
 
-- name: Run base and snapclient role on all hosts
-  hosts: amsel_all
-  become: true
-  roles:
-    - base
-    - snapclient
-
-### various host groups with acables, use only one of them per host!
-
-- name: Amsel snapserver/mpd host with analog and bluetooth input
-  hosts: amsel_acables_bluetooth_analog_snapserver_mpd
-  become: true
-  roles:
-    - acable
-    - bluetooth_sink
-    - snd_aloop
-    - snapserver
-    - snapweb
-    - mpd
-
-- name: Amsel snapserver/mpd host with bluetooth input
-  hosts: amsel_acables_bluetooth_snapserver_mpd
-  become: true
-  roles:
-    - acable
-    - bluetooth_sink
-    - snd_aloop
-    - snapserver
-    - snapweb
-    - mpd
-
-- name: Amsel snapserver/mpd host with bluetooth input (direct output)
-  hosts: amsel_acables_bluetoothdirect_analog_snapserver_mpd
-  become: true
-  roles:
-    - acable
-    - bluetooth_sink
-    - snd_aloop
-    - snapserver
-    - snapweb
-    - mpd
-
-#- name: Amsel snapserver/mpd host with analog input
-#  hosts: amsel_acables_analog_snapserver_mpd
+#- name: Run base and snapclient role on all hosts
+#  hosts: amsel_all
 #  become: true
 #  roles:
-#    - acable
+#    - base
+#    - snapclient
+
+# Warning: bluetooth_sink must be run AFTER the acable role, as it 
+# uses the variable acable_config that is built in the acable role only.
+- name: Configure audio connections
+  hosts: amsel_adc_aloop:amsel_adc_dac:amsel_bluetooth_aloop:amsel_bluetooth_dac
+  become: true
+  roles:
+    - acable
+    - bluetooth_sink
+    
+#- name: Configure audio server 
+#  hosts: amsel_server
+#  become: true
 #    - snd_aloop
 #    - snapserver
 #    - snapweb
 #    - mpd
-
-#- name: Amsel bluetooth and analog input
-#  hosts: amsel_acables_bluetooth_analog
-#  become: true
-#  roles:
-#    - acable
-#    - bluetooth_sink
-
-- name: Amsel bluetooth input
-  hosts: amsel_acables_bluetooth
-  become: true
-  roles:
-    - acable
-    - bluetooth_sink
-

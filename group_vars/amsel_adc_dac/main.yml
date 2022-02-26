@@ -1,0 +1,6 @@
+---
+
+acable_adc_dac:
+  - name: adc_dac
+    source: dsnoop:CARD=sndrpihifiberry,DEV=0
+    sink: dmix:CARD=sndrpihifiberry,DEV=0
