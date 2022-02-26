@@ -1,8 +1,10 @@
 ---
 
-snapserver_name: snapname
+snapserver_name: "{{ ansible_hostname }}"
 snapserver_sourcetype: alsa
-snapserver_alsadevice: dsnoop:CARD=Loopback,DEV=1
+snapserver_alsasource: dsnoop:CARD=Loopback,DEV=1
 snapserver_sampleformat: "44100:16:2"
 snapserver_codec: flac
 snapserver_buffer: 200
+snapserver_idle_threshold: 1000
+snapserver_silence_threshold_percent: "0.5"

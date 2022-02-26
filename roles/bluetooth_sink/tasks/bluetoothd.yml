@@ -1,0 +1,36 @@
+---
+
+- name: Exit play if os_family is not Debian
+  ansible.builtin.fail:
+    msg: "ERROR: os_family of host {{ inventory_hostname }} is not Debian"
+  when: ansible_facts['os_family'] != "Debian"
+
+- name: Install pi-bluetooth package
+  ansible.builtin.apt:
+    name: pi-bluetooth
+    state: latest
+    update_cache: yes
+  notify: "Restart bluetoothd"
+
+- name: Make device discoverable forever
+  ansible.builtin.ini_file:
+    dest: /etc/bluetooth/main.conf
+    section: General
+    option: DiscoverableTimeout
+    value: "0"
+    backup: yes
+  notify: "Restart bluetoothd"
+
+- name: Check if device is discoverable
+  ansible.builtin.shell:
+    cmd: /usr/bin/bluetoothctl show | egrep -o "Discoverable. .*" | cut -d " " -f 2
+  register: bluetoothd_discoverable
+  changed_when: false
+
+- name: Make device discoverable
+  ansible.builtin.command:
+    cmd: /usr/bin/bluetoothctl discoverable on
+  when:
+    - bluetoothd_discoverable.stdout == "no"
+    - not ansible_check_mode
+  ignore_errors: "{{ ansible_check_mode }}"

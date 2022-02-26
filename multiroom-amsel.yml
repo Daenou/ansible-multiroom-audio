@@ -1,0 +1,45 @@
+---
+
+### Amsel concept
+### * all hosts get "base" and "snapclient"
+### * "acable" is used to create internal audio connections (similar to alsaloop),
+###   "bluetooth_sink" adds the bluetooth infrastructure - but only if at least
+###   one bluetooth connection is defined in acable_config.
+### * "bluetooth_disable" should be executed for all hosts without any acable
+###    configured if you want to be sure that bluetooth is actually switched off.
+### * At least one audio server (snapserver) should be defined to actually distribute
+###   audio). This needs snd_aloop, snapserver/snapweb and mpd.
+
+### base/snapclient 
+
+- name: Run base and snapclient role on all hosts
+  hosts: amsel_all
+  become: true
+  roles:
+    - base
+    - snapclient
+
+# Warning: bluetooth_sink must be run AFTER the acable role, as it
+# uses the variable acable_config that is built in the acable role only.
+
+- name: Configure audio connections
+  hosts: amsel_adc_aloop:amsel_adc_dac:amsel_bluetooth_aloop:amsel_bluetooth_dac
+  become: true
+  roles:
+    - acable
+    - bluetooth_sink
+
+- name: Disable bluetooth as no acable is defined
+  hosts: amsel_all:!amsel_adc_aloop:!amsel_adc_dac:!amsel_bluetooth_aloop:!amsel_bluetooth_dac
+  become: true
+  roles:
+    - bluetooth_disable
+
+- name: Configure audio server
+  hosts: amsel_server
+  become: true
+  roles:
+    - snd_aloop
+    - snapserver
+    - snapweb
+    - mpd

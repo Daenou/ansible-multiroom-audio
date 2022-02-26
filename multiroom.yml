@@ -1,0 +1,43 @@
+---
+
+- name: Run the base role on all hosts
+  hosts: all
+  become: true
+  roles:
+    - base
+
+- name: Snapclients
+  hosts: snapclients
+  become: true
+  roles:
+    - snapclient
+
+- name: Snapservers
+  hosts: snapservers
+  become: true
+  roles:
+    - snapserver
+
+- name: acables
+  hosts: acables
+  become: true
+  roles:
+    - acable
+
+- name: Loopback module
+  hosts: snd_aloop
+  become: true
+  roles:
+    - snd_aloop
+
+- name: Bluetooth sinks
+  hosts: bluetooth_sinks
+  become: true
+  roles:
+    - bluetooth_sink
+
+- name: mpd servers
+  hosts: mpd
+  become: true
+  roles:
+    - mpd

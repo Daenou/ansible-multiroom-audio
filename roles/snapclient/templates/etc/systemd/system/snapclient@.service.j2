@@ -1,0 +1,21 @@
+# {{ ansible_managed }}
+[Unit]
+Description=Snapcast client %i
+Documentation=man:snapclient(1)
+# no ahavi used with multiple snapservers, but leave on for now...
+Wants=avahi-daemon.service
+After=network.target time-sync.target sound.target avahi-daemon.service
+
+[Service]
+# config file must be present in order to start, no "=-" here (see man systemd.exec)
+EnvironmentFile=/etc/snapclient.conf.d/%i.conf
+ExecStart=/usr/bin/snapclient --logsink=system $SNAPCLIENT_OPTS
+User=_snapclient
+Group=_snapclient
+# very noisy on stdout
+StandardOutput=null
+SyslogIdentifier=snapclient@%i
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

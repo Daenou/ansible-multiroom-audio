@@ -1,0 +1,6 @@
+---
+
+acable_adc_aloop:
+  - name: adc_aloop
+    source: dsnoop:CARD=sndrpihifiberry,DEV=0
+    sink: dmix:CARD=Loopback,DEV=0

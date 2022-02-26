@@ -1,0 +1,41 @@
+# {{ ansible_managed }}
+# minimal config, all comments removed
+
+music_directory         "{{ mpd_music_directory }}"
+playlist_directory      "/var/lib/mpd/playlists"
+db_file                 "/var/lib/mpd/tag_cache"
+log_file                "/var/log/mpd/mpd.log"
+pid_file                "/run/mpd/pid"
+state_file              "/var/lib/mpd/state"
+sticker_file            "/var/lib/mpd/sticker.sql"
+
+user                    "mpd"
+
+bind_to_address         "any"
+
+max_output_buffer_size  "{{ mpd_max_output_buffer_size }}"
+
+input {
+        plugin "curl"
+}
+
+
+input { 
+        plugin "smbclient"
+}
+
+input {
+       plugin "alsa"
+       default_format "{{ mpd_alsa_sink_format }}"
+       auto_resample "no"
+       auto_channels "no"
+       auto_format "no"
+}
+
+audio_output {
+        type            "alsa"
+        name            "{{ mpd_alsa_sink_name }}"
+        device          "{{ mpd_alsa_sink_device }}"
+        format          "{{ mpd_alsa_sink_format }}"
+        mixer_type      "software"
+}

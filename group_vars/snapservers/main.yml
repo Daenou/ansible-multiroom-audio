@@ -1,6 +1,3 @@
-snapserver_name: alsamischpult
+---
 
-alooper_sources:
-  - hifiberry
-  - CODEC
-  - bluealsa
+snapserver_name: alsamischpult

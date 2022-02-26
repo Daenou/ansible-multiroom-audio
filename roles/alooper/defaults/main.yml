@@ -1,7 +1,0 @@
----
-
-# List of devices that an alooper@ instance should be started
-# bluealsa option starts bluealsa-aplay
-alooper_sources:
-  - hifiberry
- #- bluealsa

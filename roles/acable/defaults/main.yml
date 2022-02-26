@@ -1,0 +1,7 @@
+---
+
+# List of acable@ instances that should be started
+# This example combines the acables defined individually in the group vars
+
+acable_config: "{{ acable_bluetooth_aloop | default ([]) + acable_bluetooth_dac | default ([]) + acable_adc_aloop | default ([]) + acable_adc_dac | default ([]) }}"
+

@@ -60,6 +60,8 @@
 # use the address of a specific network interface to just listen to and accept
 # connections from that interface
 #bind_to_address = 0.0.0.0
+# although not clearly documented, this enables both IPv6 and IPv4:
+bind_to_address = ::
 
 # which port the server should listen to
 #port = 1780
@@ -83,6 +85,8 @@ doc_root = /usr/share/snapserver/snapweb
 # use the address of a specific network interface to just listen to and accept
 # connections from that interface
 #bind_to_address = 0.0.0.0
+# although not clearly documented, this enables both IPv6 and IPv4:
+bind_to_address = ::
 
 # which port the server should listen to
 #port = 1705
@@ -99,6 +103,8 @@ doc_root = /usr/share/snapserver/snapweb
 # use the address of a specific network interface to just listen to and accept
 # connections from that interface
 #bind_to_address = 0.0.0.0
+# although not clearly documented, this enables both IPv6 and IPv4:
+bind_to_address = ::
 
 # which port the server should listen to
 #port = 1704
@@ -129,7 +135,7 @@ doc_root = /usr/share/snapserver/snapweb
 # alsa: alsa://?name=<name>&device=<alsa device>[&send_silence=false][&idle_threshold=100]
 # meta: meta:///<name of source#1>/<name of source#2>/.../<name of source#N>?name=<name>
 #source = pipe:///tmp/snapfifo?name=mischpult
-source = {{ snapserver_sourcetype }}://?name={{ snapserver_name }}&device={{ snapserver_alsadevice }}
+source = {{ snapserver_sourcetype }}://?name={{ snapserver_name }}&device={{ snapserver_alsasource }}&send_silence=false&idle_threshold={{ snapserver_idle_threshold }}&silence_threshold_percent={{ snapserver_silence_threshold_percent}}
 #source = tcp://127.0.0.1?name=mopidy_tcp
 
 # Default sample format

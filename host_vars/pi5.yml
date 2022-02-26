@@ -1,0 +1,5 @@
+---
+
+acable_config:
+  - name: bluealsa-cable
+    sink: dmix:CARD=sndrpihifiberry

@@ -1,0 +1,11 @@
+# {{ ansible_managed }}
+[Unit]
+Description=ALSA Source to Sink connector
+After=multi-user.target
+
+[Service]
+ExecStart=/usr/local/bin/acable.sh %i
+SyslogIdentifier=acable@%i
+
+[Install]
+WantedBy=multi-user.target

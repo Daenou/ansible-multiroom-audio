@@ -1,6 +1,21 @@
-[snapclients]
-client1
-client2
+# Is this example, we one snapserver named aptly named "server1" which listens to the dsnoop of the loopback device.
+# You can have any number of inputs playing to the dmix loopback device simultaneously.
+# We also configure it as a bluetooth audio sink aka bluetooth loudspeaker.
+# Furthermore, we have one snapsclient named "client1", which listens to the snapserver.
+# The server1 also has a snapclient installed listening to the local snapserver.
 
 [snapservers]
+server1
+
+[snd_aloop]
+server1
+
+[snapclients]
+server1
+client1
+
+[bluetooth_sinks]
+server1
+
+[mpd]
 server1

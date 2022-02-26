@@ -1,0 +1,9 @@
+---
+
+acable_config:
+  - name: hifiberry
+    sink: dmix:CARD=sndrpihifiberry
+    buffersize: 1
+    periodsize: 1
+  - name: CODEC
+  - name: bluealsa-cable

@@ -4,3 +4,4 @@
   ansible.builtin.systemd:
     name: snapserver
     state: restarted
+  ignore_errors: "{{ ansible_check_mode }}"

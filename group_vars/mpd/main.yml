@@ -1,0 +1,5 @@
+---
+
+mpd_music_directory: "/var/lib/mpd/music/"
+mpd_alsa_sink_name: "To Snapserver"
+mpd_alsa_sink_device: "dmix:CARD=Loopback,DEV=0"

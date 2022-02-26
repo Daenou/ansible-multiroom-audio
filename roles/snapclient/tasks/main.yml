@@ -1,20 +1,158 @@
 ---
 
+- name: Exit play if os_family is not Debian
+  ansible.builtin.fail:
+    msg: "ERROR: os_family of host {{ inventory_hostname }} is not Debian"
+  when: ansible_facts['os_family'] != "Debian"
+
 - name: Install snapclient package
   ansible.builtin.apt:
     name: snapclient
     state: latest
     update_cache: yes
 
-- name: Install snapclient config
-  ansible.builtin.template:
-    src: templates/etc/default/snapclient.j2
-    dest: /etc/default/snapclient
-    backup: yes
-  notify:
-    - Restart snapclient
-
-- name: Enable snapclient to start on boot
+- name: Disable upstream systemd unit
   ansible.builtin.systemd:
-    name: snapclient
+    name: "snapclient.service"
+    enabled: no
+    state: stopped
+    masked: yes
+    force: yes
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: Disable autostart in upstream config file
+  ansible.builtin.lineinfile:
+    path: /etc/default/snapclient
+    regexp: "^[ #]*START_SNAPCLIENT *="
+    line: "START_SNAPCLIENT=false"
+    state: present
+    insertbefore: BOF
+    backup: yes
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: Add comment to upstream config file
+  ansible.builtin.lineinfile:
+    path: /etc/default/snapclient
+    line: "# Autostart disabled here to support multiple snapclients, see /etc/snapclient.conf.d/"
+    insertbefore: BOF
+    state: present
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: Create snapclient.conf.d directory
+  ansible.builtin.file:
+    path: /etc/snapclient.conf.d
+    state: directory
+    mode: 0755
+
+####
+#### Cleanup stale services and config files
+####
+
+- name: Create list of ids as configured in snapclient_config (target list)
+  ansible.builtin.set_fact:
+    idlistfromconfig: "{{ snapclient_config | selectattr('name') | map(attribute='name') }}"
+    #equivalent to:   "{{ snapclient_config | community.general.json_query('[*].name') }}"
+
+#### cleanup stale systemd services
+# removes all instances in idlistfromservices (current state) but not in idlistfromconfig (target list)
+
+# snapclientservices: list of service names as found in ansible_facts.services named snapclient@ in state running/stopped
+# idlistfromservices: list of ids derived from snapclientservices (current state list)
+# idlistfromconfig: contains list of expected ids (target list)
+
+- name: Populate service facts
+  ansible.builtin.service_facts:
+
+- name: Get list of stopped/running snapclient@ services from ansible_facts.services
+  ansible.builtin.set_fact:
+    snapclientservices: "{{ snapclientservices | default ([]) + [ item.value.name ] }}"
+  loop: "{{ ansible_facts.services | dict2items }}"
+  when: item.value.name is match('snapclient@') and ( item.value.state == 'running' or item.value.state == 'stopped' )
+
+- name: Create list of ids from snapclientservices (current service list)
+  ansible.builtin.set_fact:
+    idlistfromservices: "{{ idlistfromservices | default ([]) + [ item | regex_replace('^snapclient@(.*).service','\\1') ] }}"
+  loop: "{{ snapclientservices }}"
+
+- name: Print list of services that we leave as is
+  ansible.builtin.debug:
+    msg: "snapclient@{{ item }}.service, leaving untouched for now"
+  loop: "{{ idlistfromservices }}"
+  when: item in idlistfromconfig
+
+- name: Remove snapclient@ services that are not configured (any more)
+  ansible.builtin.systemd:
+    name: "snapclient@{{ item }}.service"
+    enabled: no
+    state: stopped
+    daemon_reload: yes
+  loop: "{{ idlistfromservices }}"
+  when: item not in idlistfromconfig
+
+#### cleanup stale config files
+# deletes all files in idlistfromfiles (current state) but not in idlistfromconfig (target list)
+
+# snapclientconfigs: list of full path names to config files as returned by find
+# idlistfromfiles: list of ids derived from snapclientconfigs (current state list)
+# idlistfromconfig: contains list of expected ids (target list)
+
+- name: Get list of config files (only files matching /etc/snapclient.conf.d/*.conf)
+  ansible.builtin.find:
+    paths: /etc/snapclient.conf.d
+    use_regex: yes
+    patterns: ['^.*\.conf']
+    recurse: no
+  register: snapclientconfigs
+
+- name: Create list of ids from snapclientconfigs (current config file list)
+  ansible.builtin.set_fact:
+    idlistfromfiles: "{{ idlistfromfiles | default ([]) + [ item.path | regex_replace('^/etc/snapclient.conf.d/(.*).conf', '\\1') ] }}"
+  loop: "{{ snapclientconfigs.files }}"
+  loop_control:
+    label: "{{ item.path }}"
+
+- name: Print list of files that we leave as is
+  ansible.builtin.debug: 
+    msg: "file for configured {{ item }} found, leaving untouched for now"
+  loop: "{{ idlistfromfiles }}" 
+  when: "item in idlistfromconfig"
+
+- name: Remove files that are not configured (any more)
+  ansible.builtin.file: 
+    path: "/etc/snapclient.conf.d/{{ item }}.conf"
+    state: absent
+  loop: "{{ idlistfromfiles }}"
+  when: "item not in idlistfromconfig"
+
+#### end of cleanup stale config files
+
+####
+#### End of cleanup stale services and config files
+####
+
+- name: Create snapclient config files
+  ansible.builtin.template:
+    src: templates/etc/snapclient.conf.d/snapclient.j2
+    dest: "/etc/snapclient.conf.d/{{ item.name }}.conf"
+    backup: no
+  notify: Restart snapclients
+  loop: "{{ snapclient_config }}"
+
+- name: Copy snapclient@ systemd service file
+  ansible.builtin.template:
+    src: templates/etc/systemd/system/snapclient@.service.j2
+    dest: /etc/systemd/system/snapclient@.service
+    backup: no
+  notify: Restart snapclients
+
+- name: Enable and start snapclient@ services
+  ansible.builtin.systemd:
+    name: "snapclient@{{ item.name }}.service"
     enabled: yes
+    daemon_reload: yes
+    state: started
+    masked: no
+  loop: "{{ snapclient_config }}"
+  loop_control:
+    label: "{{ item.name }}"
+  ignore_errors: "{{ ansible_check_mode }}"
