@@ -1,0 +1,16 @@
+---
+
+- name: Get rfkill bluetooth status
+  ansible.builtin.command:
+    cmd: rfkill list bluetooth -n -o SOFT
+  register: bluetoothstatus
+  changed_when: false
+
+- name: Show bluetoothstatus
+  ansible.builtin.debug:
+    msg: "Bluetooth status is {{ bluetoothstatus.stdout | default ('not evaluated in check mode', true) }}"
+
+- name: block bluetooth if needed
+  ansible.builtin.shell:
+    cmd: rfkill block bluetooth
+  when: bluetoothstatus.stdout != "blocked"

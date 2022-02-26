@@ -1,12 +1,19 @@
 # bluetooth_sink
 
-Installs and configures the 3 components to make the special `bluetooth*` `acable` names actually work. In order to actually implement a bluetooth sink, you will need in addition a properly configured `acable`. These are
+This role should always be executed after `acable`.
+
+If at least one bluetooth connection is defined in `acable_config`, it first enables the bluetooth
+hardware using `rfkill`. Then, it installs and configures the 3 components needed to make the special
+`bluetooth*` `acable` names actually work.
 
 * **bluetoothd**: usually already installed, but configured to be visible forever for new clients (insecure!)
 * **a2dp_agent**: Authenticates all incoming A2DP bluetooth pairing requests (insecure!)
 * **bluealsa**: Reads the A2DP audio stream and makes it available as ALSA source.
 
 Currently, none of these three components has any ansible variables to configure it. 
+
+If no bluetooth connection is defined in `acable_config`, the bluetooth hardware is disabled (`rfkill`), but
+no software is removed.
 
 ## bluetoothd
 
