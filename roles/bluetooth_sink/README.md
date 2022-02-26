@@ -3,7 +3,7 @@
 This role should always be executed after `acable`.
 
 If at least one bluetooth connection is defined in `acable_config`, it first enables the bluetooth
-hardware using (`rfkill`). Then, it installs and configures the 3 components needed to make the special
+hardware using `rfkill`. Then, it installs and configures the 3 components needed to make the special
 `bluetooth*` `acable` names actually work.
 
 * **bluetoothd**: usually already installed, but configured to be visible forever for new clients (insecure!)
