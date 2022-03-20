@@ -69,11 +69,8 @@ esac
 arecaplaypipe() {
         SR="$1"
         echo "Using source $SR"
-        alloutputs stop
 	/usr/bin/arecord -D "$SR" -f "$FORMAT" -d "$DURATION" -t "$FILETYPE" ${BUFFERSIZEPARAM} ${PERIODSIZEPARAM} |\
-	/usr/bin/aplay -D "$SINK" -f "$FORMAT" -d "$DURATION" -t "$FILETYPE" ${BUFFERSIZEPARAM} ${PERIODSIZEPARAM} &
-        alloutputs start
-        wait
+	/usr/bin/aplay -D "$SINK" -f "$FORMAT" -d "$DURATION" -t "$FILETYPE" ${BUFFERSIZEPARAM} ${PERIODSIZEPARAM}
 }
 
 while true; do
@@ -84,7 +81,10 @@ while true; do
                         echo "Waiting for bt device to connect"
 			arecaplaypipe $( wait_for_and_get_first_connected_source )
 			;;
-		*) arecaplaypipe "$SOURCE"
+		*)      alloutputs stop
+		        arecaplaypipe "$SOURCE" &
+		        alloutputs start
+                        wait
                         ;;
 	esac
 	echo "Loop broken, restarting"
