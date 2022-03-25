@@ -30,7 +30,7 @@ A bluetooth agent is a separate process talking to `bluetoothd` (like `bluetooth
 **pairing** (and unpairing etc.) to remote bluetooth devices: It is used to establish both trust and a connection
 with one or more profiles between the local and remote bluetooth devices. It does **not** transport any payload data itself.
 
-The `a2dp-agent` authenticates any incoming connection as long as it is an `A2DP` connection. The [Advanced Audio Distribution Profile](https://en.wikipedia.org/wiki/List_of_Bluetooth_profiles#Advanced_Audio_Distribution_Profile_(A2DP) is the way you should send HiFi-Audio over bluetooth.
+The `a2dp-agent` authenticates any incoming connection as long as it is an `A2DP` connection. The [Advanced Audio Distribution Profile](https://en.wikipedia.org/wiki/List_of_Bluetooth_profiles#Advanced_Audio_Distribution_Profile_(A2DP)) is the way you should send HiFi-Audio over bluetooth.
 
 ## bluealsa
 
