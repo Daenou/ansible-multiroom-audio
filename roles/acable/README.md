@@ -9,6 +9,10 @@ The developers of this setup are kind of aware that all that cabling could proba
 a simple framework that lets you plug your alsa devices together arbitrarily in an understandable way. JACK
 was considered as overkill, as client hosts usually need 0 or 1 cables, server hosts 2 or 3.
 
+This role implements automatic cleanup of acables that are set up on the target host (created by an earlier 
+ansible run or manually) but not in the current configuration. This allows you to easily remove or rename an
+`acable` instance without manual cleanup.
+
 ## acable.sh
 
 This script is run as daemon(s) by the `systemd` units created by the ansible configuration. Let's make an 
