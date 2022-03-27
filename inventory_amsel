@@ -7,7 +7,6 @@ chuchi
 wcdunkel
 badhell
 
-
 # Stream the Hifi-Rec-Out to aloop/snapserver
 [amsel_adc_aloop]
 wohnen
