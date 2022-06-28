@@ -1,0 +1,8 @@
+---
+
+raspotify_name: "Snapcast"
+raspotify_bitrate: "320"
+raspotify_format: "S16"
+raspotify_device_type: "speaker"
+raspotify_backend: "alsa"
+raspotify_device: "dmix:CARD=Loopback,DEV=0"

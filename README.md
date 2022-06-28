@@ -74,13 +74,15 @@ Ansible implementation
   * Loads the `snd_aloop` kernel module for the use of alsa loopback devices
 * mpd
   * A simple mpd config, used as (additional) audio stream to snapserver
+* raspotify
+  * A simple (passwordless) raspotify configuration, used as (additional) audio stream to snapserver. Makes the multiroom system available to the spotify app as a speaker - provided you have a Spotify Premium account. This is a known limitation of [librespot](https://github.com/librespot-org/librespot), the code that actually makes your system talk to the spotify servers.
 
 # Requirements
 Ansible host:
 
 * ansible installed (This playbook was tested on ansible 2.10.8)
-* ansible community.general collection for community.general.modprobe
-* Install with `ansible-galaxy collection install community.general`.
+* ansible galaxy `community.general` collection for `community.general.modprobe`, install with `ansible-galaxy collection install community.general`.
+* ansible galaxy `t2d.raspotify` role as base for the raspotify role here, install with `ansible-galaxy install t2d.raspotify`.
 
 Pi:
 
@@ -92,6 +94,7 @@ Pi:
 
 Your Environment:
 * A mobile phone or a computer to control the snapclient volumes and mpd.
+* A Spotify premium account if you want to use your multiroom system as Spotify speaker.
 * Some pairs of decent loudspeakers (and a `hifiberry` AMP module) or a stereo amp with independent source (i.e. main out) and rec out selectors (and a `hifiberry` DAC/ADC module). 
 
 # Howto
