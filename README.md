@@ -75,7 +75,7 @@ Ansible implementation
 * mpd
   * A simple mpd config, used as (additional) audio stream to snapserver
 * raspotify
-  * A simple (passwordless) raspotify configuration, used as (additional) audio stream to snapserver
+  * A simple (passwordless) raspotify configuration, used as (additional) audio stream to snapserver. Makes your multiroom system available to your spotify app as a speaker, provided you have a Spotify Premium account. This is a known limitation of [librespot](https://github.com/librespot-org/librespot), the code that actually makes your system talk to the spotify servers.
 
 # Requirements
 Ansible host:
@@ -94,6 +94,7 @@ Pi:
 
 Your Environment:
 * A mobile phone or a computer to control the snapclient volumes and mpd.
+* A Spotify premium account if you want to use your multiroom system as audio sink for Spotify.
 * Some pairs of decent loudspeakers (and a `hifiberry` AMP module) or a stereo amp with independent source (i.e. main out) and rec out selectors (and a `hifiberry` DAC/ADC module). 
 
 # Howto
