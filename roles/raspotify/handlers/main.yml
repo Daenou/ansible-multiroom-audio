@@ -1,0 +1,8 @@
+---
+
+- name: Restart raspotify
+  ansible.builtin.systemd:
+    name: "raspotify.service"
+    daemon_reload: yes
+    state: restarted
+  ignore_errors: "{{ ansible_check_mode }}"
