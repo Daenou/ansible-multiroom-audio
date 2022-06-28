@@ -74,13 +74,15 @@ Ansible implementation
   * Loads the `snd_aloop` kernel module for the use of alsa loopback devices
 * mpd
   * A simple mpd config, used as (additional) audio stream to snapserver
+* raspotify
+  * A simple (passwordless) raspotify configuration, used as (additional) audio stream to snapserver
 
 # Requirements
 Ansible host:
 
 * ansible installed (This playbook was tested on ansible 2.10.8)
-* ansible community.general collection for community.general.modprobe
-* Install with `ansible-galaxy collection install community.general`.
+* ansible galaxy `community.general` collection for `community.general.modprobe`, install with `ansible-galaxy collection install community.general`.
+* ansible galaxy `t2d.raspotify` role as base for the raspotify role here, install with `ansible-galaxy install t2d.raspotify`.
 
 Pi:
 
