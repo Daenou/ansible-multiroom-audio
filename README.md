@@ -94,7 +94,7 @@ Pi:
 
 Your Environment:
 * A mobile phone or a computer to control the snapclient volumes and mpd.
-* A Spotify premium account if you want to use your multiroom system as audio sink for Spotify.
+* A Spotify premium account if you want to use your multiroom system as Spotify speaker.
 * Some pairs of decent loudspeakers (and a `hifiberry` AMP module) or a stereo amp with independent source (i.e. main out) and rec out selectors (and a `hifiberry` DAC/ADC module). 
 
 # Howto
