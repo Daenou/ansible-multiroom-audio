@@ -5,11 +5,36 @@
     msg: "ERROR: os_family of host {{ inventory_hostname }} is not Debian"
   when: ansible_facts['os_family'] != "Debian"
 
-- name: Install bluealsa package
+- block:
+  - name: Add "bookworm" testing release
+    ansible.builtin.apt_repository: 
+      repo: deb http://archive.raspbian.org/raspbian bookworm main contrib non-free rpi
+      state: present
+
+  - name: Pin "bookworm" to very low priority
+    ansible.builtin.copy:
+      src: files/etc/apt/preferences.d/preferbullseye.pref
+      dest: /etc/apt/preferences.d/preferbullseye.pref
+
+  - name: Install bluealsa from bookworm
+    ansible.builtin.apt:
+      name: bluez-alsa-utils
+      state: latest
+      update_cache: yes
+
+  when: ansible_facts['distribution_release'] == "bullseye"
+
+- name: Install bluealsa package (for older releases)
   ansible.builtin.apt:
     name: bluealsa
     state: latest
     update_cache: yes
+  when: ansible_facts['distribution_release'] != "bullseye"
+
+- name: Exit play for debug reasons
+  ansible.builtin.fail:
+    msg: "EXIT EXIT"
+
 
 - name: Create systemd override directory for bluealsa
   ansible.builtin.file:
