@@ -6,9 +6,9 @@ This role configures the onboard wlan interface to act as access point. This ena
 
 * The onboard wlan interface is renamed to `ap0`
 * `ap0` is configured to have a static IPv4 address
-* `dhcpcd` is configured to release control of `ap0` to free it up for `hostapd` management
-* `hostapd` is used to create a WPA2 hotspot.
-* `dnsmasq` is used as DHCP-Server for the WLAN clients
+* `dhcpcd` is configured to release control of `ap0` to free it up for `hostapd` management. All other network interfaces remain unser the control of `dhcpcd`
+* `hostapd` is used to create a WPA2 hotspot on `ap0`
+* `dnsmasq` is used as DHCP-Server on `ap0` for the WLAN clients
 
 Ansible variables available are
 
