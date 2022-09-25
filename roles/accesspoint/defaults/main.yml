@@ -1,0 +1,10 @@
+---
+accesspoint_ap0_address_v4: "172.26.0.1"
+accesspoint_ap0_mask_v4: "255.255.255.0"
+accesspoint_dhcp_range_v4: "172.26.0.10,172.26.0.199"
+
+accesspoint_channel: "11"
+accesspoint_ieee80211d: "1"
+accesspoint_country_code: "CH"
+accesspoint_ssid: "{{ ansible_hostname }}"
+# accesspoint_wpa_passphrase is asked interactively at the beginning

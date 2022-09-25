@@ -1,0 +1,6 @@
+[Match]
+Driver=brcmfmac
+Type=wlan
+
+[Link]
+Name=ap0
