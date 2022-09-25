@@ -1,7 +1,12 @@
-- name: Run base to configure dmix/dsnoop defaults
+
+- name: Do everything
   hosts: camper
   become: true
+  vars_prompt:
+    - name: accesspoint_wpa_passphrase
+      prompt: "Enter the WPA passphrase to be set"
   roles: 
     - base
     - acable
     - bluetooth_sink
+    - accesspoint
