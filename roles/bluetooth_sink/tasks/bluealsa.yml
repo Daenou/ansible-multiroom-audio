@@ -5,29 +5,68 @@
     msg: "ERROR: os_family of host {{ inventory_hostname }} is not Debian"
   when: ansible_facts['os_family'] != "Debian"
 
-- name: Install bluealsa package
-  ansible.builtin.apt:
-    name: bluealsa
-    state: latest
-    update_cache: yes
+- block:
+  - name: Add "bookworm" testing release
+    ansible.builtin.apt_repository: 
+      repo: deb http://archive.raspbian.org/raspbian bookworm main contrib non-free rpi
+      state: present
 
-- name: Create systemd override directory for bluealsa
-  ansible.builtin.file:
-    path: /etc/systemd/system/bluealsa.service.d
-    state: directory
-    mode: '0755'
+  - name: Pin "bookworm" to very low priority
+    ansible.builtin.copy:
+      src: files/etc/apt/preferences.d/preferbullseye.pref
+      dest: /etc/apt/preferences.d/preferbullseye.pref
 
-- name: Copy bluealsa systemd override file
-  ansible.builtin.copy:
-    src: files/etc/systemd/system/bluealsa.service.d/override.conf
-    dest: /etc/systemd/system/bluealsa.service.d/override.conf
-    backup: no
-  notify: "Restart bluealsa"
+  - name: Install bluez-alsa from bookworm
+    ansible.builtin.apt:
+      name: bluez-alsa-utils
+      state: latest
+      update_cache: yes
 
-- name: Start and enable bluealsa.service
-  ansible.builtin.systemd:
-    name: "bluealsa.service"
-    enabled: yes
-    daemon_reload: yes
-    state: started
-  ignore_errors: "{{ ansible_check_mode }}"
+  - name: Configure bluez-alsa in /etc/default
+    ansible.builtin.lineinfile:
+      path: /etc/default/bluez-alsa
+      regexp: "^[ #]*OPTIONS *="
+      line: "OPTIONS=\"-p a2dp-sink --a2dp-volume --a2dp-force-audio-cd\""
+      state: present
+      backup: no
+    notify: "Restart bluez-alsa"
+
+  - name: Start and enable bluez-alsa.service
+    ansible.builtin.systemd:
+      name: "bluez-alsa.service"
+      enabled: yes
+      daemon_reload: yes
+      state: started
+    ignore_errors: "{{ ansible_check_mode }}"
+
+  when: ansible_facts['distribution_release'] == "bullseye"
+
+- block:
+  - name: Install bluealsa package (for older releases)
+    ansible.builtin.apt:
+      name: bluealsa
+      state: latest
+      update_cache: yes
+
+  - name: Create systemd override directory for bluealsa
+    ansible.builtin.file:
+      path: /etc/systemd/system/bluealsa.service.d
+      state: directory
+      mode: '0755'
+
+  - name: Copy bluealsa systemd override file
+    ansible.builtin.copy:
+      src: files/etc/systemd/system/bluealsa.service.d/override.conf
+      dest: /etc/systemd/system/bluealsa.service.d/override.conf
+      backup: no
+    notify: "Restart bluealsa"
+
+  - name: Start and enable bluealsa.service
+    ansible.builtin.systemd:
+      name: "bluealsa.service"
+      enabled: yes
+      daemon_reload: yes
+      state: started
+    ignore_errors: "{{ ansible_check_mode }}"
+
+  when: ansible_facts['distribution_release'] != "bullseye"

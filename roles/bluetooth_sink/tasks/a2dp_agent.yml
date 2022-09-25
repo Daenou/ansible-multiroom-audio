@@ -10,7 +10,7 @@
     name:
       - python2
       - python-dbus
-      - bluealsa
+      # bluealsa/bluez-alsa handled in bluealsa task
     state: latest
     update_cache: yes
   when: ansible_facts['python']['version']['major'] == 2
@@ -21,7 +21,7 @@
       - python3
       - python3-gi
       - python3-dbus
-      - bluealsa
+      # bluealsa/bluez-alsa handled in bluealsa task
     state: latest
     update_cache: yes
   when: ansible_facts['python']['version']['major'] == 3

@@ -5,6 +5,9 @@
 
 - name: Include bluealsa
   ansible.builtin.import_tasks: bluealsa.yml
+
+- name: Include bluez-alsa
+  ansible.builtin.import_tasks: bluez-alsa.yml
  
 - name: Include a2dp_agent
   ansible.builtin.import_tasks: a2dp_agent.yml

@@ -1,0 +1,7 @@
+- name: Run base to configure dmix/dsnoop defaults
+  hosts: camper
+  become: true
+  roles: 
+    - base
+    - acable
+    - bluetooth_sink
