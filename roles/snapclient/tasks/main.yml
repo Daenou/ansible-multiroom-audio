@@ -72,12 +72,12 @@
 - name: Create list of ids from snapclientservices (current service list)
   ansible.builtin.set_fact:
     idlistfromservices: "{{ idlistfromservices | default ([]) + [ item | regex_replace('^snapclient@(.*).service','\\1') ] }}"
-  loop: "{{ snapclientservices }}"
+  loop: "{{ snapclientservices | default ([]) }}"
 
 - name: Print list of services that we leave as is
   ansible.builtin.debug:
     msg: "snapclient@{{ item }}.service, leaving untouched for now"
-  loop: "{{ idlistfromservices }}"
+  loop: "{{ idlistfromservices | default ([]) }}"
   when: item in idlistfromconfig
 
 - name: Remove snapclient@ services that are not configured (any more)
@@ -86,7 +86,7 @@
     enabled: no
     state: stopped
     daemon_reload: yes
-  loop: "{{ idlistfromservices }}"
+  loop: "{{ idlistfromservices | default ([]) }}"
   when: item not in idlistfromconfig
 
 #### cleanup stale config files
@@ -114,14 +114,14 @@
 - name: Print list of files that we leave as is
   ansible.builtin.debug: 
     msg: "file for configured {{ item }} found, leaving untouched for now"
-  loop: "{{ idlistfromfiles }}" 
+  loop: "{{ idlistfromfiles | default ([]) }}" 
   when: "item in idlistfromconfig"
 
 - name: Remove files that are not configured (any more)
   ansible.builtin.file: 
     path: "/etc/snapclient.conf.d/{{ item }}.conf"
     state: absent
-  loop: "{{ idlistfromfiles }}"
+  loop: "{{ idlistfromfiles | default ([]) }}"
   when: "item not in idlistfromconfig"
 
 #### end of cleanup stale config files

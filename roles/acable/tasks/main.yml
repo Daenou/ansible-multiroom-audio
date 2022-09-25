@@ -28,22 +28,39 @@
 #### Cleanup stale services and config files
 ####
 
+  # idlistfromconfig: list of ids as expected from ansible vars (target state list), used for both checks
+
+- name: initialize idlistfromconfig to empty list
+  ansible.builtin.set_fact:
+    idlistfromconfig: []
+
 - name: Create list of ids as configured in acable_config (target list)
   ansible.builtin.set_fact:
-    idlistfromconfig: "{{ acable_config | selectattr('name') | map(attribute='name') }}"
+    idlistfromconfig: "{{ acable_config | selectattr('name') | map(attribute='name') | default ([]) }}"
+
+  # acableservices: list of service names as found in ansible_facts.services
+  # idlistfromservices: list of ids derived from acableservices (current state list)
 
 - name: Populate service facts
   ansible.builtin.service_facts:
 
+- name: initialize acableservices to empty list
+  ansible.builtin.set_fact:
+    acableservices: []
+
 - name: Get list of stopped/running acable@ services from ansible_facts.services
   ansible.builtin.set_fact:
-    acableservices: "{{ acableservices | default ([]) + [ item.value.name ] }}"
+    acableservices: "{{ acableservices + [ item.value.name ] }}"
   loop: "{{ ansible_facts.services | dict2items }}"
   when: item.value.name is match('acable@') and ( item.value.state == 'running' or item.value.state == 'stopped' )
 
+- name: initialize current service list
+  ansible.builtin.set_fact:
+    idlistfromservices: []
+
 - name: Create list of ids from acableservices (current service list)
   ansible.builtin.set_fact:
-    idlistfromservices: "{{ idlistfromservices | default ([]) + [ item | regex_replace('^acable@(.*).service','\\1') ] }}"
+    idlistfromservices: "{{ idlistfromservices + [ item | regex_replace('^acable@(.*).service','\\1') ] }}"
   loop: "{{ acableservices }}"
 
 - name: Print list of services that we leave as is
@@ -61,6 +78,9 @@
   loop: "{{ idlistfromservices }}"
   when: item not in idlistfromconfig
 
+  # acableconfigs  : raw list of config files
+  # idlistfromfiles: cleaned up list of config file ids
+
 - name: Get list of config files (only files matching /etc/acable.conf.d/*.conf)
   ansible.builtin.find:
     paths: /etc/acable.conf.d
@@ -69,9 +89,13 @@
     recurse: no
   register: acableconfigs
 
+- name: initialize idlistfromfiles to empty list
+  ansible.builtin.set_fact:
+    idlistfromfiles: []
+
 - name: Create list of ids from snapclientconfigs (current config file list)
   ansible.builtin.set_fact:
-    idlistfromfiles: "{{ idlistfromfiles | default ([]) + [ item.path | regex_replace('^/etc/acable.conf.d/(.*).conf', '\\1') ] }}"
+    idlistfromfiles: "{{ idlistfromfiles + [ item.path | regex_replace('^/etc/acable.conf.d/(.*).conf', '\\1') ] }}"
   loop: "{{ acableconfigs.files }}"
   loop_control:
     label: "{{ item.path }}"

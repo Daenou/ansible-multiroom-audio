@@ -4,6 +4,10 @@
   ansible.builtin.set_fact:
     idlistfromconfig: "{{ acable_config | selectattr('name') | map(attribute='name') }}"
 
+- name: Set no bluetooth as default
+  ansible.builtin.set_fact:
+    hasbluetooth: false
+
 - name: Is there at least one bluetooth connection configured?
   ansible.builtin.set_fact:
     hasbluetooth: true
@@ -43,5 +47,4 @@
     ansible.builtin.shell:
       cmd: rfkill block bluetooth
     when: bluetoothstatus.stdout != "blocked"
-
   when: not hasbluetooth
