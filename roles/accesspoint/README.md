@@ -5,13 +5,14 @@ This role configures the onboard wlan interface to act as access point. This ena
 **WARNING:** This disables the use of the onboard wlan interface to connect as client to another access point. If you are not connected to the raspi using Ethernet (or a 2nd WLAN adapter), you will lose network connectivity.
 
 * The onboard wlan interface is renamed to `ap0`
-* `dhcpcd` is prevented from using `ap0` as this would prevent `hostapd` from managing the interface properly
+* `ap0` is configured to have a static IPv4 address
+* `dhcpcd` is configured to release control of `ap0` to free it up for `hostapd` management
 * `hostapd` is used to create a WPA2 hotspot.
-* `dnsmasq` is used as DHCP-Server for the WLAN clients.
+* `dnsmasq` is used as DHCP-Server for the WLAN clients
 
 Ansible variables available are
 
-* `accesspoint_ap0_address_v4`: The static IP of your new access point, e.g. `192.168.250.1`
+* `accesspoint_ap0_address_v4`: The static IP of `ap0`, e.g. `192.168.250.1`
 * `accesspoint_ap0_mask_v4`: The network mask, e.g. `255.255.255.0`
 * `accesspoint_dhcp_range_v4`: The dhcp range handed out to WLAN clients, must be part of the network defined by the address/mask, e.g. `192.168.250.10,192.168.250.199`
 * `accesspoint_channel`: The WLAN channel to be used by the WLAN access point, eg `11`
