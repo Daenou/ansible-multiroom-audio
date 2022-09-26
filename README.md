@@ -76,6 +76,8 @@ Ansible implementation
   * A simple mpd config, used as (additional) audio stream to snapserver
 * raspotify
   * A simple (passwordless) raspotify configuration, used as (additional) audio stream to snapserver. Makes the multiroom system available to the spotify app as a speaker - provided you have a Spotify Premium account. This is a known limitation of [librespot](https://github.com/librespot-org/librespot), the code that actually makes your system talk to the spotify servers.
+* accesspoint
+  * converts the built in WLAN adapter to a WLAN hotspot. Useful for small / offline configurations.
 
 # Requirements
 Ansible host:
