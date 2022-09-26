@@ -88,10 +88,10 @@ Ansible host:
 
 Pi:
 
-* bullseye image with buster repo added (bug [#18](https://github.com/Daenou/ansible-multiroom-audio/issues/18)).
-* passwordless ssh login from ansible host to hostname in the inventory file. If you use passwordless login to the user `pi` (and not `root`) append `-u pi` to the command line.
+* Bullseye image.
 * Strongly suggested: The Pis can reach each other using a DNS-Name.
-* audio HAT is working and enabled in `/boot/config.txt`. You should see it with `aplay -L`
+* Passwordless ssh login from ansible host to hostname in the inventory file. If you use passwordless login to the user `pi` (and not `root`) append `-u pi` to the command line.
+* Audio HAT is working and enabled in `/boot/config.txt`. You should see it with `aplay -L`
 * Either python2 or python3 for the bluetooth_sink role (a2dp_agent) 
 
 Your Environment:
