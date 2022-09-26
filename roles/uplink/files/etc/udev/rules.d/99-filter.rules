@@ -1,0 +1,2 @@
+ACTION=="add", SUBSYSTEM=="net", \
+    RUN+="/usr/bin/bash /usr/local/bin/uplink-filter.sh '$env{ACTION}' '$name'" 
