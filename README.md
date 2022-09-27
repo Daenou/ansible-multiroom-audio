@@ -8,10 +8,11 @@ The roles support setting up an audio multiroom system from a collection of Rasp
 * use every Pi as bluetooth sink to stream audio e.g. from your mobile
 * use the analog input to stream audio from e.g. the rec out of your hifi amp
 * use the USB ports to stream audio from e.g. a turntable with a builtin USB-Soundcard
+* use the Pi as standalone music center controlled via WLAN and use it as access point when you add connectivity over a 2nd network interface
 
 ## Architecture
 
-### Hardware Limitations
+### Audio Hardware Limitations
 
 Hardware sources and sinks need to be **driven individually**, so that we can receive audio from the analog input, digitize it, stream it synchronously 
 over the network to (all other clients and) the local client that sends the audio to the analog output. This will have some delay,  but exactly the same delay 
