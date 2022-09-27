@@ -86,9 +86,9 @@ then
 else
   # all other interfaces are considered to be uplink interfaces
   #
-  # for information only: check if this is the interface having the most attractive default route right now.
-  # Need to apply rules even if this interface is not the default route (right now), as this can change later.
-  # E.g. if the currently active interface is disconnected.
+  # for information only: check if this is the interface having the most attractive default route right now
+  # need to apply rules even when this interface is not the default route right now, it is
+  # possible that this changes later 
 
   ACTIVEUPLINK=$( ip route get 1.1.1.1 | sed -ne "s/^.* dev \([^ ]*\) .*$/\1/p" )
 
