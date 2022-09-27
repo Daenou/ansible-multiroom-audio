@@ -1,0 +1,56 @@
+---
+
+- name: Exit play if os_family is not Debian
+  ansible.builtin.fail:
+    msg: "ERROR: os_family of host {{ inventory_hostname }} is not Debian"
+  when: ansible_facts['os_family'] != "Debian"
+
+- name: Use firewalld
+  ansible.builtin.apt:
+    name: firewalld
+    state: latest
+    update_cache: yes
+
+- name: Define localwlan zone if not defined yet.
+  ansible.builtin.copy:
+    src: files/etc/firewalld/zones/localwlan.xml
+    dest: /etc/firewalld/zones/localwlan.xml
+    force: no
+  register: resultwlan
+
+- name: Define uplink zone if not defined yet.
+  ansible.builtin.copy:
+    src: files/etc/firewalld/zones/uplink.xml
+    dest: /etc/firewalld/zones/uplink.xml
+    force: no
+  register: resultuplink
+
+- name: Restart firewalld now if localwlan or uplink zone was not known before
+  ansible.builtin.systemd:
+    name: "firewalld.service"
+    daemon_reload: yes
+    state: restarted
+  when: resultwlan['changed'] or resultuplink['changed'] 
+
+- name: Create firewall script
+  ansible.builtin.copy:
+    src: files/usr/local/bin/uplink-filter.sh
+    dest: /usr/local/bin/uplink-filter.sh
+    backup: no
+    mode: "755"
+  register: resultscript
+
+- name: Create udev rule to call firewall script when interface comes up
+  ansible.builtin.copy:
+    src: files/etc/udev/rules.d/99-filter.rules
+    dest: /etc/udev/rules.d/99-filter.rules
+    mode: "644"
+    backup: no
+  register: resultudev
+
+- name: Trigger udev when needed
+  ansible.builtin.systemd:
+    name: "systemd-udev-trigger.service"
+    daemon_reload: yes
+    state: restarted
+  when: resultscript['changed'] or resultudev['changed'] 

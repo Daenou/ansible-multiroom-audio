@@ -8,10 +8,11 @@ The roles support setting up an audio multiroom system from a collection of Rasp
 * use every Pi as bluetooth sink to stream audio e.g. from your mobile
 * use the analog input to stream audio from e.g. the rec out of your hifi amp
 * use the USB ports to stream audio from e.g. a turntable with a builtin USB-Soundcard
+* use the Pi as standalone music center controlled via WLAN and use it as access point when you add connectivity over a 2nd network interface
 
 ## Architecture
 
-### Hardware Limitations
+### Audio Hardware Limitations
 
 Hardware sources and sinks need to be **driven individually**, so that we can receive audio from the analog input, digitize it, stream it synchronously 
 over the network to (all other clients and) the local client that sends the audio to the analog output. This will have some delay,  but exactly the same delay 
@@ -77,7 +78,10 @@ Ansible implementation
 * raspotify
   * A simple (passwordless) raspotify configuration, used as (additional) audio stream to snapserver. Makes the multiroom system available to the spotify app as a speaker - provided you have a Spotify Premium account. This is a known limitation of [librespot](https://github.com/librespot-org/librespot), the code that actually makes your system talk to the spotify servers.
 * accesspoint
-  * converts the built in WLAN adapter to a WLAN hotspot. Useful for small / offline configurations.
+  * converts the built in WLAN adapter to a WLAN hotspot. Has no internet connectivity, but enough to control e.g. the volume via a mobile mpd client app. Useful for offline use.
+* uplink
+  * needs the `accesspoint` role to be executed before
+  * adds simple `firewalld` and `udev` based management of all other network interfaces (on top of the Raspbian default `dhcpcd`). As soon as e.g. the builtin ethernet or an additional WLAN USB dongle has internet connectivity, the `accesspoint` clients will have too.
 
 # Requirements
 Ansible host:
@@ -88,10 +92,10 @@ Ansible host:
 
 Pi:
 
-* bullseye image with buster repo added (bug [#18](https://github.com/Daenou/ansible-multiroom-audio/issues/18)).
-* passwordless ssh login from ansible host to hostname in the inventory file. If you use passwordless login to the user `pi` (and not `root`) append `-u pi` to the command line.
+* Bullseye image.
 * Strongly suggested: The Pis can reach each other using a DNS-Name.
-* audio HAT is working and enabled in `/boot/config.txt`. You should see it with `aplay -L`
+* Passwordless ssh login from ansible host to hostname in the inventory file. If you use passwordless login to the user `pi` (and not `root`) append `-u pi` to the command line.
+* Audio HAT is working and enabled in `/boot/config.txt`. You should see it with `aplay -L`
 * Either python2 or python3 for the bluetooth_sink role (a2dp_agent) 
 
 Your Environment:
