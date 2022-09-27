@@ -89,6 +89,7 @@ Ansible host:
 * ansible installed (This playbook was tested on ansible 2.10.8)
 * ansible galaxy `community.general` collection for `community.general.modprobe`, install with `ansible-galaxy collection install community.general`.
 * ansible galaxy `t2d.raspotify` role as base for the raspotify role here, install with `ansible-galaxy install t2d.raspotify`.
+* ansible galaxy `ansible.posix` for the `usbmount` role.
 
 Pi:
 

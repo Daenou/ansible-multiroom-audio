@@ -1,0 +1,48 @@
+---
+
+- name: Exit play if os_family is not Debian
+  ansible.builtin.fail:
+    msg: "ERROR: os_family of host {{ inventory_hostname }} is not Debian"
+  when: ansible_facts['os_family'] != "Debian"
+
+- name: Check if package already installed
+  ansible.builtin.command:
+    cmd: dpkg-query -s usbmount
+  register: installstatus
+  ignore_errors: yes
+  changed_when: false
+
+- block:
+
+  - name: Copy usbmount.deb
+    ansible.builtin.copy:
+      src: var/local/usbmount_0.0.24_all.deb
+      dest: /var/local/usbmount_0.0.24_all.deb
+
+  - name: Install usbmount.deb
+    ansible.builtin.apt:
+      deb: /var/local/usbmount_0.0.24_all.deb
+
+  when: installstatus['rc'] != "0"
+
+- name: Patch usbmount script
+  ansible.posix.patch:
+    src: files/usbmount.patch
+    dest: /usr/share/usbmount/usbmount
+
+- name: Be verbose
+  ansible.builtin.lineinfile:
+    path: /etc/usbmount/usbmount.conf
+    regexp: "^ *VERBOSE="
+    line: "VERBOSE=yes"
+    state: present
+    backup: no
+
+- name: Mount read only
+  ansible.builtin.lineinfile:
+    path: /etc/usbmount/usbmount.conf
+    regexp: "^ *MOUNTOPTIONS="
+    line: "MOUNTOPTIONS=\"ro,noexec,nodev\""
+    state: present
+    backup: no
+
