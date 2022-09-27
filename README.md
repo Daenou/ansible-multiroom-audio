@@ -77,7 +77,10 @@ Ansible implementation
 * raspotify
   * A simple (passwordless) raspotify configuration, used as (additional) audio stream to snapserver. Makes the multiroom system available to the spotify app as a speaker - provided you have a Spotify Premium account. This is a known limitation of [librespot](https://github.com/librespot-org/librespot), the code that actually makes your system talk to the spotify servers.
 * accesspoint
-  * converts the built in WLAN adapter to a WLAN hotspot. Useful for small / offline configurations.
+  * converts the built in WLAN adapter to a WLAN hotspot. Has no internet connectivity, but enough to control e.g. the volume via a mobile mpd client app. Useful for offline use.
+* uplink
+  * needs the `accesspoint` role to be executed before
+  * adds simple `firewalld` and `udev` based management of all other network interfaces (on top of the Raspbian default `dhcpcd`). As soon as e.g. the builtin ethernet or an additional WLAN USB dongle has internet connectivity, the `accesspoint` clients will have too.
 
 # Requirements
 Ansible host:
