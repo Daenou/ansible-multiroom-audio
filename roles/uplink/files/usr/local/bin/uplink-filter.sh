@@ -24,7 +24,7 @@ firewall_do () {
   $LOGGER $( firewall-cmd $* ) 
 }
 
-serialize () {
+list2lines () {
 for i in $*
 do
   echo $i
@@ -72,9 +72,19 @@ then
   # Enable local services
   for localservice in dhcp dns ssh
   do
-    if ! serialize $( firewall-cmd --zone localwlan --list-services ) | grep -w $localservice > /dev/null 2>&1
+    if ! list2lines $( firewall-cmd --zone localwlan --list-services ) | grep -w $localservice > /dev/null 2>&1
     then
       firewall_do --zone localwlan --add-service $localservice
+    fi
+  done
+
+  # Enable local tcp ports
+  # 6600: MPD control port
+  for port in 6600
+  do
+    if ! list2lines $( firewall-cmd --zone localwlan --list-ports ) | grep -w $port > /dev/null 2>&1
+    then
+      firewall_do --zone localwlan --add-port=$port/tcp
     fi
   done
 
@@ -113,7 +123,7 @@ else
   # Enable local services
   for localservice in ssh
   do
-    if ! serialize $( firewall-cmd --zone uplink --list-services ) | grep -w $localservice > /dev/null 2>&1
+    if ! list2lines $( firewall-cmd --zone uplink --list-services ) | grep -w $localservice > /dev/null 2>&1
     then
       firewall_do --zone uplink --add-service $localservice
     fi
