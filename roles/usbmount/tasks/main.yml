@@ -45,4 +45,3 @@
     line: "MOUNTOPTIONS=\"ro,noexec,nodev\""
     state: present
     backup: no
-
