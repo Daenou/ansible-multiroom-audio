@@ -8,11 +8,18 @@ Firewall concept in a nutshell:
 * `firewalld`, two zones
   * **localwlan**: This is where the clients connected to the access point are
   * **uplink**: This is where the uplink connection goes to
-* Implementation in a shell script with lots of `firewall-cmd` commands that is triggered by udev when interface comes up
-  * This enables mapping the uplink zone to an interface that was not present at boot (e.g. USB dongle).
-  * This enables reconfiguring the firewall at any time
-* No permanent changes to the rules except where this cannot be done otherwise:
-  * Enabling logging of all dropped packages
-  * New zones
-* All traffic from `localwlan` is allowed and masqueraded before being sent out on `uplink`.
+  * All traffic from `localwlan` is allowed and masqueraded before being sent out on `uplink`.
+* Implementation in `/usr/local/bin/uplink-filter.sh` with some `firewall-cmd` commands. It is triggered by `udev` for every interface that comes up.
+* All dropped packets are logged. Log rotating has proven to be efficient enough, never had an issue.
+* `lo`: Nothing else happens
+* `ap0`: mapped to zone `localwlan`, zone is configured
+* all other interface names (including `eth0`): mapped to zone `uplink`, zone is configured (incoming `ssh` only). 
+* Changes to `firewalld` are not persistent except where persistent is the only option: packet logging and zones.
 * **WARNING** This is my first `firewalld` configuration, I am sure I could tighten it up even more.
+
+## Hints for bootstrapping a WLAN uplink
+
+* As the internal WLAN adapter is used for `ap0`, you will need a USB-WLAN Dongle. Be warned: USB WLAN dongles that have stable linux kernel (module) support are **not easy to find**. They tend to keep the same product name even when the producer switches to a new chipset. Oh my.
+* Please connect the usb dongle to the raspi in a way that the antenna is **about a meter away** of it to prevent too much interference with the onboard `ap0`
+* I have not experimented yet with the auto channel options of hostapd, so the channel defined by your wlan uplink **might be the same or very close to the one of hostapd**. You will have to edit `/etc/hostapd/hostapd.conf` to set the `channel` to a more appropriate value. I usually use [Farproc Wifi Analyzer](https://play.google.com/store/apps/details?id=com.farproc.wifi.analyzer) on my Android mobile to check the situation on site. iOS does not expose the needed information to application programmers, so there is no similar app for iPhones.
+* as all interfaces (except `ap0`) are still under control of `dhcpcd` as in standard Raspbian bullseye, you **configure the uplink SSID and password as usual** in `/etc/wpa_supplicant/wpa_supplicant.conf`. In order to bootstrap the uplink, you can either connect to the raspi using the WLAN on `ap0`, edit the file and then `systemctl restart dhcpcd` (or replug the USB dongle). Or you remove the SD-card from the raspi and write a `wpa_supplicant.conf` file to the boot partition. This file will be moved to `/etc/wpa_supplicant/wpa_supplicant.conf` upon next boot.

@@ -9,12 +9,9 @@ LOGGER="/usr/bin/logger $0 ($ACTION $IFACE):"
 
 if [[ $IFACE == "lo" ]] 
 then
-  $LOGGER "Doing nothing"
+  $LOGGER "Doing nothing for loopback interface"
   exit 0
 fi
-
-UPLINKUSB=""
-UPSTREAMIFS="eth0 ${UPLINKUSB}"
 
 # Expects an interface called ap0
 # Expects a zone called localwlan
@@ -37,8 +34,9 @@ done
 ##################################################
 # Status
 
-if [[ "$ACTION" == "status" ]]
+if [[ "$ACTION" != "add" ]]
 then
+  $LOGGER "show status"
   firewall_do --get-default-zone
   firewall_do --get-zones
   firewall_do --get-active-zones
@@ -85,15 +83,27 @@ then
   then
     firewall_do --zone localwlan --add-forward
   fi
-fi
+else
+  # all other interfaces are considered to be uplink interfaces
+  #
+  # for information only: check if this is the interface having the most attractive default route right now.
+  # Need to apply rules even if this interface is not the default route (right now), as this can change later.
+  # E.g. if the currently active interface is disconnected.
 
-##################################################
-# For uplink interface (if any, assume eth0 for now)
+  ACTIVEUPLINK=$( ip route get 1.1.1.1 | sed -ne "s/^.* dev \([^ ]*\) .*$/\1/p" )
 
-UPLINKIFACE=eth0
+  if [[ -n "$ACTIVEUPLINK" ]]
+  then
+    if [[ "$ACTIVEUPLINK" == "$IFACE" ]]
+    then
+      $LOGGER "$IFACE is the currently active uplink"
+    else
+      $LOGGER "$IFACE is different from the currently active uplink $ACTIVEUPLINK"
+    fi
+  else
+    $LOGGER "no interface to reach 1.1.1.1, offline?"
+  fi
 
-if [[ "$IFACE" == "$UPLINKIFACE" ]]
-then
   # Bind uplink zone to uplink interface
   if [[ $( firewall-cmd --get-zone-of-interface=$IFACE ) != "uplink" ]]
   then
