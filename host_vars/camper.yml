@@ -1,3 +1,9 @@
 acable_bluetooth_dac:
   - name: bluealsa-workaround-cable
     sink: dmix:CARD=sndrpihifiberry,DEV=0
+
+mpd_music_directory: "/var/lib/mpd/music"
+mpd_alsa_sink_name: "To Hifiberry"
+mpd_alsa_sink_device: "dmix:CARD=sndrpihifiberry,DEV=0"
+mpd_alsa_sink_format: "44100:16:2"
+mpd_max_output_buffer_size: "32768"
