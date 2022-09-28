@@ -18,9 +18,9 @@ With this entry, the normal boot will attempt to mount the device at `/media/mys
 
 * if `usbmount` is already active, it might interfere with your manual actions. You can disable `usbmount` by setting `ENABLED=0` in `/etc/usbmount/usbmount.conf`
 * find out the correct UUID: plug in your device and try e.g. `ls -l /dev/disk/by-uuid/`
-* create the mount point `mkdir /media/mysound`
+* create the mount point: `mkdir /media/mysound`
 * create the entry in `/etc/fstab` and verify with `mount /media/mysound` that the entry works. `ext4` is probably not the filesystem on your usb device,  but **`ro,nofail 0 0` are mandatory** to keep user experience consistent.
-* test it (reboot with disk connected, reboot without, connect later).
+* test it: reboot with disk connected, reboot without, connect later.
 
 ## Implementation details
 
