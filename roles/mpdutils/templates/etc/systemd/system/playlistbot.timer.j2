@@ -1,0 +1,11 @@
+[Unit]
+Description=Regularly triggers playlistbot
+Requires=playlistbot.service
+
+[Timer]
+Unit=playlistbot.service
+OnCalendar={{ mpdutils_playlistbot_OnCalendar }}
+AccuracySec=30s
+
+[Install]
+WantedBy=timers.target

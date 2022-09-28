@@ -1,0 +1,6 @@
+[Unit]
+Description=Manipulate mpd playlists
+
+[Service]
+Type=oneshot
+ExecStart=sudo -u nobody /usr/local/bin/playlistbot.sh {{ mpdutils_playlistbot_options }}
