@@ -1,7 +1,13 @@
 ---
 
 mpd_music_directory: "/var/lib/mpd/music"
+mpd_max_output_buffer_size: "32768"
+
 mpd_alsa_sink_name: "To Snapserver"
 mpd_alsa_sink_device: "dmix:CARD=Loopback,DEV=0"
 mpd_alsa_sink_format: "44100:16:2"
-mpd_max_output_buffer_size: "32768"
+mpd_alsa_sink_mixer_type: "software"
+# the following two settings are only used by template when
+# mpd_alsa_sink_mixer_type is "hardware"
+mpd_alsa_sink_mixer_device: "hw:CARD=sndrpihifiberry"
+mpd_alsa_sink_mixer_control: "Digital"
