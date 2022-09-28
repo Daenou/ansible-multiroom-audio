@@ -4,5 +4,3 @@ mpdutils_playlistbot_maxautosave: "30"
 mpdutils_playlistbot_playlistnamebase:  "zz_saved_"
 mpdutils_playlistbot_options: "-scd"
 mpdutils_playlistbot_OnCalendar: "*-*-* *:*:00"
-
-

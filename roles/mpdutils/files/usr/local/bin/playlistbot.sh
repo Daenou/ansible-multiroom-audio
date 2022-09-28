@@ -210,5 +210,3 @@ then
     log "PLAYLISTNAME $name"
   done
 fi
-
-
