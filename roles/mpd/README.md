@@ -4,7 +4,7 @@ This role installs and configures an mpd on the host. The current configuration 
 
 * `mpd_music_directory:` supported by the current template: just a local path like `/var/lib/mpd/music` or (ideally) a read only SMB guest share like `smb://myshare.mydomain.ch/music`. Can be checked e.g. with `mpc -h localhost mount`
 * `mpd_max_output_buffer_size:` Defaults to `32768`, prevents issues with a large collection and certain mpd clients.
-* the only mpd sink currently supported is an alsa sink, intended to be consumed via an ALSA loopback from the snapserver: 
+* the only mpd sink currently supported is an alsa sink, usually consumed via an ALSA loopback from the snapserver: 
     * `mpd_alsa_sink_name:` an arbitrary sink name, visible e.g. with `mpc -h localhost outputs`. Defaults to `To Snapserver`.
     * `mpd_alsa_sink_device:` the alsa sink, defaults to `dmix:CARD=Loopback,DEV=0`. While this makes sense for a snapserver based setup, you might want to change this e.g. to `dmix:CARD=sndrpihifiberry,DEV=0`. Do not use `hw`, this would prevent other audio connections (e.g. via bluetooth) from accessing the alsa device.
     * `mpd_alsa_sink_format:` the format, defaults to `44100:16:2`.
