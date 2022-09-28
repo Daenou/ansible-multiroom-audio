@@ -12,7 +12,7 @@ The playlists are saved with a generic name as mpd playlists on server side, so 
 
 The following variables are available:
 
-* `mpdutils_playlistbot_maxautosave: the maximum number of playlists that are left when the bot is cleaning up the saved playlists. Defaults to `30`.
+* `mpdutils_playlistbot_maxautosave:` the maximum number of playlists that are left when the bot is cleaning up the saved playlists. Defaults to `30`.
 * `mpdutils_playlistbot_playlistnamebase:` the beginning of the name of the created playlists, defaults to `zz_saved_`. The second part will be a timestamp like `20220928-175631`.
 * `mpdutils_playlistbot_options:` the functions to be executed when the bot is executed. Defaults to `-scd`, i.e. playlists are saved, the bot cleans up and duplicates are removed.
 * `mpdutils_playlistbot_OnCalendar:` the systemd timer setting, defaults to `*-*-* *:*:00`, i.e. the bot is run about every minute.
