@@ -12,4 +12,5 @@
     - accesspoint
     - uplink
     - mpd
+    - mpdutils
     - usbmount

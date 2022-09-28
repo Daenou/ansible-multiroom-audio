@@ -75,6 +75,8 @@ Ansible implementation
   * Loads the `snd_aloop` kernel module for the use of alsa loopback devices
 * mpd
   * A simple mpd config, used as (additional) audio stream to snapserver
+* mpdutils
+  * An mpd playlist bot to eliminate duplicate playlist entries and manage playlist backup copies in mpd.
 * raspotify
   * A simple (passwordless) raspotify configuration, used as (additional) audio stream to snapserver. Makes the multiroom system available to the spotify app as a speaker - provided you have a Spotify Premium account. This is a known limitation of [librespot](https://github.com/librespot-org/librespot), the code that actually makes your system talk to the spotify servers.
 * accesspoint
