@@ -22,7 +22,6 @@
     src: files/usr/local/bin/playlistbot.sh
     dest: /usr/local/bin/playlistbot.sh
     mode: "755"
-  notify: Restart playlistbot
 
 - name: Create playlistbot oneshot service
   ansible.builtin.template:
