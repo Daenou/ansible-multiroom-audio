@@ -45,3 +45,35 @@
     line: "MOUNTOPTIONS=\"ro,noexec,nodev\""
     state: present
     backup: no
+
+- name: stat /var/lib/mpd/music
+  ansible.builtin.stat:
+    path: /var/lib/mpd/music
+  register: statmpddir
+
+- name: Skip mpd integration of usbmount
+  ansible.builtin.debug:
+    msg: "/var/lib/mpd/music not found, skipping mpd integration"
+  when: not ( statmpddir.stat.exists and statmpddir.stat.isdir is defined and statmpddir.stat.isdir )
+
+- block:
+
+  - name: Create temp mpd music directory
+    ansible.builtin.file:
+      path: /var/lib/mpd/music/temp
+      state: directory
+      mode: '0755'
+
+  - name: Add script to create symlink to mounted media in mpd music directory and update mpd music library
+    ansible.builtin.copy:
+      src: etc/usbmount/mount.d/01_create_mpd_symlink
+      dest: /etc/usbmount/mount.d/01_create_mpd_symlink
+      mode: '0755'
+
+  - name: Add script to remove symlink to unmounted media in mpd music directory and update mpd music library
+    ansible.builtin.copy:
+      src: etc/usbmount/umount.d/01_remove_mpd_symlink
+      dest: /etc/usbmount/umount.d/01_remove_mpd_symlink
+      mode: '0755'
+
+  when: statmpddir.stat.exists and statmpddir.stat.isdir is defined and statmpddir.stat.isdir

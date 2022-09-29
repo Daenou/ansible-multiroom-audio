@@ -1,12 +1,14 @@
 # usbmount
+This role configures the raspi to mount any usb disk (partition) automatically after plug in. If installed together with `mpd`, the devices are automatically scanned by mpd so that you can browse the music in an mpd client.
 
-This role configures the raspi to mount any usb disk (partition) automatically after plug in.
-
-* All automatic mounts are **read only**. Therefore the filesystem integrity on the partition remains even when the device is unplugged while being mounted.
-
-* The **mount points** are
-  * usually`/media/usb0` to `/media/usb7`.
-  * If you have a UUID based entry in `/etc/fstab` (that works with a manual `mount` command), `usbmount` will use that mountpoint instead. This establishes a stable mount point for your favourite devices.
+* All automatic mounts are **read only**. Therefore you can unplug the device at any time.
+* The **mount points** are `/media/usb0` to `/media/usb7`.
+* If the directory `/var/lib/mpd/music/` exists
+  * a new subdirectory `temp` is created.
+  * The usbmount configuration is enhanced to 
+    * create a symlink from `/var/lib/mpd/music/temp/NAME_OF_DEVICE` to `/media/usbX` and **trigger mpd to add the files in the new directory to its database** after a mount.
+    * remove that symlink and trigger mpd to remove the files from its database
+* As this adding / removing files from mpd scales well for smaller disks, it can take dozens of minutes on a large collection.  If you have a UUID based entry in `/etc/fstab` (that works with a manual `mount` command), `usbmount` will use that mountpoint instead. This establishes a stable mount point for your favourite devices and will **not trigger mpd** on plug or unplug and enables / forces you to manage the mpd scan manually.
 
 ## Example entry `/etc/fstab`
 
