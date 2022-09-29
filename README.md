@@ -1,5 +1,5 @@
 # ansible-multiroom-audio
-This collection has been built to maintain (at least) two quite different multiroom audio setups based on Raspberry Pi and high quality audio HATs. We use [hifiberry](https://www.hifiberry.com/), but this works with any supported audio HAT. We are happy to hear from anyone else being successful using these roles.
+This collection is being used to maintain (at least) three quite different multiroom audio setups based on Raspberry Pi and high quality audio HATs. We use [hifiberry](https://www.hifiberry.com/), but this works with any supported audio HAT. We are happy to hear from anyone else being successful using these roles.
 
 ## Features 
 
@@ -9,6 +9,8 @@ The roles support setting up an audio multiroom system from a collection of Rasp
 * use the analog input to stream audio from e.g. the rec out of your hifi amp
 * use the USB ports to stream audio from e.g. a turntable with a builtin USB-Soundcard
 * use the Pi as standalone music center controlled via WLAN and use it as access point when you add connectivity over a 2nd network interface
+
+It is also possible with these roles to create a standalone mpd music center that can be used offline (and without multiroom :smile:)
 
 ## Architecture
 
@@ -45,47 +47,61 @@ Ansible implementation
 * Fully automated setup
 
 # Roles
+
+
 * base (**TODO** rename) 
   * Installs and configures the alsa config in /etc/asound.conf, needed as soon as you use `dmix` or `dsnoop` devices. That means always.
-* snapclient
-  * Installs the snapclient package and configures one or more snapclients. Always (or at least on two nodes)
-* snapserver
-  * Installs the snapserver package and configures it (max 1 snapserver per host)
+
+* Multiroom (snapcast)
+  * snapclient
+    * Installs the snapclient package and configures one or more snapclients. Usually on all nodes, at least two
+  * snapserver
+    * Installs the snapserver package and configures it (max 1 snapserver per host), At least on one node.
 * snapweb
   * Adds a web application (on port `1780`) to snapserver that allows to control the snapclient volumes with a browser.
-* acable
-  * Installs a systemd unit template with which you can create 'virtual cables' between alsa audio sources and sinks
-  * These virtual cables are `arec | aplay` commands with configurable variables (e.g. an `alsaloop` that can use `dmix`/`dsnoop` devices)
-  * Can also create a bluetooth sink, but only when the additional role `bluetooth_sink` is also mapped to that node.
-* bluetooth_sink
-  * To be run after `acable`.
-  * Installs and configures all components needed to enable `acable`  to accept an audio stream via bluetooth A2DP:
-    * `bluetoothd` drives the hardware
-    * a2dp_agent
-      * Taken from mill1000's [python a2dp-agent](https://gist.github.com/mill1000/74c7473ee3b4a5b13f6325e9994ff84c)
-      * Installs `a2dp-agent.py` configures a systemd unit
-      * The a2dp agent handles the bluetooth connection initiation and authentication
-    * bluealsa
-      * Installs and configures bluealsa aka [bluez-alsa](https://github.com/Arkq/bluez-alsa), which configures the device as a bluetooth audio sink aka bluetooth loudspeaker
-  * Ensures that bluetooth hardware is disabled (using `rfkill`) if not used
-  * **WARNING**: There is still bug [#14](https://github.com/Daenou/ansible-multiroom-audio/issues/14), needs a one time manual intervention. 
-* bluetooth_disable
-  * Disable bluetooth with `rfkill`. Needed as separate role to handle devices without `acable` at all.
-* snd_aloop
-  * Loads the `snd_aloop` kernel module for the use of alsa loopback devices
-* mpd
-  * A simple mpd config, used as (additional) audio stream to snapserver
-* mpdutils
-  * An mpd playlist bot to eliminate duplicate playlist entries and manage playlist backup copies in mpd.
-* usbmount
-  * any plugged in usb storage device is automatically mounted read only and scanned by mpd for audio files.
-* raspotify
-  * A simple (passwordless) raspotify configuration, used as (additional) audio stream to snapserver. Makes the multiroom system available to the spotify app as a speaker - provided you have a Spotify Premium account. This is a known limitation of [librespot](https://github.com/librespot-org/librespot), the code that actually makes your system talk to the spotify servers.
-* accesspoint
-  * converts the built in WLAN adapter to a WLAN hotspot. Has no internet connectivity, but enough to control e.g. the volume via a mobile mpd client app. Useful for offline use.
-* uplink
-  * needs the `accesspoint` role to be executed before
-  * adds simple `firewalld` and `udev` based management of all other network interfaces (on top of the Raspbian default `dhcpcd`). As soon as e.g. the builtin ethernet or an additional WLAN USB dongle has internet connectivity, the `accesspoint` clients will have too.
+
+* Connecting the ALSA streams
+  * snd_aloop
+    * Loads the `snd_aloop` kernel module if you need an alsa loopback device
+  * acable
+    * Installs a systemd unit template with which you can create 'virtual cables' between alsa audio sources and sinks
+    * These virtual cables are `arec | aplay` commands with configurable variables (e.g. an `alsaloop` that can use `dmix`/`dsnoop` devices)
+    * Can also create a bluetooth sink, but only when the additional role `bluetooth_sink` is also mapped to that node.
+
+* Bluetooth
+  * bluetooth_sink
+    * To be run after `acable`.
+    * Installs and configures all components needed to enable `acable`  to accept an audio stream via bluetooth A2DP:
+      * `bluetoothd` drives the hardware
+      * a2dp_agent
+        * Taken from mill1000's [python a2dp-agent](https://gist.github.com/mill1000/74c7473ee3b4a5b13f6325e9994ff84c)
+        * Installs `a2dp-agent.py` configures a systemd unit
+        * The a2dp agent handles the bluetooth connection initiation and authentication
+      * bluealsa
+        * Installs and configures bluealsa aka [bluez-alsa](https://github.com/Arkq/bluez-alsa), which configures the device as a bluetooth audio sink aka bluetooth loudspeaker
+    * Ensures that bluetooth hardware is disabled (using `rfkill`) if not used
+    * **WARNING**: There is still bug [#14](https://github.com/Daenou/ansible-multiroom-audio/issues/14), needs a one time manual intervention. 
+  * bluetooth_disable
+    * Disable bluetooth with `rfkill`. Needed as separate role to handle devices without `acable` at all.
+
+* MPD
+  * mpd
+    * A simple mpd config, used as (additional) audio stream to snapserver
+  * mpdutils
+    * An mpd playlist bot to eliminate duplicate playlist entries and manage playlist backup copies in mpd.
+  * usbmount
+    * any plugged in usb storage device is automatically mounted read only and scanned by mpd for audio files.
+
+* Spotify
+  * raspotify
+    * A simple (passwordless) raspotify configuration, used as (additional) audio stream to snapserver. Makes the multiroom system available to the spotify app as a speaker - provided you have a Spotify Premium account. This is a known limitation of [librespot](https://github.com/librespot-org/librespot), the code that actually makes your system talk to the spotify servers.
+
+* Standalone Music Box
+  * accesspoint
+    * converts the built in WLAN adapter to a WLAN hotspot. Has no internet connectivity, but enough to control e.g. the volume via a mobile mpd client app. Useful for offline use.
+  * uplink
+    * needs the `accesspoint` role to be executed before
+    * adds simple `firewalld` and `udev` based management of all other network interfaces (on top of the Raspbian default `dhcpcd`). As soon as e.g. the builtin ethernet or an additional WLAN USB dongle has internet connectivity, the `accesspoint` clients will have too.
 
 # Requirements
 Ansible host:
