@@ -93,7 +93,7 @@
   ansible.builtin.set_fact:
     idlistfromfiles: []
 
-- name: Create list of ids from snapclientconfigs (current config file list)
+- name: Create list of ids from acable configs (current config file list)
   ansible.builtin.set_fact:
     idlistfromfiles: "{{ idlistfromfiles + [ item.path | regex_replace('^/etc/acable.conf.d/(.*).conf', '\\1') ] }}"
   loop: "{{ acableconfigs.files }}"
