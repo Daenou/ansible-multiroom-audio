@@ -1,0 +1,25 @@
+#!/bin/sh
+# This script removes the model name symlink in /var/lib/mpd/music/temp.
+# Heavily inspired from Martin Dickopp
+#
+# This file is free software; the copyright holder gives unlimited
+# permission to copy and/or distribute it, with or without
+# modifications, as long as this notice is preserved.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY, to the extent permitted by law; without
+# even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.
+#
+set -e
+
+ls /var/lib/mpd/music/temp | while read name; do
+    if test "`readlink \"/var/lib/mpd/music/temp/$name\" || :`" = "$UM_MOUNTPOINT"; then
+	rm -f "/var/lib/mpd/music/temp/$name"
+	break
+    fi
+done
+
+mpc -h localhost update temp
+
+exit 0
