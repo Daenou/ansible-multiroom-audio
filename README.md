@@ -10,13 +10,13 @@ The roles support setting up an audio multiroom system from a collection of Rasp
 * use the USB ports to stream audio from e.g. a turntable with a builtin USB-Soundcard
 * use the Pi as standalone music center controlled via WLAN and use it as access point when you add connectivity over a 2nd network interface
 
-It is also possible with these roles to create a standalone mpd music center that can be used offline (and without multiroom :smile:)
+As a side product, it is also possible with these roles to create a standalone mpd music box that can be used offline. If you are crazy enough, you could run `snapcast` there too :smile:.
 
 ## Architecture
 
 ### Audio Hardware Limitations
 
-Hardware sources and sinks need to be **driven individually**, so that we can receive audio from the analog input, digitize it, stream it synchronously 
+Hardware audio sources and sinks need to be **driven individually**, so that we can receive audio from the analog input, digitize it, stream it synchronously 
 over the network to (all other clients and) the local client that sends the audio to the analog output. This will have some delay,  but exactly the same delay 
 as all other networked clients. On the other hand, a soundcard has one global digital clock for all inputs/outputs. Therefore, we use only one digital audio 
 format in all components and set that format explicitly wherever possible. This also minimizes the CPU load (and audio quality loss) for unwanted format 
@@ -56,9 +56,9 @@ Ansible implementation
   * snapclient
     * Installs the snapclient package and configures one or more snapclients. Usually on all nodes, at least two
   * snapserver
-    * Installs the snapserver package and configures it (max 1 snapserver per host), At least on one node.
-* snapweb
-  * Adds a web application (on port `1780`) to snapserver that allows to control the snapclient volumes with a browser.
+    * Installs the snapserver package and configures it. At least on one node, but not more than one snapserver per node.
+  * snapweb
+    * Adds a web application (on port `1780`) to snapserver that allows to control the snapclient volumes with a browser.
 
 * Connecting the ALSA streams
   * snd_aloop
