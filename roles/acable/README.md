@@ -38,6 +38,17 @@ devices.
 /usr/bin/alsaloop -C dsnoop:CARD=sndrpihifiberry,DEV=0 -P dmix:CARD=sndrpihifiberry,DEV=0
 ~~~
 
+### Combining variables
+
+Depending on your inventory concept, you might want to define different components of `acable_config` in different group_vars. As ansible can only replace and not update an existing variable, the default settings for `acable_config` combines the values of these 4 variables:
+
+* `acable_bluetooth_aloop`
+* `acable_bluetooth_dac`
+* `acable_adc_aloop`
+* `acable_adc_dac`
+
+see [here](defaults/main.yml) how this is implemented.
+
 ### bluetooth
 
 There are two reserved names that are used for bluetooth audio sources. Do not define the `source:` ansible variable for a bluetooth A2DP source in your host- or group- variables - it would be ignored. A2DP sources as presented by bluealsa have the bluetooth MAC address of the client in the alsa device name, e.g. `bluealsa:SRV=org.bluealsa,DEV=01:02:03:04:05:06,PROFILE=a2dp`. Therefore, the source needs to be determined dynamically. This can be done in two different ways:
