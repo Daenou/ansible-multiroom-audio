@@ -48,7 +48,6 @@ Ansible implementation
 
 # Roles
 
-
 * base (**TODO** rename) 
   * Installs and configures the alsa config in /etc/asound.conf, needed as soon as you use `dmix` or `dsnoop` devices. That means always.
 
