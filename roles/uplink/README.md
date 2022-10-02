@@ -16,7 +16,6 @@ Firewall concept in a nutshell:
     * `ap0`: if not done before, `ap0` is mapped to zone `localwlan`, zone is configured
     * all other interface names (including `eth0`): if not done before, interface mapped to zone `uplink`, zone is configured (incoming `ssh` only). 
 * Changes are not made persistent except where persistency is the only `firewalld` option: packet logging and the two zones. Persistency from `firewalld` is not needed, as the settings are applied (if not there already) whenever an interface comes up.
-* All dropped packets are logged to /var/log/kern.log. Eases firewall debugging massively and default logrotate config has proven to be efficient enough, never had an issue.
 * **WARNING**: This is my first `firewalld` configuration, I am sure I could tighten it up even more.
 
 ## Hints for bootstrapping a WLAN uplink
