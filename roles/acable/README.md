@@ -10,7 +10,7 @@ a simple framework that lets you plug your alsa devices together arbitrarily in 
 was considered as overkill, as client hosts usually need 0 or 1 cables, server hosts 2 or 3.
 
 This role implements automatic cleanup of acables that are set up on the target host (created by an earlier 
-ansible run or manually but not in the tarrget configuration). This allows you to easily remove or rename an
+ansible run or manually but not in the target configuration). This allows you to easily remove or rename an
 `acable` instance without manual cleanup.
 
 ## acable.sh
