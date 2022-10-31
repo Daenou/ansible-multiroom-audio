@@ -129,6 +129,18 @@ else
     fi
   done
 
+  # Enable ping to ease debugging
+
+  if [[ $( firewall-cmd --zone uplink --query-icmp-block-inversion ) != "yes" ]]
+  then
+    firewall_do --zone uplink --add-icmp-block-inversion
+  fi
+
+  if ! list2lines $( firewall-cmd --zone uplink --list-icmp-block) | grep -w echo-request > /dev/null 2>&1
+  then
+    firewall_do --zone uplink --add-icmp-block echo-request
+  fi
+
   # Enable masquerading on uplink
   if [[ $( firewall-cmd --zone uplink --query-masquerade ) != "yes" ]]
   then
