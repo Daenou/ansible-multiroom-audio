@@ -35,7 +35,15 @@
   roles:
     - bluetooth_disable
 
-- name: Configure audio server
+- name: Configure small audio server (only snapserver)
+  hosts: amsel_small_server
+  become: true
+  roles:
+    - snd_aloop
+    - snapserver
+    - snapweb
+
+- name: Configure full audio server (including mpd, raspotify)
   hosts: amsel_server
   become: true
   roles:
