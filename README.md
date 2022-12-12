@@ -121,8 +121,9 @@ Pi:
 Your Environment:
 * A mobile phone or a computer to control the snapclient volumes and mpd.
 * A Spotify premium account if you want to use your multiroom system as Spotify speaker.
-* Some pairs of decent loudspeakers (and a `hifiberry` AMP module) or a stereo amp with independent source (i.e. main out) and rec out selectors (and a `hifiberry` DAC/ADC module). 
-
+* Some pairs of decent loudspeakers (connected directly to `hifiberry` AMP module) or a stereo equipment and a `hifiberry` DAC/ADC module.
+* Hint for connecting a stereo amp: In order to be able to stream a local source (like a turntable) to the multiroom system **and** play it locally with the same delay as all other sinks for a true multiroom experience, your amp needs to have a *tape monitor* (or a *rec selector*) control. Connect the hifiberry cinch output (DAC) to the *tape in*, the hifiberry 3.5mm jack input (ADC) to the *tape rec out* of the amp and setup the internal "wiring" (see e.g. the `amsel_small_server` setup) correctly.
+   
 # Howto
 ## Config
 1) Populate the variables in the `host_vars/$HOSTGROUPNAME/main.yml` files with your settings. Checkout `roles/*/defaults/main.yml` to see all variables available.
