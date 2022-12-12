@@ -16,6 +16,11 @@
       src: files/etc/apt/preferences.d/preferbullseye.pref
       dest: /etc/apt/preferences.d/preferbullseye.pref
 
+  - name: Ensure old bluealsa package is removed
+    ansible.builtin.apt:
+      name: bluealsa
+      state: absent
+
   - name: Install bluez-alsa from bookworm
     ansible.builtin.apt:
       name: bluez-alsa-utils
