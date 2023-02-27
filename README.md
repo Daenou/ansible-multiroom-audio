@@ -124,7 +124,7 @@ Pi:
   * regenerate sshd keys: `rm -v /etc/ssh/ssh_host_*` and `dpkg-reconfigure openssh-server`
   * reset machine id: `rm /etc/machine-id`, `systemd-machine-id-setup`
   * reboot
-  * hard refresh DHCP leases on raspi, e.g. `rm /var/lib/dhcpcd/*.lease`, `systemctl restart dhcpcd`
+  * hard refresh DHCP leases on raspi, e.g. `rm /var/lib/dhcpcd/*.lease*`, `systemctl restart dhcpcd`
   * in some cases, DHCP servers get confused when the same MAC address is seen with a new name while the lease for the old name is still valid. Check and clean up your DHCP server cache.
 * Passwordless ssh login from ansible host to hostname in the inventory file. If you use passwordless login to the user `pi` (and not `root`) append `-u pi` to the command line.
 * Either python2 or python3 for the bluetooth_sink role (a2dp_agent) 
