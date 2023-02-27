@@ -116,14 +116,16 @@ Pi:
 * Strongly suggested: The Pis can reach each other using a DNS-Name.
 * Hints after a fresh install / a clone
   * reset password of user `pi`
-  * enable ssh daemon: `touch` an empty file called `ssh` `/boot`
-  * a valid `wpa_supplicant.conf` in `/boot` when you only have WLAN connectivity
+  * enable ssh daemon: `touch /boot/ssh`
+  * create a valid `/boot/wpa_supplicant.conf` when you need WLAN from the start
   * internal (low quality) audio is disabled in `/boot/config.txt`: `# dtparam=audio=on`
   * Audio HAT is working and enabled in `/boot/config.txt`. You should see it with `aplay -L`
   * Change hostname `sed -iBAK -e "s/raspberrypi/NEWHOSTNAME/g" /etc/hostname /etc/hosts`
   * regenerate sshd keys: `rm -v /etc/ssh/ssh_host_*` and `dpkg-reconfigure openssh-server`
   * reset machine id: `rm /etc/machine-id`, `systemd-machine-id-setup`
+  * reboot
   * hard refresh DHCP leases on raspi, e.g. `rm /var/lib/dhcpcd/*.lease`, `systemctl restart dhcpcd`
+  * in some cases, DHCP servers get confused when the same MAC address is seen with a new name while the lease for the old name is still valid. Check and clean up your DHCP server cache.
 * Passwordless ssh login from ansible host to hostname in the inventory file. If you use passwordless login to the user `pi` (and not `root`) append `-u pi` to the command line.
 * Either python2 or python3 for the bluetooth_sink role (a2dp_agent) 
 
