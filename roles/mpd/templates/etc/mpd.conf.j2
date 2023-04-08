@@ -1,6 +1,11 @@
 # {{ ansible_managed }}
 # minimal config, all comments removed
 
+{% if mpd_zeroconf_enabled is defined and mpd_zeroconf_enabled -%}
+zeroconf_enabled        "yes"
+zeroconf_name           "mpd@%h"
+{% endif %}
+
 music_directory         "{{ mpd_music_directory }}"
 playlist_directory      "/var/lib/mpd/playlists"
 db_file                 "/var/lib/mpd/tag_cache"
