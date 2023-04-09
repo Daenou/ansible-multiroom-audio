@@ -24,10 +24,14 @@
   notify: Restart dhcpcd
 
 # Use /etc/network/interfaces.d (dhcpcd ignores ap0)
-- name: Set static ip for ap0
+- name: Set static IPs for ap0
   ansible.builtin.template:
     src: templates/etc/network/interfaces.d/accesspoint.j2
     dest: /etc/network/interfaces.d/accesspoint
+  notify:
+    - Restart ap0
+    - Restart hostapd
+    - Restart dnsmasq
 
 - name: Use dnsmasq as dhcp / dns server
   ansible.builtin.apt:
@@ -40,6 +44,7 @@
     path: /etc/dnsmasq.conf
     block: |
       dhcp-range={{ accesspoint_dhcp_range_v4 }},12h
+      dhcp-range={{ accesspoint_ap0_v6_ula_net_48 }}{{ accesspoint_ap0_v6_local_64 }}::1:1,{{ accesspoint_ap0_v6_ula_net_48 }}{{ accesspoint_ap0_v6_local_64 }}::ffff:fffe,ra-names,64,24h
   notify: Restart dnsmasq
 
 - name: Reboot when ap0 not known yet
@@ -84,4 +89,3 @@
     masked: no
     daemon_reload: yes
     state: started
-
