@@ -68,3 +68,7 @@ label fc00::/7      1
 # Teredo
 label 2001:0::/32   7
 ~~~
+
+**WARNING**: if you happen to have uplink connectivity over IPv4 only, these edits can make your network experience very bad. While
+browsers have "happy eyeballs" (i.e. fast fallback to IPv4), most other network applications can take up to 2 minutes to fail over
+from IPv6 to IPv4.
