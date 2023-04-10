@@ -26,9 +26,9 @@ firewall_do () {
 
 # Rich rules contain spaces, simple approach above does not work any more
 firewall_do_richrule () {
-  zone=$1
+  zone="$1"
   shift
-  rule=$1
+  rule="$*"
   $LOGGER "===== Executing: firewall-cmd --zone $zone --add-rich-rule \"$rule\""
   $LOGGER $( firewall-cmd --zone $zone --add-rich-rule "$rule" )
 }
