@@ -1,6 +1,6 @@
 # uplink
 
-Provided that you already use the `accesspoint` role to convert your pi into a WLAN access point, this role takes you one step further: As all interfaces except `ap0` are still under the control of `dhcpcd`, they will eventually receive an uplink configuration via DHCP. This can be the built in ethernet interface or an additional usb network dongle (ethernet/WLAN/5G/...). 
+Provided that you already use the `accesspoint` role to convert your pi into a WLAN access point, this role takes you one step further: As all interfaces except `ap0` are still under the control of `dhcpcd`, they will eventually receive an uplink configuration via DHCP. This can be the built in ethernet interface or an additional usb network dongle (ethernet/WLAN/5G/...).
 
 This role configures IPv4 routing, masquerading and filtering to allow any device on the `ap0` WLAN to reuse the uplink discovered by `dhcpcd`.
 Firewall concept in a nutshell:
@@ -14,7 +14,7 @@ Firewall concept in a nutshell:
 * Action depending on interface name
     * `lo`: Nothing else happens
     * `ap0`: if not done before, `ap0` is mapped to zone `localwlan`, zone is configured
-    * all other interface names (including `eth0`): if not done before, interface mapped to zone `uplink`, zone is configured (incoming `ssh` only). 
+    * all other interface names (including `eth0`): if not done before, interface mapped to zone `uplink`, zone is configured (incoming `ssh` only).
 * Changes are not made persistent except where persistency is the only `firewalld` option: packet logging and the two zones. Persistency from `firewalld` is not needed, as the settings are applied (if not there already) whenever an interface comes up.
 * **WARNING**: This is my first `firewalld` configuration, I am sure I could tighten it up even more.
 
@@ -29,4 +29,9 @@ Firewall concept in a nutshell:
 
 In order to fully work as an IPv6 gateway, we need IPv6 connectivity and a subnet for the `ap0` subnet from upstream. Some providers don't deliver IPv6 at all, others just one `/128` address, others a `/64` subnet (with all adresses routed), and only a few what should be standard: You can request a larger subnet (up to `/48`) via [DHCPv6 prefix delegation](https://en.wikipedia.org/wiki/Prefix_delegation). And the options differ massively depending on the country and for resident and mobile internet connections.
 
-The simplest way for a solution that works everywhere is an IPv6 tunnel with a reasonable subnet. I use an openVPN tunnel to a server I control myself for this purpose, but there are dozens of other options.
+The current implementation uses IPv6 ULA addresses for the local WLAN. Some clients might be configured
+to prefer IPv6 over IPv4 over IPv6 ULA, check the [accesspoint README](../accesspoint/README.md) for
+further details.
+
+Another option would be to use a VPN that delivers IPv6 Global Unicast addresses. This works,
+but makes sense only if there is already a VPN-Server in place.
