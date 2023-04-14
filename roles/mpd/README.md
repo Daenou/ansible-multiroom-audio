@@ -2,6 +2,9 @@
 
 This role installs and configures an mpd on the host. The current configuration template is taken from the package default `mpd.conf` (with all comments and most whitespace removed). These ansible variables are available:
 
+* `mpd_enable_zeroconf:` `true` or `false`, defaulting to `false`. Note that enabling zeroconf and having a systemd socket at the same time is [a pointless exercise](https://mpd-devel.musicpd.narkive.com/TNe6J7Lj/systemd-and-zeroconf-no-global-port-disabling-zeroconf): *You would only be able to find MPD after you already connected to MPD*. Therefore:
+    * `true` enables zeroconf in the `mpd` configuration and disables `mpd.socket`.
+    * `false` disables zerconf in the `mpd` configuration and (starts and) enables `mpd.socket`.
 * `mpd_music_directory:` supported by the current template: just a local path like `/var/lib/mpd/music` or (ideally) a read only SMB guest share like `smb://myshare.mydomain.ch/music`. Can be checked e.g. with `mpc -h localhost mount`
 * `mpd_max_output_buffer_size:` Defaults to `32768`, prevents issues with a large collection and certain mpd clients.
 * the only mpd sink currently supported is an alsa sink, usually consumed via an ALSA loopback from the snapserver: 

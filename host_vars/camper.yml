@@ -2,6 +2,8 @@ acable_bluetooth_dac:
   - name: bluealsa-workaround-cable
     sink: dmix:CARD=sndrpihifiberry,DEV=0
 
+mpd_zeroconf_enabled: true
+
 mpd_alsa_sink_name: "To Hifiberry"
 mpd_alsa_sink_device: "dmix:CARD=sndrpihifiberry,DEV=0"
 mpd_alsa_sink_mixer_type: "hardware"

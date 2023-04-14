@@ -11,6 +11,22 @@
     state: latest
     update_cache: yes
 
+- name: Enable/Start mpd socket (no zeroconf)
+  ansible.builtin.systemd:
+    name: mpd.socket
+    state: started
+    enabled: true
+  when: mpd_zeroconf_enabled is not defined or not mpd_zeroconf_enabled
+  notify: "Restart mpd"
+
+- name: Disable/Stop mpd socket (with zeroconf)
+  ansible.builtin.systemd:
+    name: mpd.socket
+    state: stopped
+    enabled: false
+  when: mpd_zeroconf_enabled is defined and mpd_zeroconf_enabled
+  notify: "Restart mpd"
+
 - name: Configure mpd
   ansible.builtin.template:
     src: templates/etc/mpd.conf.j2
