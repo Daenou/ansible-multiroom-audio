@@ -41,7 +41,11 @@ LIBRESPOT_DISABLE_CREDENTIAL_CACHE=
 LIBRESPOT_ENABLE_VOLUME_NORMALISATION=
 
 # Enable verbose log output.
+{% if raspotify_verbose is defined and raspotify_verbose -%}
+LIBRESPOT_VERBOSE=
+{% else %}
 #LIBRESPOT_VERBOSE=
+{% endif %}
 
 # Disable zeroconf discovery mode.
 #LIBRESPOT_DISABLE_DISCOVERY=
