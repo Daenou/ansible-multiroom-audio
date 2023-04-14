@@ -24,6 +24,15 @@ firewall_do () {
   $LOGGER $( firewall-cmd $* ) 
 }
 
+# Rich rules contain spaces, simple approach above does not work any more
+firewall_do_richrule () {
+  zone="$1"
+  shift
+  rule="$*"
+  $LOGGER "===== Executing: firewall-cmd --zone $zone --add-rich-rule \"$rule\""
+  $LOGGER $( firewall-cmd --zone $zone --add-rich-rule "$rule" )
+}
+
 list2lines () {
 for i in $*
 do
@@ -70,7 +79,7 @@ then
   fi
 
   # Enable local services
-  for localservice in dhcp dns ssh
+  for localservice in dhcp dhcpv6 dns mdns ssh
   do
     if ! list2lines $( firewall-cmd --zone localwlan --list-services ) | grep -w $localservice > /dev/null 2>&1
     then
@@ -121,7 +130,7 @@ else
   fi
 
   # Enable local services
-  for localservice in ssh
+  for localservice in ssh dhcpv6-client
   do
     if ! list2lines $( firewall-cmd --zone uplink --list-services ) | grep -w $localservice > /dev/null 2>&1
     then
@@ -141,9 +150,19 @@ else
     firewall_do --zone uplink --add-icmp-block echo-request
   fi
 
-  # Enable masquerading on uplink
+  # Enable IPv4 masquerading on uplink
   if [[ $( firewall-cmd --zone uplink --query-masquerade ) != "yes" ]]
   then
     firewall_do --zone uplink --add-masquerade
   fi
+
+  # Enable IPv6 masquerading on uplink
+  IPV6MASQ_RICHRULE='rule family="ipv6" masquerade'
+  if [[ $( firewall-cmd --zone uplink --query-rich-rule "${IPV6MASQ_RICHRULE}" ) != "yes" ]]
+  then
+    firewall_do_richrule uplink "${IPV6MASQ_RICHRULE}"
+  fi
+
 fi
+
+$LOGGER "done."

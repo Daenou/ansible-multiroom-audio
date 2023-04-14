@@ -1,5 +1,9 @@
 ---
 
+- name: Restart ap0
+  ansible.builtin.shell:
+    cmd: "ifdown ap0; ifup ap0"
+
 - name: Restart hostapd
   ansible.builtin.systemd:
     name: "hostapd.service"

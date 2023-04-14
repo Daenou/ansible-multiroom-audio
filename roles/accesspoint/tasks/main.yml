@@ -16,7 +16,7 @@
     path: /etc/systemd/system/dhcpcd.service.d
     state: directory
     mode: '0755'
-    
+
 - name: dhcpcd must ignore ap0 so that hostapd can take control
   ansible.builtin.copy:
     src: files/etc/systemd/system/dhcpcd.service.d/zzoverride.conf
@@ -24,10 +24,14 @@
   notify: Restart dhcpcd
 
 # Use /etc/network/interfaces.d (dhcpcd ignores ap0)
-- name: Set static ip for ap0
+- name: Set static IPs for ap0
   ansible.builtin.template:
     src: templates/etc/network/interfaces.d/accesspoint.j2
     dest: /etc/network/interfaces.d/accesspoint
+  notify:
+    - Restart ap0
+    - Restart hostapd
+    - Restart dnsmasq
 
 - name: Use dnsmasq as dhcp / dns server
   ansible.builtin.apt:
@@ -35,11 +39,29 @@
     state: latest
     update_cache: yes
 
-- name: Configure dnsmasq to serve wlan network
-  ansible.builtin.blockinfile: 
+- name: Configure dnsmasq to serve wlan network (IPv4)
+  ansible.builtin.blockinfile:
     path: /etc/dnsmasq.conf
+    marker: "# {mark} ANSIBLE MANAGED BLOCK IPv4"
     block: |
       dhcp-range={{ accesspoint_dhcp_range_v4 }},12h
+  notify: Restart dnsmasq
+
+- name: Configure dnsmasq to serve wlan network (IPv6)
+  ansible.builtin.blockinfile:
+    path: /etc/dnsmasq.conf
+    marker: "# {mark} ANSIBLE MANAGED BLOCK IPv6"
+    block: |
+      dhcp-range={{ accesspoint_ap0_v6_ula_net_48 }}{{ accesspoint_ap0_v6_local_64 }}::1:1,{{ accesspoint_ap0_v6_ula_net_48 }}{{ accesspoint_ap0_v6_local_64 }}::ffff:fffe,ra-names,64,24h
+  when: accesspoint_ap0_v6_ula_net_48 is defined
+  notify: Restart dnsmasq
+
+- name: Stop dnsmasq from serving wlan network (IPv6)
+  ansible.builtin.blockinfile:
+    path: /etc/dnsmasq.conf
+    marker: "# {mark} ANSIBLE MANAGED BLOCK IPv6"
+    state: "absent"
+  when: accesspoint_ap0_v6_ula_net_48 is not defined
   notify: Restart dnsmasq
 
 - name: Reboot when ap0 not known yet
@@ -61,11 +83,11 @@
     msg: "channel={{ accesspoint_channel | default ('?') }}, ieee80211d={{ accesspoint_ieee80211d | default ('?') }}, country_code={{ accesspoint_country_code | default ('?') }}, SSID={{ accesspoint_ssid | default ('?') }}, passphrase={{ accesspoint_wpa_passphrase | default ('?') }}"
 
 - name: Abort when passphrase unset or empty string
-  ansible.builtin.fail: 
+  ansible.builtin.fail:
     msg: "Aborting, passphrase unset or empty string"
   when: accesspoint_wpa_passphrase is not defined or accesspoint_wpa_passphrase | default ('?') == ""
 
-- name: Install hostapd 
+- name: Install hostapd
   ansible.builtin.apt:
     name: hostapd
     state: latest
@@ -84,4 +106,3 @@
     masked: no
     daemon_reload: yes
     state: started
-

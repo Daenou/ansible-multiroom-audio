@@ -7,3 +7,14 @@ mpd_zeroconf_enabled: true
 mpd_alsa_sink_name: "To Hifiberry"
 mpd_alsa_sink_device: "dmix:CARD=sndrpihifiberry,DEV=0"
 mpd_alsa_sink_mixer_type: "hardware"
+
+# this MUST BE an ULA Address, please generate your own
+# https://www.ip-six.de/index.php
+# https://en.wikipedia.org/wiki/Unique_local_address
+# https://www.rfc-editor.org/info/rfc4193
+accesspoint_ap0_v6_ula_net_48: "fd86:7b08:fef2:"
+accesspoint_ap0_v6_local_64: "0"
+accesspoint_ap0_v6_host: "::1"
+# These three are used to generate
+# * the IPv6 address of ap0: "fd86:7b08:fef2:0::1/64"
+# * the IPv6 dhcp range: "fd86:7b08:fef2:0::1:1,fd86:7b08:fef2:0::ffff:fffe"
