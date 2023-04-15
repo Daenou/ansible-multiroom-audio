@@ -21,7 +21,7 @@ fi
 
 firewall_do () {
   $LOGGER "===== Executing: firewall-cmd $*"
-  $LOGGER $( firewall-cmd $* ) 
+  $LOGGER $( firewall-cmd $* 2>&1 ) 
 }
 
 # Rich rules contain spaces, simple approach above does not work any more
@@ -30,7 +30,7 @@ firewall_do_richrule () {
   shift
   rule="$*"
   $LOGGER "===== Executing: firewall-cmd --zone $zone --add-rich-rule \"$rule\""
-  $LOGGER $( firewall-cmd --zone $zone --add-rich-rule "$rule" )
+  $LOGGER $( firewall-cmd --zone $zone --add-rich-rule "$rule" 2>&1 )
 }
 
 list2lines () {
@@ -87,13 +87,12 @@ then
     fi
   done
 
-  # Enable local tcp ports
-  # 6600: MPD control port
-  for port in 6600
+  # Enable local tcp/udp ports
+  for port in {{ uplink_localwlan_ports | join (' ') }}
   do
     if ! list2lines $( firewall-cmd --zone localwlan --list-ports ) | grep -w $port > /dev/null 2>&1
     then
-      firewall_do --zone localwlan --add-port=$port/tcp
+      firewall_do --zone localwlan --add-port=$port
     fi
   done
 
