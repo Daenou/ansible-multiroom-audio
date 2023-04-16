@@ -33,8 +33,8 @@
   when: resultwlan['changed'] or resultuplink['changed'] 
 
 - name: Create firewall script
-  ansible.builtin.copy:
-    src: files/usr/local/bin/uplink-filter.sh
+  ansible.builtin.template:
+    src: templates/usr/local/bin/uplink-filter.sh
     dest: /usr/local/bin/uplink-filter.sh
     backup: no
     mode: "755"

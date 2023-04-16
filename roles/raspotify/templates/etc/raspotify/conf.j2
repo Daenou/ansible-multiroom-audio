@@ -111,7 +111,11 @@ LIBRESPOT_DEVICE="{{ raspotify_device }}"
 
 # The port the internal server advertises over zeroconf 1 - 65535.
 # Ports <= 1024 may require root privileges.
+{% if raspotify_zeroconf_port is defined -%}
+LIBRESPOT_ZEROCONF_PORT="{{ raspotify_zeroconf_port }}"
+{% else %}
 #LIBRESPOT_ZEROCONF_PORT=""
+{% endif %}
 
 # HTTP proxy to use when connecting.
 #LIBRESPOT_PROXY=""

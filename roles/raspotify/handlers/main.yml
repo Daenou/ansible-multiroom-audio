@@ -1,5 +1,12 @@
 ---
 
+- name: Restart avahi-daemon
+  ansible.builtin.systemd:
+    name: "avahi-daemon.service"
+    daemon_reload: yes
+    state: restarted
+  ignore_errors: "{{ ansible_check_mode }}"
+
 - name: Restart raspotify
   ansible.builtin.systemd:
     name: "raspotify.service"

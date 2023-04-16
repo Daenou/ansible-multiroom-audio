@@ -8,6 +8,15 @@ mpd_alsa_sink_name: "To Hifiberry"
 mpd_alsa_sink_device: "dmix:CARD=sndrpihifiberry,DEV=0"
 mpd_alsa_sink_mixer_type: "hardware"
 
+uplink_localwlan_ports:
+  - '"6600/tcp"'
+  - '"12345/tcp"'
+
+raspotify_name: "Connect"
+raspotify_device: "dmix:CARD=sndrpihifiberry,DEV=0"
+raspotify_verbose: "true"
+raspotify_zeroconf_port: "12345"
+
 # this MUST BE an ULA Address, please generate your own
 # https://www.ip-six.de/index.php
 # https://en.wikipedia.org/wiki/Unique_local_address

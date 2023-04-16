@@ -18,6 +18,19 @@ Firewall concept in a nutshell:
 * Changes are not made persistent except where persistency is the only `firewalld` option: packet logging and the two zones. Persistency from `firewalld` is not needed, as the settings are applied (if not there already) whenever an interface comes up.
 * **WARNING**: This is my first `firewalld` configuration, I am sure I could tighten it up even more.
 
+## Variables
+
+`uplink_localwlan_ports` is a list of ports on the raspi that need to be accessible from the WLAN side.
+Configure like this if you have `mpd` ("6600/tcp") and `raspotify` ("12345/tcp")
+
+~~~
+uplink_localwlan_ports:
+  - '"6600/tcp"'
+  - '"12345/tcp"'
+~~~
+
+the port number for raspotify must be the same as in [`raspotify_zeroconf_port`](../raspotify/README.md).
+
 ## Hints for bootstrapping a WLAN uplink
 
 * As the internal WLAN adapter is used for `ap0`, you will need a USB-WLAN Dongle. Be warned: USB WLAN dongles that have stable linux kernel (module) support are **not easy to find**. They tend to keep the same product name even when the producer switches to a new chipset. Oh my.
@@ -34,4 +47,4 @@ to prefer IPv6 over IPv4 over IPv6 ULA, check the [accesspoint README](../access
 further details.
 
 Another option would be to use a VPN that delivers IPv6 Global Unicast addresses. This works,
-but makes sense only if there is already a VPN-Server in place.
+but makes sense only if there is already a VPN server in place.

@@ -5,6 +5,20 @@
     msg: "ERROR: os_family of host {{ inventory_hostname }} is not Debian"
   when: ansible_facts['os_family'] != "Debian"
 
+- name: Install avahi workaround
+  ansible.builtin.template:
+    src: templates/etc/avahi/services/spotify-connect.service
+    dest: /etc/avahi/services/spotify-connect.service
+  when: raspotify_zeroconf_port is defined
+  notify: "Restart avahi-daemon"
+
+- name: Remove avahi workaround
+  ansible.builtin.file:
+    path: /etc/avahi/services/spotify-connect.service
+    state: absent
+  when: raspotify_zeroconf_port is not defined
+  notify: "Restart avahi-daemon"
+
 - name: Install raspotify 
   include_role: 
     name: t2d.raspotify

@@ -6,4 +6,5 @@ iface ap0 inet static
 {% if accesspoint_ap0_v6_ula_net_48 is defined -%}
 iface ap0 inet6 static
     address {{ accesspoint_ap0_v6_ula_net_48 }}{{ accesspoint_ap0_v6_local_64 }}{{ accesspoint_ap0_v6_host }}/64
+    dad-attempts 0
 {% endif %}
