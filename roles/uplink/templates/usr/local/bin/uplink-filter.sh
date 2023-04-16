@@ -7,7 +7,7 @@ LOGGER="/usr/bin/logger $0 ($ACTION $IFACE):"
 
 # LOGGER="echo $*"
 
-if [[ $IFACE == "lo" ]] 
+if [[ $IFACE == "lo" ]]
 then
   $LOGGER "Doing nothing for loopback interface"
   exit 0
@@ -21,7 +21,7 @@ fi
 
 firewall_do () {
   $LOGGER "===== Executing: firewall-cmd $*"
-  $LOGGER $( firewall-cmd $* 2>&1 ) 
+  $LOGGER $( firewall-cmd $* 2>&1 )
 }
 
 # Rich rules contain spaces, simple approach above does not work any more
@@ -106,7 +106,7 @@ else
   #
   # for information only: check if this is the interface having the most attractive default route right now
   # need to apply rules even when this interface is not the default route right now, it is
-  # possible that this changes later 
+  # possible that this changes later
 
   ACTIVEUPLINK=$( ip route get 1.1.1.1 | sed -ne "s/^.* dev \([^ ]*\) .*$/\1/p" )
 
