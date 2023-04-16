@@ -1,0 +1,17 @@
+<?xml version="1.0" standalone='no'?><!--*-nxml-*-->
+<!DOCTYPE service-group SYSTEM "avahi-service.dtd">
+<!-- See avahi.service(5) for more information about this configuration file -->
+
+<service-group>
+
+  <name replace-wildcards="yes">Spotify on %h</name>
+
+  <service>
+    <type>_spotify-connect._tcp</type>
+    <port>{{ raspotify_zeroconf_port }}</port>
+    <txt-record>CPath=/</txt-record>
+    <txt-record>VERSION=1.0</txt-record>
+  </service>
+
+</service-group>
+
