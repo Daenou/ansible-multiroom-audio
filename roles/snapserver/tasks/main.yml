@@ -5,11 +5,29 @@
     msg: "ERROR: os_family of host {{ inventory_hostname }} is not Debian"
   when: ansible_facts['os_family'] != "Debian"
 
-- name: Install snapserver package
+- name: Install snapserver package from repo
   ansible.builtin.apt:
     name: snapserver
     state: latest
     update_cache: yes
+  when: snapserver_newest_pkg is not defined or not snapserver_newest_pkg
+
+- block:
+
+  - name: Get newest release from github
+    ansible.builtin.get_url:
+      url: "{{ snapserver_github_source }}"
+      checksum: "sha256:{{ snapserver_github_sha256sum }}"
+      dest: "{{ snapserver_github_dest }}"
+
+  - name: Install dowloaded package
+    ansible.builtin.apt:
+      deb: "{{ snapserver_github_dest }}"
+    notify:
+      - Restart snapserver
+
+  when: snapserver_newest_pkg is defined and snapserver_newest_pkg
+  notify: Restart snapserver
 
 - name: Install snapserver config
   ansible.builtin.template:
@@ -20,7 +38,7 @@
     - Restart snapserver
 
 - name: Add snapserver user to audio group
-  ansible.builtin.user: 
+  ansible.builtin.user:
     name: _snapserver
     append: yes
     groups: audio

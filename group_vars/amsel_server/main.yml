@@ -1,6 +1,7 @@
 ---
 snapserver_sourcetype: alsa
 snapserver_alsasource: dsnoop:CARD=Loopback,DEV=1
+snapserver_newest_pkg: true
 snapserver_idle_threshold: 30000
 snapserver_buffer: 1000
 
