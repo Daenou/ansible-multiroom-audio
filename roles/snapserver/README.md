@@ -16,8 +16,12 @@ Nov 25 20:32:49 pidev snapserver[12587]: PcmStream: sspidev, sampleFormat: 44100
 ~~~
 
 Two features I really like are not available from the snapserver package
-in the bullseye version. By setting one control variable, you can make
-the snapserver role to use the [package published on github](https://github.com/badaix/snapcast/releases)
+in the bullseye version: The **idle** detection that allows to treat
+analogue "almost silence" as real silence and the **initial volume** that
+is assigned to new snapclients (which is 100% without this feature).
+
+By setting one control variable, you can make the snapserver role to use the
+[package published on github](https://github.com/badaix/snapcast/releases)
 as package source.
 
 **Please note**: if you switch from the raspbian to the github version, you
