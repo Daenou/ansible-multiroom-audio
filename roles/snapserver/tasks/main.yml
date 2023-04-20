@@ -25,6 +25,7 @@
       deb: "{{ snapserver_github_dest }}"
     notify:
       - Restart snapserver
+    ignore_errors: "{{ ansible_check_mode }}"
 
   when: snapserver_from_github is defined and snapserver_from_github
   notify: Restart snapserver
