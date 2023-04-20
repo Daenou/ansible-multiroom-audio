@@ -10,7 +10,7 @@
     name: snapserver
     state: latest
     update_cache: yes
-  when: snapserver_newest_pkg is not defined or not snapserver_newest_pkg
+  when: snapserver_from_github is not defined or not snapserver_from_github
 
 - block:
 
@@ -26,7 +26,7 @@
     notify:
       - Restart snapserver
 
-  when: snapserver_newest_pkg is defined and snapserver_newest_pkg
+  when: snapserver_from_github is defined and snapserver_from_github
   notify: Restart snapserver
 
 - name: Install snapserver config

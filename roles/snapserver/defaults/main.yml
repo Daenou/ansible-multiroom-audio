@@ -6,7 +6,7 @@ snapserver_alsasource: dsnoop:CARD=Loopback,DEV=1
 snapserver_sampleformat: "44100:16:2"
 snapserver_codec: flac
 snapserver_buffer: 200
-# set snapserver_newest_pkg to true in host vars to make the following work
+# set snapserver_from_github to true in host vars to make the following work
 snapserver_github_source: "https://github.com/badaix/snapcast/releases/download/v0.27.0/snapserver_0.27.0-1_armhf.deb"
 snapserver_github_dest: "/tmp/snapserver_0.27.0-1_armhf.deb"
 snapserver_github_sha256sum: "bdfe79e76dfe37a61190942ec0788ec49d300dca1789ef2f0f722dbdccf755e8"
