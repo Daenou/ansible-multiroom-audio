@@ -15,7 +15,7 @@ Nov 25 20:32:49 pidev snapserver[12587]: Buffer is less than 400ms, changing to 
 Nov 25 20:32:49 pidev snapserver[12587]: PcmStream: sspidev, sampleFormat: 44100:16:2
 ~~~
 
-Two features I really like are not available from the snapserver version
+Two features I really like are not available from the snapserver package
 in the bullseye version. By setting one control variable, you can make
 the snapserver role to use the [package published on github](https://github.com/badaix/snapcast/releases)
 as package source.
