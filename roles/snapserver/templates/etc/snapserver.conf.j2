@@ -158,6 +158,17 @@ buffer = {{ snapserver_buffer }}
 ###############################################################################
 
 
+# Streaming client options ####################################################
+#
+[streaming_client]
+
+# Volume assigned to new snapclients [percent]
+# Defaults to 100 if unset
+initial_volume = {{ snapserver_initial_volume }}
+#
+###############################################################################
+
+
 # Logging options #############################################################
 #
 [logging]

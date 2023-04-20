@@ -4,4 +4,9 @@
   ansible.builtin.copy: 
     src: "files/{{ snapweb_srcdir }}/"
     dest: /usr/share/snapserver/snapweb
+  when: snapserver_from_github is not defined or not snapserver_from_github
 
+- name: You don't need this role with github pkg
+  ansible.builtin.debug:
+    msg: "Remove snapweb from the playbook"
+  when: snapserver_from_github is defined and snapserver_from_github
