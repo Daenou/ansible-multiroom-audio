@@ -8,9 +8,10 @@
 ### * "bluetooth_disable" should be executed for all hosts without any acable
 ###    configured if you want to be sure that bluetooth is actually switched off.
 ### * At least one audio server (snapserver) should be defined to actually distribute
-###   audio). This needs snd_aloop, snapserver/snapweb and mpd.
+###   audio). This needs snd_aloop, snapserver (plus snapweb when snapserver from
+###   bullseye is used). And at least one of mpd and raspotify.
 
-### base/snapclient 
+### base/snapclient
 
 - name: Run base and snapclient role on all hosts
   hosts: amsel_all
@@ -41,7 +42,7 @@
   roles:
     - snd_aloop
     - snapserver
-    - snapweb
+    #- snapweb
 
 - name: Configure full audio server (including mpd, raspotify)
   hosts: amsel_server
@@ -49,6 +50,6 @@
   roles:
     - snd_aloop
     - snapserver
-    - snapweb
+    #- snapweb
     - mpd
     - raspotify
