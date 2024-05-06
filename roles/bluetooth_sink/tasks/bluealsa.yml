@@ -5,9 +5,24 @@
     msg: "ERROR: os_family of host {{ inventory_hostname }} is not Debian"
   when: ansible_facts['os_family'] != "Debian"
 
-- block:
+# install bluealsa. What a mess since I started to use backports.
+
+- name: Install bluealsa for pre bullseye
+  when: ansible_facts['distribution_major_version'] | int < 11
+  block:
+
+  - name: Install bluealsa package
+    ansible.builtin.apt:
+      name: bluealsa
+      state: latest
+      update_cache: yes
+
+- name: Add bookworm repo at low prio to use of bluez-alsa
+  when: ansible_facts['distribution_major_version'] == '11'
+  block:
+
   - name: Add "bookworm" testing release
-    ansible.builtin.apt_repository: 
+    ansible.builtin.apt_repository:
       repo: deb http://archive.raspbian.org/raspbian bookworm main contrib non-free rpi
       state: present
 
@@ -16,17 +31,30 @@
       src: files/etc/apt/preferences.d/preferbullseye.pref
       dest: /etc/apt/preferences.d/preferbullseye.pref
 
+- name: Remove bluealsa, add bluez-alsa
+  when: ansible_facts['distribution_major_version'] | int >= 11
+
+  block:
   - name: Ensure old bluealsa package is removed
     ansible.builtin.apt:
       name: bluealsa
       state: absent
 
-  - name: Install bluez-alsa from bookworm
+  - name: Install bluez-alsa
     ansible.builtin.apt:
       name: bluez-alsa-utils
       state: latest
       update_cache: yes
 
+# the service name does not match the package name. The service
+# was called bluez-alsa only in the backported pkg...
+# older       bluealsa.service             , needs systemd overlay
+# bullseye 11 bluez-alsa.service (backport), supports /etc/default
+# bookworm 12 bluealsa.service             , needs systemd overlay, has bluealsa-aplay.service
+
+- name: Configure and start bluez-alsa
+  when: ansible_facts['distribution_major_version'] | int == 11
+  block:
   - name: Configure bluez-alsa in /etc/default
     ansible.builtin.lineinfile:
       path: /etc/default/bluez-alsa
@@ -35,6 +63,7 @@
       state: present
       backup: no
     notify: "Restart bluez-alsa"
+    ignore_errors: "{{ ansible_check_mode }}"
 
   - name: Start and enable bluez-alsa.service
     ansible.builtin.systemd:
@@ -44,14 +73,9 @@
       state: started
     ignore_errors: "{{ ansible_check_mode }}"
 
-  when: ansible_facts['distribution_release'] == "bullseye"
-
-- block:
-  - name: Install bluealsa package (for older releases)
-    ansible.builtin.apt:
-      name: bluealsa
-      state: latest
-      update_cache: yes
+- name: Configure and start bluealsa
+  when: ansible_facts['distribution_major_version'] | int != 11
+  block:
 
   - name: Create systemd override directory for bluealsa
     ansible.builtin.file:
@@ -74,4 +98,12 @@
       state: started
     ignore_errors: "{{ ansible_check_mode }}"
 
-  when: ansible_facts['distribution_release'] != "bullseye"
+- name: Stop, disable and mask bluealsa-aplay service
+  when: ansible_facts['distribution_major_version'] | int > 11
+  ansible.builtin.systemd:
+    name: "bluealsa-aplay.service"
+    enabled: no
+    daemon_reload: yes
+    state: stopped
+    masked: yes
+  ignore_errors: "{{ ansible_check_mode }}"

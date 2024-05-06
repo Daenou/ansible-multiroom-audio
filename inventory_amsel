@@ -6,8 +6,8 @@ spielen
 schlaf
 chuchi
 badhell
-# pidev
-balkon
+pi4dev
+# balkon
 
 ### Internal Audio connections
 # Stream the Hifi-Rec-Out to aloop/snapserver
@@ -23,6 +23,7 @@ spielen
 [amsel_bluetooth_aloop]
 wohnen
 spielen
+pi4dev
 
 # Stream Bluetooth to hw out (watch TV, no need to distribute)
 [amsel_bluetooth_dac]
@@ -36,4 +37,5 @@ balkon
 [amsel_server]
 wohnen
 spielen
+pi4dev
 

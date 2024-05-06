@@ -18,6 +18,7 @@
     enabled: true
   when: mpd_zeroconf_enabled is not defined or not mpd_zeroconf_enabled
   notify: "Restart mpd"
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: Disable/Stop mpd socket (with zeroconf)
   ansible.builtin.systemd:

@@ -9,7 +9,9 @@ zeroconf_name           "mpd@%h"
 music_directory         "{{ mpd_music_directory }}"
 playlist_directory      "/var/lib/mpd/playlists"
 db_file                 "/var/lib/mpd/tag_cache"
+{% if ansible_facts.distribution_major_version | int < 12 %}
 log_file                "/var/log/mpd/mpd.log"
+{% endif %}
 pid_file                "/run/mpd/pid"
 state_file              "/var/lib/mpd/state"
 sticker_file            "/var/lib/mpd/sticker.sql"

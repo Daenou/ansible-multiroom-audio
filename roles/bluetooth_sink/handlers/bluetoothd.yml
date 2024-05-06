@@ -6,3 +6,8 @@
     daemon_reload: yes
     state: restarted
   ignore_errors: "{{ ansible_check_mode }}"
+
+- name: Force discoverablity
+  ansible.builtin.command:
+    cmd: bluetoothctl discoverable on
+  ignore_errors: "{{ ansible_check_mode }}"

@@ -29,4 +29,3 @@
     dest: /etc/raspotify/conf
     backup: yes
   notify: "Restart raspotify"
-
