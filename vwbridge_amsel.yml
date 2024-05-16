@@ -1,0 +1,9 @@
+
+- name: Ask wifi pw, install vwbridge
+  become: true
+  hosts: amsel_wifi_bridges
+  vars_prompt:
+    - name: vwbridge_wifi_sec_psk
+      prompt: "Enter the WPA passphrase to be set"
+  roles:
+    - vwbridge

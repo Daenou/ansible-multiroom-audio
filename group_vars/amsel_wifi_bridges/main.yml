@@ -1,0 +1,19 @@
+---
+
+vwbridge_vlan_if: "eth0"
+vwbridge_vlan: "500"
+
+vwbridge_wifi_if: "wlan0"
+vwbridge_wifi_ssid: "YOURSSIDGOESHERE"
+
+vwbridge_wifi_dict:
+  mode: ap
+  band: bg
+  channel: 3
+
+# vwbridge_wifi_sec_psk: "do-not-set-here"
+vwbridge_wifi_sec_pmf: 1
+
+# See README.md of the vwbridge role for further information and links
+vwbridge_wifi_sec_protos:
+  - rsn
