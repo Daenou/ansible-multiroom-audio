@@ -1,0 +1,46 @@
+---
+
+- name: Exit play if os_family is not Debian
+  ansible.builtin.fail:
+    msg: "ERROR: os_family of host {{ inventory_hostname }} is not Debian"
+  when: ansible_facts['os_family'] != "Debian"
+
+- name: create wifibridge
+  community.general.nmcli:
+    type: bridge
+    conn_name: wifibridge
+    ifname: br0
+    method4: disabled
+    method6: disabled
+    state: present
+
+- name: create vlan if
+  community.general.nmcli:
+    type: vlan
+    conn_name: "vlan {{- vwbridge_vlan }}"
+    slave_type: bridge
+    master: br0
+    vlanid: "{{ vwbridge_vlan }}"
+    vlandev: "{{ vwbridge_vlan_if }}"
+    method4: disabled
+    method6: disabled
+    state: present
+
+- name: create wifi ap if
+  community.general.nmcli:
+    type: wifi
+    conn_name: brelay
+    ifname: "{{ vwbridge_wifi_if }}"
+    slave_type: bridge
+    master: br0
+    ssid: "{{ vwbridge_wifi_ssid }}"
+    wifi: "{{ vwbridge_wifi_dict }}"
+    wifi_sec:
+      key-mgmt: wpa-psk
+      psk: "{{ vwbridge_wifi_sec_psk }}"
+      pmf: "{{ vwbridge_wifi_sec_pmf }}"
+      proto: "{{ vwbridge_wifi_sec_protos }}"
+    method4: disabled
+    method6: disabled
+    state: present
+  notify: Reapply wifi configuration

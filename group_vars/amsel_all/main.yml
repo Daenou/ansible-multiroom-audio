@@ -10,4 +10,3 @@ snapclient_config:
   - name: pi4dev
     snapclient_snapserver: pi4dev.iselin.net
     snapclient_sink: dmix:CARD=sndrpihifiberry,DEV=0
-

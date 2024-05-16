@@ -13,6 +13,7 @@ pi4dev
 # Stream the Hifi-Rec-Out to aloop/snapserver
 [amsel_adc_aloop]
 wohnen
+pi4dev
 balkon
 
 # Copy hw in to hw out (Workstation output)
@@ -38,4 +39,9 @@ balkon
 wohnen
 spielen
 pi4dev
+
+### wifi extenders
+
+[amsel_wifi_bridges]
+schlaf
 
