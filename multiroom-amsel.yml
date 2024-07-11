@@ -42,7 +42,6 @@
   roles:
     - snd_aloop
     - snapserver
-    #- snapweb
 
 - name: Configure full audio server (including mpd, raspotify)
   hosts: amsel_server
@@ -50,6 +49,6 @@
   roles:
     - snd_aloop
     - snapserver
-    #- snapweb
     - mpd
+    - mpdutils
     - raspotify

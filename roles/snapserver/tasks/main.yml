@@ -16,13 +16,13 @@
 
   - name: Get newest release from github
     ansible.builtin.get_url:
-      url: "{{ snapserver_github_source }}"
-      checksum: "sha256:{{ snapserver_github_sha256sum }}"
-      dest: "{{ snapserver_github_dest }}"
+      url: "{{ snapserver_github | selectattr('release', 'equalto', ansible_facts.distribution_release) | map(attribute='source') | first }}"
+      checksum: "sha256:{{ snapserver_github | selectattr('release', 'equalto', ansible_facts.distribution_release) | map(attribute='sha256sum') | first}}"
+      dest: "{{ snapserver_github | selectattr('release', 'equalto', ansible_facts.distribution_release) | map(attribute='dest') | first }}"
 
   - name: Install dowloaded package
     ansible.builtin.apt:
-      deb: "{{ snapserver_github_dest }}"
+      deb: "{{ snapserver_github | selectattr('release', 'equalto', ansible_facts.distribution_release) | map(attribute='dest') | first }}"
     notify:
       - Restart snapserver
     ignore_errors: "{{ ansible_check_mode }}"

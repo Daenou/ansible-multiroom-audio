@@ -9,14 +9,9 @@
   ansible.builtin.copy:
     src: files/usr/local/bin/acable.sh
     dest: /usr/local/bin/acable.sh
+    mode: "0755"
     backup: yes
   notify: Restart acables
-
-- name: Make acable script executable
-  ansible.builtin.file:
-    dest: /usr/local/bin/acable.sh
-    mode: +x
-  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: Create acable.conf.d directory
   ansible.builtin.file:

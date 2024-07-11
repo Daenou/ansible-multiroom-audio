@@ -7,9 +7,15 @@ snapserver_sampleformat: "44100:16:2"
 snapserver_codec: flac
 snapserver_buffer: 200
 # set snapserver_from_github to true in host vars to make the following work
-snapserver_github_source: "https://github.com/badaix/snapcast/releases/download/v0.27.0/snapserver_0.27.0-1_armhf.deb"
-snapserver_github_dest: "/var/tmp/snapserver_0.27.0-1_armhf.deb"
-snapserver_github_sha256sum: "bdfe79e76dfe37a61190942ec0788ec49d300dca1789ef2f0f722dbdccf755e8"
+snapserver_github:
+  - release: bullseye
+    source: "https://github.com/badaix/snapcast/releases/download/v0.27.0/snapserver_0.27.0-1_armhf.deb"
+    dest: "/var/tmp/snapserver_0.27.0-1_armhf.deb"
+    sha256sum: "bdfe79e76dfe37a61190942ec0788ec49d300dca1789ef2f0f722dbdccf755e8"
+  - release: bookworm
+    source: "https://github.com/badaix/snapcast/releases/download/v0.28.0/snapserver_0.28.0-1_armhf-bookworm.deb"
+    dest: "/var/tmp/snapserver_0.28.0-1_armhf-bookworm.deb"
+    sha256sum: "8b8d072a1846518fad8f951866520f5ac8540cdede3548084f42614f003a31b8"
 snapserver_idle_threshold: 1000
 snapserver_silence_threshold_percent: "0.5"
 snapserver_initial_volume: 10
