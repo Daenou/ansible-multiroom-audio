@@ -54,6 +54,7 @@
     - snd_aloop
     - snapserver
     - mpd
+    - rompr
     - mpdutils
     - raspotify
   tags: feature::server
