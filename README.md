@@ -91,7 +91,12 @@ Ansible implementation
   * usbmount
     * any plugged in usb storage device is automatically mounted read only and scanned by mpd for audio files.
   * rompr
-    * a container based web frontend for mpd. Finally get rid of broken android/linux cilents...
+    * a container based web frontend for mpd (on port 80)
+    * beautiful, easy to use, but [does not scale](https://github.com/fatg3erman/RompR/issues/168) for large playlists on large collections.
+
+  * ampd
+    * another container based web frontend for mpd (on port 8080)
+    * scales well
 
 * Spotify
   * raspotify
