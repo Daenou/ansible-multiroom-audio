@@ -19,6 +19,7 @@
   roles:
     - base
     - snapclient
+  tags: feature::base
 
 # Warning: bluetooth_sink must be run AFTER the acable role, as it
 # uses the variable acable_config that is built in the acable role only.
@@ -29,12 +30,14 @@
   roles:
     - acable
     - bluetooth_sink
+  tags: feature::acable
 
 - name: Disable bluetooth as no acable is defined
   hosts: amsel_all:!amsel_adc_aloop:!amsel_adc_dac:!amsel_bluetooth_aloop:!amsel_bluetooth_dac
   become: true
   roles:
     - bluetooth_disable
+  tags: feature::acable
 
 - name: Configure small audio server (only snapserver)
   hosts: amsel_small_server
@@ -42,6 +45,7 @@
   roles:
     - snd_aloop
     - snapserver
+  tags: feature::small_server
 
 - name: Configure full audio server (including mpd, raspotify)
   hosts: amsel_server
@@ -52,3 +56,4 @@
     - mpd
     - mpdutils
     - raspotify
+  tags: feature::server

@@ -7,7 +7,6 @@ snapclient_config:
   - name: wohnen
     snapclient_snapserver: wohnen.iselin.net
     snapclient_sink: dmix:CARD=sndrpihifiberry,DEV=0
-  - name: pi4dev
-    snapclient_snapserver: pi4dev.iselin.net
-    snapclient_sink: dmix:CARD=sndrpihifiberry,DEV=0
-
+#  - name: pi4dev
+#    snapclient_snapserver: pi4dev.iselin.net
+#    snapclient_sink: dmix:CARD=sndrpihifiberry,DEV=0
