@@ -115,7 +115,7 @@ Ansible host:
 
 Pi:
 
-* ~~Bullseye~~ Bookworm image.
+* Raspbian Bookworm image.
 * Strongly suggested: The Pis can reach each other using a DNS-Name.
 * Hints after a fresh install / a clone
   * reset password of user `pi`
