@@ -1,0 +1,57 @@
+---
+
+- name: Exit play if os_family is not Debian
+  ansible.builtin.fail:
+    msg: "ERROR: os_family of host {{ inventory_hostname }} is not Debian"
+  when: ansible_facts['os_family'] != "Debian"
+
+- name: Install docker pkg
+  ansible.builtin.apt:
+    name:
+      - docker.io
+      - git
+    state: latest
+    update_cache: no
+
+- name: download rompr container files from github
+  ansible.builtin.git:
+    repo: "https://github.com/rawdlite/docker-rompr"
+    dest: "{{ rompr_download_path }}"
+    single_branch: yes
+    version: master
+
+- name: build docker image
+  community.docker.docker_image:
+    name: "{{ rompr_image_name }}"
+    build:
+      path: "{{ rompr_download_path }}"
+      args:
+        ROMPR_VERSION: "{{ rompr_version }}"
+    source: build
+    state: present
+    push: false
+
+- name: start docker container
+  community.docker.docker_container:
+    name: "{{ rompr_container_name }}"
+    image: "{{ rompr_image_name }}"
+    state: started
+    restart_policy: always
+    image_name_mismatch: recreate
+    ports:
+      - "80:80"
+
+- name: list all current images
+  community.docker.docker_image_info:
+  register: docker_images
+
+- name: delete all but the current rompr images
+  community.docker.docker_image_remove:
+    name: "{{ item.Id }}"
+    force: true
+  loop: "{{ docker_images.images }}"
+  loop_control:
+    label: "{{ item.RepoTags[0] }} - {{ item.Id }}"
+  when:
+    - item.RepoTags[0] is ansible.builtin.match(rompr_image_basename)
+    - not item.RepoTags[0] is ansible.builtin.match(rompr_image_name)

@@ -1,0 +1,8 @@
+---
+
+rompr_version: "2.17"
+rompr_download_path: /var/tmp/git/docker-rompr
+rompr_image_basename: "local/rompr_"
+rompr_image_name: "{{ rompr_image_basename }}{{ rompr_version }}"
+rompr_container_name: rompr
+

@@ -90,6 +90,8 @@ Ansible implementation
     * An mpd playlist bot to eliminate duplicate playlist entries and manage playlist backup copies in mpd.
   * usbmount
     * any plugged in usb storage device is automatically mounted read only and scanned by mpd for audio files.
+  * rompr
+    * a container based web frontend for mpd. Finally get rid of broken android/linux cilents...
 
 * Spotify
   * raspotify
@@ -109,10 +111,11 @@ Ansible host:
 * ansible galaxy `community.general` collection for `community.general.modprobe`, install with `ansible-galaxy collection install community.general`.
 * ansible galaxy `t2d.raspotify` role as base for the raspotify role here, install with `ansible-galaxy install t2d.raspotify`.
 * ansible galaxy `ansible.posix` for the `usbmount` role.
+* ansible galaxy `community.docker` for the `rompr` role.
 
 Pi:
 
-* Bullseye image.
+* Raspbian Bookworm image.
 * Strongly suggested: The Pis can reach each other using a DNS-Name.
 * Hints after a fresh install / a clone
   * reset password of user `pi`
