@@ -55,6 +55,7 @@
     - snapserver
     - mpd
     - rompr
+    - ampd
     - mpdutils
     - raspotify
   tags: feature::server
