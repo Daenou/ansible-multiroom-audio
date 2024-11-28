@@ -1,0 +1,6 @@
+FROM eclipse-temurin:17-jre-noble
+VOLUME /tmp
+COPY ampd.jar ampd.jar
+COPY ampd.properties application.properties
+ENTRYPOINT ["java", "-jar", "/ampd.jar"]
+EXPOSE 8080

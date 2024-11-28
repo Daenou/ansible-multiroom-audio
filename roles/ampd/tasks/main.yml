@@ -1,0 +1,71 @@
+---
+
+- name: Exit play if os_family is not Debian
+  ansible.builtin.fail:
+    msg: "ERROR: os_family of host {{ inventory_hostname }} is not Debian"
+  when: ansible_facts['os_family'] != "Debian"
+
+- name: Install docker pkg
+  ansible.builtin.apt:
+    name:
+      - docker.io
+    state: latest
+    update_cache: no
+
+- name: Create build directory
+  ansible.builtin.file:
+    path: "{{ ampd_download_path }}"
+    state: directory
+    mode: '0750'
+
+- name: download ampd.jar
+  ansible.builtin.get_url:
+    url: "{{ ampd_url}}"
+    checksum: "{{ ampd_checksum }}"
+    dest: "{{ ampd_download_path }}/ampd.jar"
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: create properties file
+  ansible.builtin.template:
+    src: "ampd.properties.j2"
+    dest: "{{ ampd_download_path }}/ampd.properties"
+
+- name: create Docker file
+  ansible.builtin.template:
+    src: "Dockerfile.j2"
+    dest: "{{ ampd_download_path}}/Dockerfile"
+
+- name: build Docker image
+  community.docker.docker_image:
+    name: "{{ ampd_image_name }}"
+    build:
+      path: "{{ ampd_download_path }}"
+    source: build
+    state: present
+    push: false
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: start docker container
+  community.docker.docker_container:
+    name: "{{ ampd_container_name }}"
+    image: "{{ ampd_image_name }}"
+    state: started
+    restart_policy: always
+    image_name_mismatch: recreate
+    ports:
+      - "8080:8080"
+
+- name: list all current images
+  community.docker.docker_image_info:
+  register: docker_images
+
+- name: delete all but the current ampd images
+  community.docker.docker_image_remove:
+    name: "{{ item.Id }}"
+    force: true
+  loop: "{{ docker_images.images }}"
+  loop_control:
+    label: "{{ item.RepoTags[0] }} - {{ item.Id }}"
+  when:
+    - item.RepoTags[0] is ansible.builtin.match(ampd_image_basename)
+    - not item.RepoTags[0] is ansible.builtin.match(ampd_image_name)
