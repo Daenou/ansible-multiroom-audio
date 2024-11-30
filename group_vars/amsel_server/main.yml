@@ -8,3 +8,5 @@ snapserver_buffer: 1000
 mpd_music_directory: "smb://shares.t7.iselin.net/mp3-coll"
 mpd_alsa_sink_name: "To Snapserver"
 mpd_alsa_sink_device: "dmix:CARD=Loopback,DEV=0"
+
+ampd_props_queue_page_size: 1000
