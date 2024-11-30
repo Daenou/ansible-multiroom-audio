@@ -57,10 +57,12 @@
     image_name_mismatch: recreate
     ports:
       - "8080:8080"
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: list all current images
   community.docker.docker_image_info:
   register: docker_images
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: delete all but the current ampd images
   community.docker.docker_image_remove:
