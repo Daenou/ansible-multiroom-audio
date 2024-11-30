@@ -29,11 +29,13 @@
   ansible.builtin.template:
     src: "ampd.properties.j2"
     dest: "{{ ampd_download_path }}/ampd.properties"
+  register: ampd_properties
 
 - name: create Docker file
   ansible.builtin.template:
     src: "Dockerfile.j2"
     dest: "{{ ampd_download_path}}/Dockerfile"
+  register: ampd_dockerfile
 
 - name: build Docker image
   community.docker.docker_image:
@@ -41,6 +43,7 @@
     build:
       path: "{{ ampd_download_path }}"
     source: build
+    force_source: "{{ ampd_properties.changed or ampd_dockerfile.changed }}"
     state: present
     push: false
   ignore_errors: "{{ ansible_check_mode }}"
@@ -65,7 +68,8 @@
     force: true
   loop: "{{ docker_images.images }}"
   loop_control:
-    label: "{{ item.RepoTags[0] }} - {{ item.Id }}"
+    label: "{{ item.RepoTags[0] | default('NoTag') }} - {{ item.Id }}"
   when:
+    - item.RepoTags[0] is defined
     - item.RepoTags[0] is ansible.builtin.match(ampd_image_basename)
     - not item.RepoTags[0] is ansible.builtin.match(ampd_image_name)

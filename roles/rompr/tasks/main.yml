@@ -51,7 +51,8 @@
     force: true
   loop: "{{ docker_images.images }}"
   loop_control:
-    label: "{{ item.RepoTags[0] }} - {{ item.Id }}"
+    label: "{{ item.RepoTags[0] | default('NoTag') }} - {{ item.Id }}"
   when:
+    - item.RepoTags[0] is defined
     - item.RepoTags[0] is ansible.builtin.match(rompr_image_basename)
     - not item.RepoTags[0] is ansible.builtin.match(rompr_image_name)
