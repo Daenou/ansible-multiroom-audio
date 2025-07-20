@@ -8,3 +8,4 @@ ampd_image_basename: "local/ampd_"
 ampd_image_name: "{{ ampd_image_basename }}{{ ampd_version }}"
 ampd_container_name: ampd
 ampd_props_queue_page_size: 100
+ampd_props_mpd_server: "{{ inventory_hostname }}"

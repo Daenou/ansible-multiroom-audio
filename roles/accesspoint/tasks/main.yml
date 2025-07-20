@@ -5,64 +5,11 @@
     msg: "ERROR: os_family of host {{ inventory_hostname }} is not Debian"
   when: ansible_facts['os_family'] != "Debian"
 
-- name: Rename WLAN interface to ap0
+- name: Rename onboard WLAN interface to ap0
   ansible.builtin.copy:
     src: files/etc/systemd/network/00-onboard.link
     dest: /etc/systemd/network/00-onboard.link
     backup: no
-
-- name: Create systemd override directory for dhcpcd
-  ansible.builtin.file:
-    path: /etc/systemd/system/dhcpcd.service.d
-    state: directory
-    mode: '0755'
-
-- name: dhcpcd must ignore ap0 so that hostapd can take control
-  ansible.builtin.copy:
-    src: files/etc/systemd/system/dhcpcd.service.d/zzoverride.conf
-    dest: /etc/systemd/system/dhcpcd.service.d/zzoverride.conf
-  notify: Restart dhcpcd
-
-# Use /etc/network/interfaces.d (dhcpcd ignores ap0)
-- name: Set static IPs for ap0
-  ansible.builtin.template:
-    src: templates/etc/network/interfaces.d/accesspoint.j2
-    dest: /etc/network/interfaces.d/accesspoint
-  notify:
-    - Restart ap0
-    - Restart hostapd
-    - Restart dnsmasq
-
-- name: Use dnsmasq as dhcp / dns server
-  ansible.builtin.apt:
-    name: dnsmasq
-    state: latest
-    update_cache: yes
-
-- name: Configure dnsmasq to serve wlan network (IPv4)
-  ansible.builtin.blockinfile:
-    path: /etc/dnsmasq.conf
-    marker: "# {mark} ANSIBLE MANAGED BLOCK IPv4"
-    block: |
-      dhcp-range={{ accesspoint_dhcp_range_v4 }},12h
-  notify: Restart dnsmasq
-
-- name: Configure dnsmasq to serve wlan network (IPv6)
-  ansible.builtin.blockinfile:
-    path: /etc/dnsmasq.conf
-    marker: "# {mark} ANSIBLE MANAGED BLOCK IPv6"
-    block: |
-      dhcp-range={{ accesspoint_ap0_v6_ula_net_48 }}{{ accesspoint_ap0_v6_local_64 }}::1:1,{{ accesspoint_ap0_v6_ula_net_48 }}{{ accesspoint_ap0_v6_local_64 }}::ffff:fffe,ra-names,64,24h
-  when: accesspoint_ap0_v6_ula_net_48 is defined
-  notify: Restart dnsmasq
-
-- name: Stop dnsmasq from serving wlan network (IPv6)
-  ansible.builtin.blockinfile:
-    path: /etc/dnsmasq.conf
-    marker: "# {mark} ANSIBLE MANAGED BLOCK IPv6"
-    state: "absent"
-  when: accesspoint_ap0_v6_ula_net_48 is not defined
-  notify: Restart dnsmasq
 
 - name: Reboot when ap0 not known yet
   ansible.builtin.reboot:
@@ -74,35 +21,253 @@
     msg: "ap0 not found after reboot, cannot continue"
   when: ansible_facts['ap0'] is not defined
 
-- name: ap0
-  ansible.builtin.debug:
-    msg: "ap0 has IP {{ ansible_facts['ap0']['ipv4']['address'] }}/{{ ansible_facts['ap0']['ipv4']['netmask'] }}"
+- name: Create /etc/docker directory
+  ansible.builtin.file:
+    path: /etc/docker
+    state: directory
+    mode: 0755
 
-- name: WLAN config
-  ansible.builtin.debug:
-    msg: "channel={{ accesspoint_channel | default ('?') }}, ieee80211d={{ accesspoint_ieee80211d | default ('?') }}, country_code={{ accesspoint_country_code | default ('?') }}, SSID={{ accesspoint_ssid | default ('?') }}, passphrase={{ accesspoint_wpa_passphrase | default ('?') }}"
-
-- name: Abort when passphrase unset or empty string
-  ansible.builtin.fail:
-    msg: "Aborting, passphrase unset or empty string"
-  when: accesspoint_wpa_passphrase is not defined or accesspoint_wpa_passphrase | default ('?') == ""
-
-- name: Install hostapd
-  ansible.builtin.apt:
-    name: hostapd
-    state: latest
-    update_cache: no
-
-- name: Configure hostapd
+- name: Disable docker networking
   ansible.builtin.template:
-    src: templates/etc/hostapd/hostapd.conf.j2
-    dest: /etc/hostapd/hostapd.conf
-  notify: Restart hostapd
+    src: etc/docker/daemon.json
+    dest: /etc/docker/daemon.json
+  when: accesspoint_disable_docker_networking
 
-- name: Start and enable hostapd
+- name: Install firewalld
+  ansible.builtin.apt:
+    name: firewalld
+    state: latest
+  notify: Reboot
+
+- name: Add docker zone
+  ansible.builtin.template:
+    src: etc/firewalld/zones/docker.xml
+    dest: /etc/firewalld/zones/docker.xml
+    force: false
+  register: deploy_docker_zone
+
+- name: Patch firewalld
+  # taken from https://github.com/firewalld/firewalld/issues/1307
+  ansible.posix.patch:
+    src: firewalld.patch
+    dest: /usr/lib/python3/dist-packages/firewall/server/firewalld.py
+  register: apply_patch
+  ignore_errors: "{{ ansible_check_mode }}"
+  notify: Reboot
+
+- name: Check default zone
+  ansible.builtin.command:
+    cmd: firewall-cmd --get-default-zone
+  register: get_default_zone
+  check_mode: false
+  changed_when: false
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: Set default zone to public
+  ansible.builtin.command:
+    cmd: firewall-cmd --set-default-zone public
+  when: get_default_zone.stdout_lines[0] != 'public'
+  register: default_zone
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: Check logging of denied packets
+  ansible.builtin.command:
+    cmd: firewall-cmd --get-log-denied
+  register: get_log_denied
+  check_mode: false
+  changed_when: false
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: Set logging of all denied packets
+  ansible.builtin.command:
+    cmd: firewall-cmd --set-log-denied all
+  when: get_log_denied.stdout_lines[0] != 'all'
+  register: logging
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: Define dmz-to-public policy
+  ansible.builtin.copy:
+    src: etc/firewalld/policies/dmz-to-public.xml
+    dest: /etc/firewalld/policies/dmz-to-public.xml
+    mode: "644"
+  register: dmz_to_public_policy
+
+- name: Define docker-to-host policy
+  ansible.builtin.copy:
+    src: etc/firewalld/policies/docker-to-host.xml
+    dest: /etc/firewalld/policies/docker-to-host.xml
+    mode: "644"
+  register: docker_to_host_policy
+
+- name: restart firewalld now if anything changed
   ansible.builtin.systemd:
-    name: "hostapd.service"
-    enabled: yes
-    masked: no
+    name: "firewalld.service"
     daemon_reload: yes
-    state: started
+    state: restarted
+  when: deploy_docker_zone['changed'] or
+        apply_patch['changed'] or
+        default_zone['changed'] or
+        logging['changed'] or
+        dmz_to_public_policy['changed'] or
+        docker_to_host_policy['changed']
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: Check wifi country code
+  ansible.builtin.command:
+    cmd: raspi-config nonint get_wifi_country
+  register: wifi_country
+  check_mode: false
+  changed_when: false
+  ignore_errors: true
+
+- name: Set wifi country code
+  ansible.builtin.command:
+    cmd: raspi-config nonint do_wifi_country {{ accesspoint_country_code }}
+  when: wifi_country.stdout_lines | length == 0 or wifi_country.stdout_lines[0] != accesspoint_country_code
+  notify: Reboot
+
+- name: Define access point on ap0 (with IPv6)
+  community.general.nmcli:
+    type: "wifi"
+    conn_name: "accesspoint"
+    ifname: "ap0"
+    zone: "dmz"
+    ssid: "{{ accesspoint_ssid }}"
+    state: "present"
+    ip4: "{{ accesspoint_ap0_address_v4 }}/{{ accesspoint_ap0_prefix_v4 }}"
+    ip6: "{{ accesspoint_ap0_v6_ula_net_48 }}{{ accesspoint_ap0_v6_local_64 }}{{ accesspoint_ap0_v6_host }}/64"
+    wifi:
+      ap-isolation: 0
+      band: "bg"
+      channel: "{{ accesspoint_channel }}"
+      mode: "ap"
+    wifi_sec:
+      key-mgmt: "wpa-psk"
+      psk: "{{ accesspoint_wpa_passphrase }}"
+      pmf: "1"
+      proto:
+        - rsn
+  when: accesspoint_ap0_v6_ula_net_48 is defined
+  notify: Reboot
+
+- name: Define access point on ap0 (without IPv6)
+  community.general.nmcli:
+    type: "wifi"
+    conn_name: "accesspoint"
+    ifname: "ap0"
+    zone: "dmz"
+    ssid: "{{ accesspoint_ssid }}"
+    state: "present"
+    ip4: "{{ accesspoint_ap0_address_v4 }}/{{ accesspoint_ap0_prefix_v4 }}"
+    wifi:
+      ap-isolation: 0
+      band: "bg"
+      channel: "{{ accesspoint_channel }}"
+      mode: "ap"
+    wifi_sec:
+      key-mgmt: "wpa-psk"
+      psk: "{{ accesspoint_wpa_passphrase }}"
+      pmf: "1"
+      proto:
+        - rsn
+  when: accesspoint_ap0_v6_ula_net_48 is not defined
+  notify: Reboot
+
+- name: Check priority of accesspoint
+  ansible.builtin.command:
+    cmd: nmcli -g connection.autoconnect-priority c show accesspoint
+  register: auto_priority
+  check_mode: false
+  changed_when: false
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: Raise priority of accesspoint
+  ansible.builtin.command:
+    cmd: nmcli c modify accesspoint connection.autoconnect-priority 900
+  when: auto_priority.stdout_lines[0] != "900"
+  ignore_errors: "{{ ansible_check_mode }}"
+  notify: Reboot
+
+- name: Get wifi kill switch status
+  ansible.builtin.command:
+    cmd: nmcli r wifi
+  register: radio_wifi
+  check_mode: false
+  changed_when: false
+
+- name: Enable wifi
+  ansible.builtin.command:
+    cmd: nmcli r wifi on
+  when: radio_wifi.stdout_lines[0] != 'enabled'
+  notify: Reboot
+
+# not using ansible.posix.firewalld here as it can on zones only, but not on policies
+# therefore using script that runs when interface comes up to have full featureset
+
+- name: Create firewall script
+  ansible.builtin.template:
+    src: templates/etc/network/if-up.d/firewalld
+    dest: /etc/network/if-up.d/firewalld
+    backup: no
+    mode: "755"
+  notify: Reboot
+
+- name: Install dnsmasq to use as dhcp / dns server
+  ansible.builtin.apt:
+    name: dnsmasq
+    state: latest
+
+- name: Configure dnsmasq to serve wlan network (IPv4)
+  ansible.builtin.blockinfile:
+    path: /etc/dnsmasq.conf
+    marker: "# {mark} ANSIBLE MANAGED BLOCK IPv4"
+    block: |
+      dhcp-range={{ accesspoint_dhcp_range_v4 }},12h
+  notify: Restart dnsmasq
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: Add a private entry to /etc/hosts for ap0 interface (IPv4)
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    regexp: "^{{ accesspoint_ap0_address_v4 }}"
+    line: "{{ accesspoint_ap0_address_v4 }} camper.private"
+    state: present
+    insertafter: EOF
+  notify: Restart dnsmasq
+
+- name: Configure dnsmasq to serve wlan network (IPv6)
+  ansible.builtin.blockinfile:
+    path: /etc/dnsmasq.conf
+    marker: "# {mark} ANSIBLE MANAGED BLOCK IPv6"
+    block: |
+      dhcp-range={{ accesspoint_ap0_v6_ula_net_48 }}{{ accesspoint_ap0_v6_local_64 }}::1:1,{{ accesspoint_ap0_v6_ula_net_48 }}{{ accesspoint_ap0_v6_local_64 }}::ffff:fffe,ra-names,64,24h
+  when: accesspoint_ap0_v6_ula_net_48 is defined
+  notify: Restart dnsmasq
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: Add a private entry to /etc/hosts for ap0 interface (IPv6)
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    regexp: "^[fF][cDdD].* camper.private$"
+    line: "{{ accesspoint_ap0_v6_ula_net_48 }}{{ accesspoint_ap0_v6_local_64}}{{ accesspoint_ap0_v6_host }} camper.private"
+    state: present
+    insertafter: EOF
+  notify: Restart dnsmasq
+  when: accesspoint_ap0_v6_ula_net_48 is defined
+
+- name: Stop dnsmasq from serving wlan network (IPv6)
+  ansible.builtin.blockinfile:
+    path: /etc/dnsmasq.conf
+    marker: "# {mark} ANSIBLE MANAGED BLOCK IPv6"
+    state: "absent"
+  when: accesspoint_ap0_v6_ula_net_48 is not defined
+  notify: Restart dnsmasq
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: Remove private entry to /etc/hosts for ap0 interface (IPv6)
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    regexp: "^[fF][cDdD].* camper.private$"
+    state: absent
+  notify: Restart dnsmasq
+  when: accesspoint_ap0_v6_ula_net_48 is not defined

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<zone version="1.0" target="ACCEPT">
+  <short>docker</short>
+  <description>zone for docker bridge network interfaces</description>
+  <forward/>
+</zone>

@@ -1,0 +1,227 @@
+#!/usr/bin/bash
+
+LOGGER="/usr/bin/logger $0 ($NM_DISPATCHER_ACTION $ADDRFAM $IFACE):"
+
+# $LOGGER "$( printenv | sort )"
+
+# are the music ports available from "outside"?
+{% if accesspoint_trust_public_zone is defined and accesspoint_trust_public_zone -%}
+ALLOW_MUSIC_IN_DEFAULT_ZONE=yes
+#ALLOW_MUSIC_IN_DEFAULT_ZONE=no
+{% else %}
+#ALLOW_MUSIC_IN_DEFAULT_ZONE=yes
+ALLOW_MUSIC_IN_DEFAULT_ZONE=no
+{% endif %}
+
+MUSIC_PORTS="{{ accesspoint_firewall_music_ports | join  (' ') }}"
+
+##################################################
+# Helper functions
+
+firewall_do () {
+  $LOGGER "===== Executing: firewall-cmd $*"
+  $LOGGER "$( firewall-cmd $* 2>&1 )"
+}
+
+# Rich rules contain spaces, simple approach above does not work any more
+firewall_do_richrule () {
+  zone="$1"
+  shift
+  rule="$*"
+  $LOGGER "===== Executing: firewall-cmd --zone $zone --add-rich-rule \"$rule\""
+  $LOGGER $( firewall-cmd --zone $zone --add-rich-rule "$rule" 2>&1 )
+}
+
+list2lines () {
+for i in $*
+do
+  echo $i
+done
+}
+
+allow_music_ports () {
+
+  LOCALZONE=$1
+
+  # Enable local tcp/udp ports
+  for port in $MUSIC_PORTS
+  do
+    if ! list2lines $( firewall-cmd --zone $LOCALZONE --list-ports ) | grep -w $port > /dev/null 2>&1
+    then
+      changed_sth=yes
+      firewall_do --zone $LOCALZONE --add-port=$port
+    fi
+  done
+}
+
+deny_music_ports () {
+
+  LOCALZONE=$1
+
+  # Disable local tcp/udp ports
+  for port in $MUSIC_PORTS
+  do
+    if list2lines $( firewall-cmd --zone $LOCALZONE --list-ports ) | grep -w $port > /dev/null 2>&1
+    then
+      changed_sth=yes
+      firewall_do --zone $LOCALZONE --remove-port=$port
+    fi
+  done
+}
+
+##################################################
+# Status
+
+printstatus () {
+
+$LOGGER "Show Status"
+firewall_do --get-default-zone
+firewall_do --get-zones
+for zone in $( firewall-cmd --get-active-zones | egrep "^[a-z0-9]" )
+do
+  firewall_do --zone $zone --list-all
+done
+firewall_do --get-policies
+for policy in $( firewall-cmd --get-active-policies | egrep "^[a-z0-9]" )
+do
+  firewall_do --info-policy $policy
+done
+}
+
+### MAIN ###
+
+if [[ $IFACE == "lo" ]]
+then
+  $LOGGER "Doing nothing for loopback interface"
+  exit 0
+fi
+
+if [[ "$NM_DISPATCHER_ACTION" != "up" ]]
+then
+  printstatus
+  exit 0
+fi
+
+# Assumptions here:
+# Interface "ap0"     for the accesspoint, having its own zone (dmz)
+# Interface "docker0" for the docker bridge,
+# Zone      "docker"  already exists (brought by docker)
+
+# get firewalld zone for IFACE
+ZONE=$( firewall-cmd --get-zone-of-interface $IFACE )
+$LOGGER "Working on $IFACE in zone $ZONE"
+
+##################################################
+# Do the real work, depending on interface
+##################################################
+
+changed_sth=no
+
+if [[ "$IFACE" == "ap0" ]]
+then
+
+  ### prevent default zone from being changed for access point
+  default_zone=$( firewall-cmd  --get-default-zone )
+  if [[ "$ZONE" == "$default_zone" ]]
+  then
+    $LOGGER "WARNING: $IFACE should not be in default zone $default_zone, doing nothing"
+    exit 0
+  elif [[ -z "$ZONE" ]]
+  then
+    $LOGGER "WARNING: $IFACE is in no zone, doing nothing"
+    exit 0
+  else
+    $LOGGER "INFO: $IFACE not in default zone $default_zone, going on"
+  fi
+
+  # Enable local services for this zone
+
+  for localservice in dhcp dhcpv6 dns mdns ssh
+  do
+    if ! list2lines $( firewall-cmd --zone $ZONE --list-services ) | grep -w $localservice > /dev/null 2>&1
+    then
+      changed_sth=yes
+      firewall_do --zone $ZONE --add-service $localservice
+    fi
+  done
+
+  allow_music_ports $ZONE
+
+  # Enable forwarding (probably not needed, this is for intra zone forwarding only)
+  if [[ $( firewall-cmd --zone $ZONE --query-forward  ) != "yes" ]]
+  then
+    changed_sth=yes
+    firewall_do --zone $ZONE --add-forward
+  fi
+elif [[ "$IFACE" == "docker0" ]]
+then
+  if [[ -z "$ZONE" ]]
+  then
+    ZONE="docker"
+    if firewall-cmd --get-zones | grep $ZONE > /dev/null 2>&1
+    then
+      changed_sth=yes
+      firewall_do --zone $ZONE --add-interface $IFACE
+    else
+      $LOGGER "Target zone $ZONE for $IFACE not found, doing nothing"
+      exit 0
+    fi
+  else
+    $LOGGER "$IFACE is already in zone $ZONE, doing nothing"
+    exit 0
+  fi
+else
+  # all other interfaces are considered to be uplink interfaces in the default zone
+  #
+  # for information only: check if this is the interface having the most attractive default route right now
+  # need to apply rules even when this interface is not the default route right now, it is
+  # possible that this changes later
+
+  ACTIVEUPLINK=$( ip route get 1.1.1.1 | sed -ne "s/^.* dev \([^ ]*\) .*$/\1/p" )
+
+  if [[ "$ADDRFAM" == "inet" ]]
+  then
+    if [[ -n "$ACTIVEUPLINK" ]]
+    then
+      if [[ "$ACTIVEUPLINK" == "$IFACE" ]]
+      then
+        $LOGGER "$IFACE is the currently active IPv4 uplink"
+      else
+        $LOGGER "$IFACE is different from the currently active IPv4 uplink $ACTIVEUPLINK"
+      fi
+    else
+      $LOGGER "no interface to reach 1.1.1.1, IPv4 offline?"
+    fi
+  fi
+
+  # Enable IPv4 masquerading on uplink
+  if [[ $( firewall-cmd --zone $ZONE --query-masquerade ) != "yes" ]]
+  then
+    changed_sth=yes
+    firewall_do --zone $ZONE --add-masquerade
+  fi
+
+  # Enable IPv6 masquerading on uplink
+  IPV6MASQ_RICHRULE='rule family="ipv6" masquerade'
+  if [[ $( firewall-cmd --zone $ZONE --query-rich-rule "${IPV6MASQ_RICHRULE}" ) != "yes" ]]
+  then
+    changed_sth=yes
+    firewall_do_richrule $ZONE "${IPV6MASQ_RICHRULE}"
+  fi
+
+  if [[ "$ALLOW_MUSIC_IN_DEFAULT_ZONE" == "yes" ]]
+  then
+    allow_music_ports $ZONE
+  else
+    deny_music_ports $ZONE
+  fi
+
+fi
+
+if [[ "$changed_sth" == "yes" ]]
+then
+  firewall_do --runtime-to-permanent
+  printstatus
+else
+  $LOGGER "no changes applied"
+fi

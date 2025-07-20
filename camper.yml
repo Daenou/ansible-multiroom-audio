@@ -10,8 +10,8 @@
     - acable
     - bluetooth_sink
     - accesspoint
-    - uplink
     - mpd
     - raspotify
     - mpdutils
     - usbmount
+    - ampd

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<policy target="DROP">
+  <port port="6600" protocol="tcp"/>
+  <ingress-zone name="docker"/>
+  <egress-zone name="HOST"/>
+</policy>
