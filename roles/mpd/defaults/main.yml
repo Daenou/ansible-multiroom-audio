@@ -1,6 +1,7 @@
 ---
 
 mpd_zeroconf_enabled: false
+mpd_connection_timeout: 120
 
 mpd_music_directory: "/var/lib/mpd/music"
 mpd_max_output_buffer_size: "32768"

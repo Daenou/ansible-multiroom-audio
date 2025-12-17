@@ -5,6 +5,9 @@
 zeroconf_enabled        "yes"
 zeroconf_name           "mpd@%h"
 {% endif %}
+{% if mpd_connection_timeout is defined -%}
+connection_timeout      "{{ mpd_connection_timeout }}"
+{% endif %}
 
 music_directory         "{{ mpd_music_directory }}"
 playlist_directory      "/var/lib/mpd/playlists"

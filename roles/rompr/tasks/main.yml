@@ -19,6 +19,7 @@
     dest: "{{ rompr_download_path }}"
     single_branch: yes
     version: master
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: build docker image
   community.docker.docker_image:
@@ -30,6 +31,7 @@
     source: build
     state: present
     push: false
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: start docker container
   community.docker.docker_container:
@@ -40,10 +42,12 @@
     image_name_mismatch: recreate
     ports:
       - "80:80"
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: list all current images
   community.docker.docker_image_info:
   register: docker_images
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: delete all but the current rompr images
   community.docker.docker_image_remove:
@@ -51,7 +55,8 @@
     force: true
   loop: "{{ docker_images.images }}"
   loop_control:
-    label: "{{ item.RepoTags[0] }} - {{ item.Id }}"
+    label: "{{ item.RepoTags[0] | default('NoTag') }} - {{ item.Id }}"
   when:
+    - item.RepoTags[0] is defined
     - item.RepoTags[0] is ansible.builtin.match(rompr_image_basename)
     - not item.RepoTags[0] is ansible.builtin.match(rompr_image_name)
