@@ -4,6 +4,7 @@
 {% if mpd_zeroconf_enabled is defined and mpd_zeroconf_enabled -%}
 zeroconf_enabled        "yes"
 zeroconf_name           "mpd@%h"
+port                    "6600"
 {% endif %}
 {% if mpd_connection_timeout is defined -%}
 connection_timeout      "{{ mpd_connection_timeout }}"

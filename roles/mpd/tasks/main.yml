@@ -13,6 +13,7 @@
 
 - name: Enable/Start mpd socket (no zeroconf)
   ansible.builtin.systemd:
+    daemon_reload: yes
     name: mpd.socket
     state: started
     enabled: true
@@ -20,13 +21,22 @@
   notify: "Restart mpd"
   ignore_errors: "{{ ansible_check_mode }}"
 
+- name: Enable mpd service (with zeroconf)
+  ansible.builtin.systemd:
+    name: mpd
+    enabled: true
+  when: mpd_zeroconf_enabled is defined and mpd_zeroconf_enabled
+  ignore_errors: "{{ ansible_check_mode }}"
+
 - name: Disable/Stop mpd socket (with zeroconf)
   ansible.builtin.systemd:
+    daemon_reload: yes
     name: mpd.socket
     state: stopped
     enabled: false
   when: mpd_zeroconf_enabled is defined and mpd_zeroconf_enabled
   notify: "Restart mpd"
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: Configure mpd
   ansible.builtin.template:
@@ -34,3 +44,4 @@
     dest: /etc/mpd.conf
     backup: yes
   notify: "Restart mpd"
+  ignore_errors: "{{ ansible_check_mode }}"

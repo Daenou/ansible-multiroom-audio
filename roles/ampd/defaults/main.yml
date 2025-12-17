@@ -1,10 +1,11 @@
 ---
 
-ampd_version: 2.1.0
-ampd_url: "https://github.com/rain0r/ampd/releases/download/ampd-{{ ampd_version}}/ampd-{{ ampd_version }}.jar"
-ampd_checksum: "sha256:df471259055c3386fd02228389d0a6679cc06aa37c005f669ab503acaf29cc2d"
+ampd_version: 2.2.6
+ampd_url: "https://github.com/rain0r/ampd/releases/download/ampd-{{ ampd_version}}/ampd.jar"
+ampd_checksum: "sha256:229411f0eecaeeaa01d56c99dc89bf03102718a5bf377470c886c79ad84ea984"
 ampd_download_path: /var/lib/buildampd
 ampd_image_basename: "local/ampd_"
 ampd_image_name: "{{ ampd_image_basename }}{{ ampd_version }}"
 ampd_container_name: ampd
 ampd_props_queue_page_size: 100
+ampd_props_mpd_server: "{{ inventory_hostname }}"

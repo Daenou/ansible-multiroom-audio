@@ -1,23 +1,5 @@
 ---
 
-- name: Restart ap0
-  ansible.builtin.shell:
-    cmd: "ifdown ap0; ifup ap0"
-
-- name: Restart hostapd
-  ansible.builtin.systemd:
-    name: "hostapd.service"
-    daemon_reload: yes
-    state: restarted
-  ignore_errors: "{{ ansible_check_mode }}"
-
-- name: Restart dhcpcd
-  ansible.builtin.systemd:
-    name: "dhcpcd.service"
-    daemon_reload: yes
-    state: restarted
-  ignore_errors: "{{ ansible_check_mode }}"
-
 - name: Restart dnsmasq
   ansible.builtin.systemd:
     name: "dnsmasq.service"
@@ -25,3 +7,6 @@
     state: restarted
   ignore_errors: "{{ ansible_check_mode }}"
 
+- name: Reboot
+  ansible.builtin.reboot:
+    msg: "Reboot to ensure proper network"
