@@ -19,4 +19,5 @@ snapserver_github:
 snapserver_idle_threshold: 1000
 snapserver_silence_threshold_percent: "0.5"
 snapserver_initial_volume: 10
-
+snapserver_controlscript: "meta_mpd.py"
+snapserver_controlscript_enable_debugging: False

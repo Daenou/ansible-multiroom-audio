@@ -30,6 +30,22 @@
   when: snapserver_from_github is defined and snapserver_from_github
   notify: Restart snapserver
 
+- name: Set variables for controlscript debugging
+  ansible.builtin.set_fact:
+    _snapserver_controlscript_params: "&controlscriptparams=--debug"
+    _snapserver_log_filter: 'PcmStream:debug,Script:debug,'
+  when:
+    - snapserver_controlscript is defined
+    - snapserver_controlscript != ""
+    - snapserver_controlscript_enable_debugging is defined
+    - snapserver_controlscript_enable_debugging
+
+- name: Unset variables for controlscript debugging
+  ansible.builtin.set_fact:
+    _snapserver_controlscript_params: ""
+    _snapserver_log_filter: ""
+  when: _snapserver_controlscript_params is not defined or _snapserver_controlscript_params == ''
+
 - name: Install snapserver config
   ansible.builtin.template:
     src: templates/etc/snapserver.conf.j2
