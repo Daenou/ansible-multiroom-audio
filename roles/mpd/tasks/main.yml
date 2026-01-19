@@ -5,6 +5,46 @@
     msg: "ERROR: os_family of host {{ inventory_hostname }} is not Debian"
   when: ansible_facts['os_family'] != "Debian"
 
+- name: Verify variable consistency
+  ansible.builtin.assert:
+    that: (mpd_smb_mount_music_dir and not mpd_music_directory is ansible.builtin.regex('^smb://') ) or not mpd_smb_mount_music_dir
+
+- name: Get current mountdir from ansible_mounts
+  when: mpd_smb_mount_music_dir
+  ansible.builtin.set_fact:
+    mpd_smb_mount_current: "{{ ansible_mounts | selectattr('device', 'eq', mpd_smb_mount_music_dir_src ) | map(attribute='mount') |  first | default('not mounted') }}"
+
+- name: Get password and create credentials file
+  when: mpd_smb_mount_music_dir and not mpd_smb_mount_current == mpd_music_directory
+  block:
+  - name: Get password if unset
+    delegate_to: localhost
+    run_once: True
+    when: mpd_smb_mount_music_dir_password == "unset"
+    block:
+    - name: Need password for {{ mpd_smb_mount_music_dir_user }}
+      ansible.builtin.pause:
+      register: _mpd_pause_result
+
+    - name: Save password to mpd_smb_mount_music_dir_password
+      ansible.builtin.set_fact:
+        mpd_smb_mount_music_dir_password: "{{ _mpd_pause_result.user_input }}"
+
+  - name: create credentials file
+    ansible.builtin.template:
+      src: etc/mpd_mount.creds.j2
+      dest: /etc/mpd_mount.creds
+      mode: "600"
+
+- name: Mount mpd_music_directory {{ mpd_music_directory }} from {{ mpd_smb_mount_music_dir_src }}
+  ansible.posix.mount:
+    fstype: smb3
+    opts: "defaults,ro,nosuid,nodev,noexec,soft,vers=3.0,credentials=/etc/mpd_mount.creds"
+    path: "{{ mpd_music_directory }}"
+    src: "{{ mpd_smb_mount_music_dir_src }}"
+    state: mounted
+    backup: true
+
 - name: Install mpd package
   ansible.builtin.apt:
     name: mpd
@@ -40,7 +80,7 @@
 
 - name: Configure mpd
   ansible.builtin.template:
-    src: templates/etc/mpd.conf.j2
+    src: etc/mpd.conf.j2
     dest: /etc/mpd.conf
     backup: yes
   notify: "Restart mpd"

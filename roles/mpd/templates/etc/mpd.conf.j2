@@ -30,11 +30,12 @@ input {
         plugin "curl"
 }
 
-
-input { 
+{% if mpd_music_directory is ansible.builtin.regex('^smb://') -%}
+input {
         plugin "smbclient"
 }
 
+{% endif %}
 input {
        plugin "alsa"
        default_format "{{ mpd_alsa_sink_format }}"
