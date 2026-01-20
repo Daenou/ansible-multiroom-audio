@@ -5,7 +5,11 @@ snapserver_from_github: true
 snapserver_idle_threshold: 30000
 snapserver_buffer: 1000
 
-mpd_music_directory: "smb://shares.t7.iselin.net/mp3-coll"
+mpd_smb_mount_music_dir: True
+mpd_smb_mount_music_dir_user: mp3readonly
+mpd_smb_mount_music_dir_password: unset
+mpd_smb_mount_music_dir_domain: T7
+mpd_smb_mount_music_dir_src: "//ucssmb.t7.iselin.net/mp3-coll"
 mpd_alsa_sink_name: "To Snapserver"
 mpd_alsa_sink_device: "dmix:CARD=Loopback,DEV=0"
 

@@ -13,10 +13,11 @@ snapserver_github:
     dest: "/var/tmp/snapserver_0.27.0-1_armhf.deb"
     sha256sum: "bdfe79e76dfe37a61190942ec0788ec49d300dca1789ef2f0f722dbdccf755e8"
   - release: bookworm
-    source: "https://github.com/badaix/snapcast/releases/download/v0.29.0/snapserver_0.29.0-1_armhf_bookworm.deb"
-    dest: "/var/tmp/snapserver_0.29.0-1_armhf-bookworm.deb"
-    sha256sum: "23e3f10e37038a768ca96e81695edbb5a38d6dac1842baa3f9359a6e016aa9a1"
+    source: "https://github.com/snapcast/snapcast/releases/download/v0.34.0/snapserver_0.34.0-1_armhf_bookworm.deb"
+    dest: "/var/tmp/snapserver_0.34.0-1_armhf-bookworm.deb"
+    sha256sum: "69b91bc180fa5f62a0487a3255e970b737150765eae20b9bf5cc1dc802c8f48f"
 snapserver_idle_threshold: 1000
 snapserver_silence_threshold_percent: "0.5"
 snapserver_initial_volume: 10
-
+snapserver_controlscript: "meta_mpd.py"
+snapserver_controlscript_enable_debugging: False
