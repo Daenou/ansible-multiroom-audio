@@ -37,6 +37,7 @@
       mode: "600"
 
 - name: Mount mpd_music_directory {{ mpd_music_directory }} from {{ mpd_smb_mount_music_dir_src }}
+  when: mpd_smb_mount_music_dir
   ansible.posix.mount:
     fstype: smb3
     opts: "defaults,ro,nosuid,nodev,noexec,soft,vers=3.0,credentials=/etc/mpd_mount.creds"
