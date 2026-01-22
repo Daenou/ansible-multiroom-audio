@@ -1,8 +1,8 @@
 ---
 
-ampd_version: 2.2.7
+ampd_version: 2.2.8
 ampd_url: "https://github.com/rain0r/ampd/releases/download/ampd-{{ ampd_version}}/ampd.jar"
-ampd_checksum: "sha256:f95f49197c122447144680a905386f46619e699d5479f0732e02898a09db0276"
+ampd_checksum: "sha256:a8456188352a1bd3893359bfdf6a25a44ce5661358c9f616b0cd01c87f5601cd"
 ampd_download_path: /var/lib/buildampd
 ampd_image_basename: "local/ampd_"
 ampd_image_name: "{{ ampd_image_basename }}{{ ampd_version }}"
